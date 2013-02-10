@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="JniBot/release/javabot.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/JniBot/export-jar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=JniBot/src&lt;javabot{JavaBot.java[JavaBot" manifestLocation="/JniBot/src/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=JniBot/src&lt;javabot.model"/>
+        <javaElement handleIdentifier="=JniBot/src&lt;javabot"/>
+        <javaElement handleIdentifier="=JniBot/src&lt;javabot.util"/>
+        <javaElement handleIdentifier="=JniBot/src&lt;javabot.types"/>
+    </selectedElements>
+</jardesc>

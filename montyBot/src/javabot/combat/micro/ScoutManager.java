@@ -1,13 +1,6 @@
 package javabot.combat.micro;
 
+//pre jednotku keby daco :P
 public class ScoutManager {
-	
-	public ScoutManager(){
-		
-	}
-	
-	//placeholder
-	public boolean needNewScout(){
-		return false;
-	}
+
 }

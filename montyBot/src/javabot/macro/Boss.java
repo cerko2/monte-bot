@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.combat.MonteCarloPlanner;
-import javabot.combat.micro.ScoutManager;
+import javabot.combat.micro.ScoutingManager;
 import javabot.model.Player;
 import javabot.model.Unit;
 import javabot.types.UnitType.UnitTypes;
@@ -19,7 +19,7 @@ public class Boss extends AbstractManager{
 	
 	private MonteCarloPlanner montePlanner;
 	private WorkerManager workerManager;
-	private ScoutManager scoutManager;
+	private ScoutingManager scoutManager;
 	
 	private ArrayList<Unit> validUnits;
 	private ArrayList<Unit> combatUnits;

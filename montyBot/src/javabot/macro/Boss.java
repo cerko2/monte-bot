@@ -2,6 +2,7 @@ package javabot.macro;
 
 import java.util.ArrayList;
 
+import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.combat.MonteCarloPlanner;
 import javabot.combat.micro.ScoutManager;
@@ -9,7 +10,7 @@ import javabot.model.Player;
 import javabot.model.Unit;
 import javabot.types.UnitType.UnitTypes;
 
-public class Boss {
+public class Boss extends AbstractManager{
 	
 	private JNIBWAPI game;
 	private Player player;

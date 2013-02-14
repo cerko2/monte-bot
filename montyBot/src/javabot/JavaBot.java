@@ -6,7 +6,7 @@ import javabot.macro.Boss;
 import javabot.model.Unit;
 import javabot.util.BWColor;
 
-public class JavaBot implements BWAPIEventListener {
+public class JavaBot extends AbstractManager {
 	
 	private Boss boss;
 	
@@ -41,39 +41,25 @@ public class JavaBot implements BWAPIEventListener {
 		bwapi.loadMapData(true);
 		initialize();
 		
-		boss.gameStarted();
+		super.gameStarted();
 	}
 	
 	public void initialize(){
 		boss = new Boss(bwapi);
+		
+		addManager(boss);
 	}
 	
 	
 	// Method called on every frame (approximately 30x every second).
 	public void gameUpdate() {
 		
-		boss.gameUpdate();
+		super.gameUpdate();
 		
 		// Draw debug information on screen
 		drawDebugInfo();
 
 	}
-
-	// Some additional event-related methods.
-	public void gameEnded() {}
-	public void matchEnded(boolean winner) {}
-	public void nukeDetect(int x, int y) {}
-	public void nukeDetect() {}
-	public void playerLeft(int id) {}
-	public void unitCreate(int unitID) {}
-	public void unitDestroy(int unitID) {}
-	public void unitDiscover(int unitID) {}
-	public void unitEvade(int unitID) {}
-	public void unitHide(int unitID) {}
-	public void unitMorph(int unitID) {}
-	public void unitShow(int unitID) {}
-	public void keyPressed(int keyCode) {}
-	
 	
 	// Draws debug information on the screen. 
 	// Reimplement this function however you want. 

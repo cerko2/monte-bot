@@ -39,6 +39,7 @@ public class Boss extends AbstractManager{
 	
 	public Boss (JNIBWAPI game){
 		this.game = game;
+		this.player = game.getSelf(); // azder
 	}
 	
 	public void initialize(){
@@ -61,9 +62,10 @@ public class Boss extends AbstractManager{
 		montePlanner.update(combatUnits);
 		workerManager.update(workerUnits);
 		
-		
-		minerals = player.getMinerals();
-		gas = player.getGas();
+		if(player != null){ //azder
+			minerals = player.getMinerals();
+			gas = player.getGas();
+		}
 	}
 	
 	private void setUnits(){

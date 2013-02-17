@@ -11,11 +11,12 @@ import javabot.types.UnitType.UnitTypes;
 
 //Azder UPM
 /*TODO*/
-/* osetrit pripad ked produkujem dve jednotky miesto jednej. 
+/* 
  * lepsie spravit navysovanie pomeru. 
- * */
+ */
 public class UnitProductionManager extends AbstractManager{
-	private boolean testing = false; //testovacie hlasky.
+	private boolean testing = false; //testovacie vypisy.
+	private boolean freeMode = false; // dokym neskonci opening som obmedzeny.
 	private JNIBWAPI game = null;
 	private Boss boss  = null;
 	private int minerals = 0;
@@ -23,15 +24,15 @@ public class UnitProductionManager extends AbstractManager{
 	private ArrayList<Double> rateArmy = new ArrayList<Double>(); // sucet = 100;???
 	private ArrayList<Double> rateArmyActual = new ArrayList<Double>();
 	private ArrayList<MyArmyGap> rateArmyGap = new ArrayList<MyArmyGap>();
+	private ArrayList<Unit> useBuilding = new ArrayList<Unit>();
 	private Vector<Integer> createStack = new Vector<Integer>();
 	private double rate = 1;
 	
-	private static int numArmy = 11; // velkos rozmanitosti armay.
-	private static int maxRate = 100; // velkos rozmanitosti armay.
-	
+	private static int numArmy = 11; // velkos rozmanitosti armady.
+	private static int maxRate = 100; 
+	private static int actFrequency = 30; //frekvecia myAct
 	
 	private class MyArmyGap implements Comparable<MyArmyGap>{
-		//private int countWorker = 0;
 		private double gap = 0;
 		private int ID = -1;
 		public MyArmyGap(double gap,int ID){
@@ -52,8 +53,9 @@ public class UnitProductionManager extends AbstractManager{
 			rateArmy.add(0.0);
 		}  
 		if(testing){ // testing  /*TODO*/
-			rateArmy.set(0, 50.0);
-			rateArmy.set(1, 50.0);
+			freeMode = true;
+			rateArmy.set(0, 75.0);
+			rateArmy.set(1, 25.0);
 		}
 	}
 	public void setResources(int minerals,int gas){
@@ -64,10 +66,15 @@ public class UnitProductionManager extends AbstractManager{
 		this.rateArmy = rateArmy; /*TODO*/ // bud mi to nastavia alebo si to ja zistim 
 	}
 	public void gameUpdate(){
-		setSettings();
-		if(minerals > 0) 
-			myAct();
-		drawDebugInfo();
+		if((game.getFrameCount() % actFrequency == 0 ) && freeMode){
+			setSettings();
+			if(minerals > 0) 
+				myAct();
+		}
+		drawDebugInfo();		
+	}
+	public void setFreeMode(Boolean freeMode){
+		this.freeMode = freeMode;
 	}
 //-----------------------------------------------------------------------------------------
 	private void setSettings(){
@@ -84,6 +91,7 @@ public class UnitProductionManager extends AbstractManager{
 		setRateArmyActual();
 		setRateArmyGap();	
 		setCrateStack();
+		useBuilding = new ArrayList<Unit>();
 		//---------->>
 		while (!createStack.isEmpty() && minerals > 0) {
 			int typeID = createStack.get(0);
@@ -169,11 +177,22 @@ public class UnitProductionManager extends AbstractManager{
 		return null;	
 	}
 	private void createUnit(Unit building, int typeID){
+		Boolean testInGroup = false;
 		int freeSuply = game.getSelf().getSupplyTotal() - game.getSelf().getSupplyUsed();
-		if(freeSuply  >= game.getUnitType(typeID).getSupplyRequired() && minerals >= game.getUnitType(typeID).getMineralPrice()  && gas >= game.getUnitType(typeID).getGasPrice()){
-			if(!building.isTraining())
-				game.train(building.getID(), typeID);		
+		if(freeSuply  >= game.getUnitType(typeID).getSupplyRequired() && minerals >= game.getUnitType(typeID).getMineralPrice() && gas >= game.getUnitType(typeID).getGasPrice()){
+			testInGroup =  isInGroup(building, useBuilding);
+			if(!building.isTraining() && !testInGroup){
+				game.train(building.getID(), typeID);	
+				useBuilding.add(building);
+			}
 		}
+	}
+	private boolean isInGroup(Unit u, ArrayList<Unit> list){
+		for(Unit l:list){
+			if(l.getID() == u.getID())
+				return true;
+		}
+		return false;
 	}
 //------------------------------------ FROM-TO ---------------------------------------------
 	private int UnitTypeID_To_InternalID(int typeID){

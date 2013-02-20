@@ -106,24 +106,33 @@ public class JavaBot extends AbstractManager {
 	// Reimplement this function however you want. 
 	public void drawDebugInfo() {
 
-		// Draw our home position and walls.
+		// Draw our home position and chokes
 		if (home != null) {
 			bwapi.drawText(new Point(5,0), "Our home position: "+String.valueOf(home.getCenterX())+","+String.valueOf(home.getCenterY()), true);
-			bwapi.drawCircle(home.getCenterX(), home.getCenterY(), 50, BWColor.TEAL, false, false);
+			bwapi.drawText(new Point(5,14), "Map: "+bwapi.getMap().getName(), true);
+
+			// chokepoints and center of the home Region
+			bwapi.drawCircle(home.getCenterX(), home.getCenterY(), 15, BWColor.TEAL, true, false);
 			for (ChokePoint c : home.getChokePoints()) {
 				bwapi.drawLine(new Point(home.getCenterX() , home.getCenterY() ), new Point(c.getCenterX(),c.getCenterY()),BWColor.TEAL,false);
+				bwapi.drawCircle(c.getCenterX(),c.getCenterY(), 10, BWColor.TEAL, true, false);
 			}
-			
-			
+		}
+
+		for (int i=1; i < bwapi.getMap().getWidth(); i++) {
+			for (int j=1; j < bwapi.getMap().getHeight(); j++) {
+				if (wallInModule.obstructedByNeutrals(i, j))
+					bwapi.drawCircle(i*32,j*32, 5, BWColor.GREEN, false, false);
+			}
 		}
 		
 		// Draw all previously computed walls
 		for (Wall w : wallInModule.getAllWalls()) {
-			for (Point bt : w.buildTiles) {
-				Integer tileWidth = bwapi.getUnitType(w.buildingTypeIds.get(w.buildTiles.indexOf(bt))).getTileWidth();
-				Integer tileHeight = bwapi.getUnitType(w.buildingTypeIds.get(w.buildTiles.indexOf(bt))).getTileHeight();
+			for (Point bt : w.getBuildTiles()) {
+				Integer tileWidth = bwapi.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileWidth();
+				Integer tileHeight = bwapi.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileHeight();
 				bwapi.drawBox(bt.x*32, bt.y*32, (bt.x + tileWidth)*32, (bt.y + tileHeight)*32, BWColor.YELLOW, false, false);
-				bwapi.drawText(new Point(bt.x*32+2, bt.y*32+2), bwapi.getUnitType(w.buildingTypeIds.get(w.buildTiles.indexOf(bt))).getName()+" "+String.valueOf(bt.x)+","+String.valueOf(bt.y), false);
+				bwapi.drawText(new Point(bt.x*32+4, bt.y*32+2), bwapi.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getName()+" "+String.valueOf(bt.x)+","+String.valueOf(bt.y), false);
 			}
 		}
 		

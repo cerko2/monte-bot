@@ -3,18 +3,16 @@ package javabot.strategy;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
-
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.model.ChokePoint;
 import javabot.model.Region;
+import javabot.model.Unit;
 import javabot.types.UnitType.UnitTypes;
 import javabot.util.AspSolver;
 import javabot.util.Wall;
 import javabot.types.UnitType;
+
 
 
 public class WallInModule extends AbstractManager {
@@ -29,7 +27,7 @@ public class WallInModule extends AbstractManager {
 	
 	public Wall getWallAt(ChokePoint choke) {
 		for (Wall w : walls) {
-			if (w.chokePoint == choke) {
+			if (w.getChokePoint() == choke) {
 				return w;
 			}
 		}
@@ -51,6 +49,7 @@ public class WallInModule extends AbstractManager {
 	}
 	
 	private boolean isBuildable(int x, int y, int w, int h, Point forbidden1, Point forbidden2, int margin1, int margin2, int margin3, int margin4) {
+		if (obstructedByNeutrals(x, y)) return false;
 		for (int i = x; i < x+w; i++) {
 			for (int j = y; j < y+h; j++) {
 				if ((!bwapi.isBuildable(i, j))
@@ -71,10 +70,30 @@ public class WallInModule extends AbstractManager {
 		return Math.sqrt(((double)x1-(double)x2)*((double)x1-(double)x2)+((double)y1-(double)y2)*((double)y1-(double)y2)); 
 	}
 	
+	public boolean obstructedByNeutrals(int tx, int ty) {
+		return false;
+		/* 
+		 * TODO: We need to have access to complete list of static neutrals (resources, neut. buildings, etc.) 
+		 */
+		
+		/*
+		UnitType nType;
+		int xDiff;
+		int yDiff;
+		for (Unit u : SOME REPRESENTATION OF ALL THE NEUTRAL BUILDINGS / RESOURCES) {
+			nType = bwapi.getUnitType(u.getTypeID());
+			xDiff = u.getTileX()-tx+nType.getTileWidth();
+			yDiff = u.getTileY()-ty+nType.getTileHeight();
+			if ((xDiff > 0) && (yDiff > 0)) return true;
+		}
+		return false;
+		*/
+	}
+	
 	public void computeWall(ChokePoint choke, Region insideRegion, Integer unitTypeId) {
 		
 		for (Wall w : walls) {
-			if (w.chokePoint == choke) {
+			if (w.getChokePoint() == choke) {
 				bwapi.printText("Wall for chokepoint "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" has already been computed.");
 				return;
 			}
@@ -97,7 +116,7 @@ public class WallInModule extends AbstractManager {
 		else if ((unitTypeId == UnitTypes.Terran_SCV.ordinal()) || (unitTypeId == UnitTypes.Zerg_Drone.ordinal()) || (unitTypeId == UnitTypes.Protoss_Probe.ordinal())) dynamicLP += "enemyUnitX(23). enemyUnitY(23).\n";  
 		else {dynamicLP += "enemyUnitX(23). enemyUnitY(23).\n";}
 		
-		// wall composition
+		// wall composition (terran: 1xBarrack, 2xDepot)
 		/*
 		dynamicLP += 
 		"% Specify what building instances to build.\n" +
@@ -212,7 +231,9 @@ public class WallInModule extends AbstractManager {
 			for (int y = choke.getCenterY()/32-CHOKEPOINT_RADIUS; y <=choke.getCenterY()/32+CHOKEPOINT_RADIUS; y++) {
 				// walkable tiles
 				if (bwapi.getMap().isWalkable(x*4+2, y*4+2)) {
-					dynAtoms.add("walkable("+String.valueOf(x)+","+String.valueOf(y)+").\n");
+					if (!obstructedByNeutrals(x,y)) {
+						dynAtoms.add("walkable("+String.valueOf(x)+","+String.valueOf(y)+").\n");
+					}
 				}
 				
 				// buildable 
@@ -243,22 +264,22 @@ public class WallInModule extends AbstractManager {
 			for (String s : model) {
 				String[] pars = s.substring(s.indexOf("(")+1).substring(0,s.substring(s.indexOf("(")+1).indexOf(")")).split(",");
 				if (pars[0].contains("gateway")) {
-					walls.get(newId).buildingTypeIds.add(UnitTypes.Protoss_Gateway.ordinal());
+					walls.get(newId).getBuildingTypeIds().add(UnitTypes.Protoss_Gateway.ordinal());
 				} else if (pars[0].contains("forge")) {
-					walls.get(newId).buildingTypeIds.add(UnitTypes.Protoss_Forge.ordinal());
+					walls.get(newId).getBuildingTypeIds().add(UnitTypes.Protoss_Forge.ordinal());
 				} else if (pars[0].contains("pylon")) {
-					walls.get(newId).buildingTypeIds.add(UnitTypes.Protoss_Pylon.ordinal());
+					walls.get(newId).getBuildingTypeIds().add(UnitTypes.Protoss_Pylon.ordinal());
 				} else if (pars[0].contains("cannon")) {
-					walls.get(newId).buildingTypeIds.add(UnitTypes.Protoss_Photon_Cannon.ordinal());
+					walls.get(newId).getBuildingTypeIds().add(UnitTypes.Protoss_Photon_Cannon.ordinal());
 				} else if (pars[0].contains("zealots")) {
-					walls.get(newId).buildingTypeIds.add(UnitTypes.Protoss_Zealot.ordinal());
+					walls.get(newId).getBuildingTypeIds().add(UnitTypes.Protoss_Zealot.ordinal());
 				}
-				walls.get(newId).buildTiles.add(new Point( Integer.valueOf(pars[1]), Integer.valueOf(pars[2])  ));
+				walls.get(newId).getBuildTiles().add(new Point( Integer.valueOf(pars[1]), Integer.valueOf(pars[2])  ));
 			}
 		} else {
 			bwapi.printText("Wall at "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" couldn't be found.");
 			walls.add(new Wall());
-			walls.get(walls.size()-1).successfullyFound = false;
+			walls.get(walls.size()-1).setSuccessfullyFound(false);
 		}
 		
 		

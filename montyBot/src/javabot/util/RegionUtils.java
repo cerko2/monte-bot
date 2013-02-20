@@ -14,13 +14,13 @@ import javabot.types.UnitType;
 import javabot.types.UnitType.UnitTypes;
 import javabot.types.WeaponType;
 
-public class UnitUtils {
+public class RegionUtils {
 	
-	public static Region getUnitRegion(Map map, Unit unit){
-		return getPointRegion(map, new Point(unit.getX(), unit.getY()));
+	public static Region getRegion(Map map, Unit unit){
+		return getRegion(map, new Point(unit.getX(), unit.getY()));
 	}
 	
-	public static Region getPointRegion(Map map, Point point){
+	public static Region getRegion(Map map, Point point){
 		ArrayList<Region> regions = map.getRegions();
 		for (Region region : regions){
 			int[] coordinates = region.getCoordinates();
@@ -38,7 +38,22 @@ public class UnitUtils {
 		return null;
 	}
 	
-	public static boolean pnpoly(int nvert, double[] vertx, double[] verty, double testx, double testy){
+	public static boolean isInRegion(Region region, Unit unit){
+		return isInRegion(region, new Point(unit.getX(), unit.getY()));
+	}
+	
+	public static boolean isInRegion(Region region, Point point){
+		int[] coordinates = region.getCoordinates();
+		double[] xCoords = new double[coordinates.length / 2];
+		double[] yCoords = new double[coordinates.length / 2];
+		for (int i = 0; i < xCoords.length; i++){
+			xCoords[i] = coordinates[i * 2];
+			yCoords[i] = coordinates[(i * 2) + 1];
+		}
+		return pnpoly(xCoords.length, xCoords, yCoords, point.getX(), point.getY());
+	}
+	
+	private static boolean pnpoly(int nvert, double[] vertx, double[] verty, double testx, double testy){
 		int i, j = 0;
 		boolean c = false;
 		for (i = 0, j = nvert-1; i < nvert; j = i++) {

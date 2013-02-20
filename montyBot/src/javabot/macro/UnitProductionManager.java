@@ -13,22 +13,26 @@ import javabot.types.UnitType.UnitTypes;
 /*TODO*/
 /* 
  * lepsie spravit navysovanie pomeru. 
+ * otestovat funciu createUnit
  */
 public class UnitProductionManager extends AbstractManager{
 	private boolean testing = false; //testovacie vypisy.
 	private boolean freeMode = false; // dokym neskonci opening som obmedzeny.
+	
 	private JNIBWAPI game = null;
 	private Boss boss  = null;
 	private int minerals = 0;
 	private int gas = 0;
+	
 	private ArrayList<Double> rateArmy = new ArrayList<Double>(); // sucet = 100;???
 	private ArrayList<Double> rateArmyActual = new ArrayList<Double>();
 	private ArrayList<MyArmyGap> rateArmyGap = new ArrayList<MyArmyGap>();
 	private ArrayList<Unit> useBuilding = new ArrayList<Unit>();
 	private Vector<Integer> createStack = new Vector<Integer>();
+	private Vector<Integer> createStackExternal = new Vector<Integer>();
 	private double rate = 1;
 	
-	private static int numArmy = 11; // velkos rozmanitosti armady.
+	private static int numArmy = 13; // velkos rozmanitosti armady.
 	private static int maxRate = 100; 
 	private static int actFrequency = 30; //frekvecia myAct
 	
@@ -45,9 +49,9 @@ public class UnitProductionManager extends AbstractManager{
 		}
 	}	
 //-----------------------------------------------------------------------------------------	
-	public UnitProductionManager(JNIBWAPI game,Boss boss){
-		this.game = game;
-		this.boss = boss;	
+	public UnitProductionManager(Boss boss){
+		this.boss = boss;
+		this.game = boss.game;
 		sendText("Start: Unit Production");	
 		for(int i = 0 ; i < numArmy ; i++){
 			rateArmy.add(0.0);
@@ -58,15 +62,15 @@ public class UnitProductionManager extends AbstractManager{
 			rateArmy.set(1, 25.0);
 		}
 	}
-	public void setResources(int minerals,int gas){
-		this.minerals = minerals;
-		this.gas = gas;
+	public void setAddResources(int minerals,int gas){
+		this.minerals += minerals;
+		this.gas += gas;
 	}
 	public void setRateArmy( ArrayList<Double> rateArmy){ /*TODO*/ 
-		this.rateArmy = rateArmy; /*TODO*/ // bud mi to nastavia alebo si to ja zistim 
+		this.rateArmy = rateArmy;  //TODO  bud mi to nastavia alebo si to ja zistim 
 	}
 	public void gameUpdate(){
-		if((game.getFrameCount() % actFrequency == 0 ) && freeMode){
+		if((game.getFrameCount() % actFrequency == 0 ) ){
 			setSettings();
 			if(minerals > 0) 
 				myAct();
@@ -75,6 +79,10 @@ public class UnitProductionManager extends AbstractManager{
 	}
 	public void setFreeMode(Boolean freeMode){
 		this.freeMode = freeMode;
+	}
+	public void createUnit(int typeID,int mineral,int gas){	
+		setAddResources(mineral, gas);
+		createStackExternal.add(typeID);
 	}
 //-----------------------------------------------------------------------------------------
 	private void setSettings(){
@@ -88,15 +96,24 @@ public class UnitProductionManager extends AbstractManager{
 		}else sendText("err: boss = null");
 	}
 	private void myAct(){
-		setRateArmyActual();
-		setRateArmyGap();	
-		setCrateStack();
 		useBuilding = new ArrayList<Unit>();
-		//---------->>
-		while (!createStack.isEmpty() && minerals > 0) {
-			int typeID = createStack.get(0);
-			createStack.remove(0);
-			productionUnit(typeID);
+		boolean createExternal = true;
+		while (!createStackExternal.isEmpty() && minerals > 0 && createExternal) {
+			int typeID = createStackExternal.get(0);
+			createExternal = productionUnit(typeID);
+			if(createExternal) // ak ju dalo stavat tak vyzaz
+				createStackExternal.remove(0);
+		}
+		if(freeMode){ // AK je modul aktivny
+			setRateArmyActual();
+			setRateArmyGap();	
+			setCrateStack();
+			//---------->>
+			while (!createStack.isEmpty() && minerals > 0) {
+				int typeID = createStack.get(0);
+				createStack.remove(0);
+				productionUnit(typeID);
+			}
 		}
 	}	
 //-----------------------------------------------------------------------------------------
@@ -108,8 +125,9 @@ public class UnitProductionManager extends AbstractManager{
 		int sumID = -1;
 		for(Unit u : game.getMyUnits()){
 			sumID = UnitTypeID_To_InternalID(u.getTypeID());
-			if(sumID != -1)
-				rateArmyActual.set(sumID, rateArmyActual.get(sumID)+ 1);
+			if(sumID != -1) //jednotka je v zozname
+				if(rateArmy.get(sumID) > 0) // mam take jednotky vyrabat
+					rateArmyActual.set(sumID, rateArmyActual.get(sumID)+ 1);
 		}
 		Double countArmy = (double) countArmy();
 		if(countArmy <= 0) countArmy = 1.0;
@@ -151,7 +169,7 @@ public class UnitProductionManager extends AbstractManager{
 			}	
 		}
 		
-		for(int i =0 ; i < numArmy;i++){
+		for(int i =0 ; i < numArmy;i++){ // TODO dako rozumne
 			pomRate = rateArmy.get(i);
 			if(pomRate > 0){
 				createStack.add(InternalID_To_UnitTypeID(i));
@@ -161,11 +179,20 @@ public class UnitProductionManager extends AbstractManager{
 		
 	}
 //---------->>
-	private void productionUnit(int typeID){
-		int buildingID = game.getUnitType(typeID).getWhatBuildID();
-		Unit building = findBuilding(buildingID);
-		if(building != null)
-			createUnit(building, typeID);
+	private boolean productionUnit(int typeID){
+		if(typeID == UnitTypes.Protoss_Archon.ordinal()||typeID == UnitTypes.Protoss_Dark_Archon.ordinal()){	
+			return productionArchon(typeID);
+		}else{
+			int buildingID = game.getUnitType(typeID).getWhatBuildID();
+			Unit building = findBuilding(buildingID);
+			if(building != null)
+				return createUnit(building, typeID);
+			return false;
+		}
+	}
+	private boolean productionArchon(int typeID){
+		 //TODO zavolat bosa nech vytvory unit.
+		return true;
 	}
 	private Unit findBuilding(int building){
 		for(Unit u : game.getMyUnits()){
@@ -176,7 +203,7 @@ public class UnitProductionManager extends AbstractManager{
 		}
 		return null;	
 	}
-	private void createUnit(Unit building, int typeID){
+	private boolean createUnit(Unit building, int typeID){
 		Boolean testInGroup = false;
 		int freeSuply = game.getSelf().getSupplyTotal() - game.getSelf().getSupplyUsed();
 		if(freeSuply  >= game.getUnitType(typeID).getSupplyRequired() && minerals >= game.getUnitType(typeID).getMineralPrice() && gas >= game.getUnitType(typeID).getGasPrice()){
@@ -184,8 +211,10 @@ public class UnitProductionManager extends AbstractManager{
 			if(!building.isTraining() && !testInGroup){
 				game.train(building.getID(), typeID);	
 				useBuilding.add(building);
+				return true;
 			}
 		}
+		return false;
 	}
 	private boolean isInGroup(Unit u, ArrayList<Unit> list){
 		for(Unit l:list){
@@ -207,6 +236,8 @@ public class UnitProductionManager extends AbstractManager{
 		if(typeID == UnitTypes.Protoss_Corsair.ordinal()) return 8; 		// 8
 		if(typeID == UnitTypes.Protoss_Carrier.ordinal()) return 9; 		// 9
 		if(typeID == UnitTypes.Protoss_Arbiter.ordinal()) return 10; 		// 10
+		if(typeID == UnitTypes.Protoss_Archon.ordinal()) return 11; 		// 11
+		if(typeID == UnitTypes.Protoss_Dark_Archon.ordinal()) return 12; 	// 12
 		return -1;
 	}
 	private int InternalID_To_UnitTypeID(int InternalID){
@@ -221,6 +252,8 @@ public class UnitProductionManager extends AbstractManager{
 		if(InternalID == 8) return UnitTypes.Protoss_Corsair.ordinal(); 		// 8
 		if(InternalID == 9) return  UnitTypes.Protoss_Carrier.ordinal(); 		// 9
 		if(InternalID == 10) return UnitTypes.Protoss_Arbiter.ordinal(); 		// 10
+		if(InternalID == 11) return UnitTypes.Protoss_Archon.ordinal(); 		// 11
+		if(InternalID == 12) return UnitTypes.Protoss_Dark_Archon.ordinal(); 	// 12
 		return -1;
 	}
 //------------------------------------ only testing ----------------------------------------

@@ -3,6 +3,7 @@ package javabot;
 import java.awt.Point;
 
 import javabot.macro.Boss;
+import javabot.macro.BuildManager;
 import javabot.macro.UnitProductionManager;
 import javabot.model.ChokePoint;
 import javabot.model.Region;
@@ -18,6 +19,7 @@ public class JavaBot extends AbstractManager {
 	private Boss boss;
 	private WallInModule wallInModule;
 	private UnitProductionManager unitProductionManager;
+	private BuildManager buildManager;
 	
 	private Region home; // Needed only for DEBUGGING (miso certikcy)
 
@@ -55,12 +57,15 @@ public class JavaBot extends AbstractManager {
 		// Create the managers
 		boss = new Boss(bwapi);
 		wallInModule = new WallInModule(bwapi);
-		unitProductionManager = new UnitProductionManager(bwapi,boss); 
+		unitProductionManager = new UnitProductionManager(boss); 
+		buildManager = new  BuildManager(boss);
 		
 		// Add the managers
 		addManager(boss);
 		addManager(wallInModule);			// miso certicky
+		addManager(buildManager);			// azder
 		addManager(unitProductionManager);	// azder
+
 	}
 	
 	

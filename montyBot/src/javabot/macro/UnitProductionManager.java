@@ -66,9 +66,6 @@ public class UnitProductionManager extends AbstractManager{
 		this.minerals += minerals;
 		this.gas += gas;
 	}
-	public void setRateArmy( ArrayList<Double> rateArmy){ /*TODO*/ 
-		this.rateArmy = rateArmy;  //TODO  bud mi to nastavia alebo si to ja zistim 
-	}
 	public void gameUpdate(){
 		if((game.getFrameCount() % actFrequency == 0 ) ){
 			setSettings();
@@ -80,9 +77,39 @@ public class UnitProductionManager extends AbstractManager{
 	public void setFreeMode(Boolean freeMode){
 		this.freeMode = freeMode;
 	}
-	public void createUnit(int typeID,int mineral,int gas){	
-		setAddResources(mineral, gas);
-		createStackExternal.add(typeID);
+	public boolean createUnit(int typeID,int minerals,int gas){	//true ak to akceptujem
+		if(minerals >= game.getUnitType(typeID).getMineralPrice() && gas >= game.getUnitType(typeID).getGasPrice()){
+			setAddResources(minerals, gas);
+			createStackExternal.add(typeID);
+			return true;
+		}
+		return false;
+	}
+	public boolean setRateArmy( ArrayList<Double> rateArmy){ //true ak to akceptujem
+		//TODO  bud mi to nastavia alebo si to ja zistim 
+		if(this.rateArmy.size() == rateArmy.size()){ 
+			double sum = sumRate(rateArmy);
+			if(sum != 100){ // normalizujem to na 100
+				double correctD = 100.0 / sum  ; 	
+				rateArmy =  correctRate(rateArmy,correctD);
+			}
+			this.rateArmy = rateArmy;  
+			return true;
+		}
+		return false;
+	}
+//-----------------------------------------------------------------------------------------
+	private double sumRate(ArrayList<Double> rateArmy){
+		double sum = 0.0;
+		for(Double d : rateArmy)
+			sum += d;
+		return sum;
+	}
+	private ArrayList<Double> correctRate(ArrayList<Double> rateArmy,double correctD){
+		ArrayList<Double> rate = new ArrayList<Double>();
+		for(Double d : rateArmy)
+			rate.add(d * correctD);
+		return rate;
 	}
 //-----------------------------------------------------------------------------------------
 	private void setSettings(){

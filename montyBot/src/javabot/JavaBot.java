@@ -3,6 +3,7 @@ package javabot;
 import java.awt.Point;
 
 import javabot.macro.Boss;
+import javabot.macro.UnitProductionManager;
 import javabot.model.Unit;
 import javabot.util.BWColor;
 
@@ -48,6 +49,7 @@ public class JavaBot extends AbstractManager {
 		boss = new Boss(bwapi);
 		
 		addManager(boss);
+		addManager(new UnitProductionManager(bwapi,boss)); // azder
 	}
 	
 	

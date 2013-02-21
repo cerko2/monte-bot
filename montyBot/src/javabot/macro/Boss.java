@@ -12,7 +12,7 @@ import javabot.types.UnitType.UnitTypes;
 
 public class Boss extends AbstractManager{
 	
-	private JNIBWAPI game;
+	public JNIBWAPI game;
 	private Player player;
 	
 	private final int workerDefenseTreshold = 3;

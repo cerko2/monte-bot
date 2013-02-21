@@ -449,6 +449,15 @@ public class JNIBWAPI {
     public ArrayList<Unit> getAllStaticGeysers(){
     	return staticGeysers;
     }
+    
+    public Unit getStaticNeutralUnit(int unitID){
+    	for (Unit unit : staticNeutralUnits){
+    		if (unit.getID() == unitID){
+    			return unit;
+    		}
+    	}
+    	return null;
+    }
 
     /**
      * Returns the map.
@@ -702,10 +711,28 @@ public class JNIBWAPI {
 
         // base locations
         if (baseLocationData != null) {
-            for (int index = 0; index < baseLocationData.length; index += BaseLocation.numAttributes) {
+            for (int index = 0, resourceIndex = 0; index < baseLocationData.length; index = resourceIndex + 1) {
                 BaseLocation baseLocation = new BaseLocation(baseLocationData, index);
+                
+                //resource mapping
+                resourceIndex = index + BaseLocation.numAttributes;
+               
+                ArrayList<Unit> geysers = new ArrayList<Unit>();
+                for (int geyserCount = baseLocationData[resourceIndex]; geyserCount > 0; geyserCount--, resourceIndex++){
+                	geysers.add(getStaticNeutralUnit(baseLocationData[resourceIndex+1]));
+                }
+                
+                resourceIndex++;
+                ArrayList<Unit> minerals = new ArrayList<Unit>();
+                for (int mineralCount = baseLocationData[resourceIndex]; mineralCount > 0; mineralCount--, resourceIndex++){
+                	minerals.add(getStaticNeutralUnit(baseLocationData[resourceIndex+1]));
+                }
+                baseLocation.setGeysers(geysers);
+                baseLocation.setStaticMinerals(minerals);
                 map.getBaseLocations().add(baseLocation);
             }
+            
+            
         }
 
         // connect the region graph

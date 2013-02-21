@@ -5,6 +5,7 @@ import java.awt.Point;
 import javabot.macro.Boss;
 import javabot.macro.BuildManager;
 import javabot.macro.UnitProductionManager;
+import javabot.model.BaseLocation;
 import javabot.model.ChokePoint;
 import javabot.model.Region;
 import javabot.model.Unit;
@@ -16,6 +17,7 @@ import javabot.util.Wall;
 public class JavaBot extends AbstractManager {
 	
 	private static final boolean STATIC_UNIT_DEBUG = true;
+	private static final boolean BASELOC_RESOURCES_DEBUG = true;
 
 	// Managers & Modules:
 	private Boss boss;
@@ -162,7 +164,18 @@ public class JavaBot extends AbstractManager {
 				int tileHeight = bwapi.getUnitType(unit.getTypeID()).getTileHeight();
 				bwapi.drawBox(unit.getTileX()*32, unit.getTileY()*32, (unit.getTileX() + tileWidth)*32, (unit.getTileY() + tileHeight)*32, BWColor.GREEN, false, false);
 			}
-			
+		}
+		
+		if (BASELOC_RESOURCES_DEBUG){
+			for (BaseLocation base : bwapi.getMap().getBaseLocations()){
+				for (Unit unit : base.getStaticMinerals()){
+					bwapi.drawLine(base.getX(), base.getY(), unit.getX(), unit.getY(), BWColor.CYAN, false);
+				}
+				
+				for (Unit unit : base.getGeysers()){
+					bwapi.drawLine(base.getX(), base.getY(), unit.getX(), unit.getY(), BWColor.GREEN, false);
+				}
+			}
 		}
 		
 	}

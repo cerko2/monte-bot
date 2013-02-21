@@ -566,7 +566,18 @@ public class JNIBWAPI {
         }
 
         // get region and choke point data
-        File bwtaFile = new File(map.getHash() + ".bwta");
+        // need to save bwta files to different folders depending on race since static unit data seems to change depending on player race
+        String race = "UNKNOWN";
+        if (getSelf().getRaceID() == 0){
+        	race = "ZERG";
+        }
+        else if (getSelf().getRaceID() == 1){
+        	race = "TERRAN";
+        }
+        else if (getSelf().getRaceID() == 2){
+        	race = "PROTOSS";
+        }
+        File bwtaFile = new File("BWTA-DATA/" + race + "/" + map.getHash() + ".bwta");
         boolean analyzed = bwtaFile.exists();
         int[] regionData = null;
         int[] chokePointData = null;

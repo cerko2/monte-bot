@@ -1027,7 +1027,23 @@ JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getBaseLocations(JNIEnv *env, 
 	  intBuf[index++] = (*i)->isIsland() ? 1 : 0;
 	  intBuf[index++] = (*i)->isMineralOnly() ? 1 : 0;
 	  intBuf[index++] = (*i)->isStartLocation() ? 1 : 0;
+
+	  //TESTING mapping resources to baseLocations
+	  intBuf[index++] = (*i)->getGeysers().size();
+
+	  std::set<Unit*> geysers = (*i)->getGeysers();
+	  for (std::set<Unit*>::iterator j=geysers.begin();j!=geysers.end();j++){
+			intBuf[index++] = (*j)->getID();
+	  }
+
+	  intBuf[index++] = (*i)->getStaticMinerals().size();
+	  std::set<Unit*> staticMinerals = (*i)->getStaticMinerals();
+	  for (std::set<Unit*>::iterator j=staticMinerals.begin();j!=staticMinerals.end();j++){
+		  intBuf[index++] = (*j)->getID();
+	  }
   }
+
+   
 
   jintArray result =env->NewIntArray(index);
   env->SetIntArrayRegion(result, 0, index, intBuf);

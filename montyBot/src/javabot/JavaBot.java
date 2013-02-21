@@ -5,6 +5,7 @@ import java.awt.Point;
 import javabot.macro.Boss;
 import javabot.macro.UnitProductionManager;
 import javabot.model.Unit;
+import javabot.strategy.OpeningManager;
 import javabot.util.BWColor;
 
 public class JavaBot extends AbstractManager {
@@ -47,8 +48,10 @@ public class JavaBot extends AbstractManager {
 	
 	public void initialize(){
 		boss = new Boss(bwapi);
+		OpeningManager openingManager = new OpeningManager(bwapi);
 		
 		addManager(boss);
+		addManager(openingManager);
 		addManager(new UnitProductionManager(bwapi,boss)); // azder
 	}
 	

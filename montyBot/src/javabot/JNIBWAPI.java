@@ -49,6 +49,10 @@ public class JNIBWAPI {
     private ArrayList<Unit> alliedUnits = new ArrayList<Unit>();
     private ArrayList<Unit> enemyUnits = new ArrayList<Unit>();
     private ArrayList<Unit> neutralUnits = new ArrayList<Unit>();
+    
+    private ArrayList<Unit> staticNeutralUnits = new ArrayList<Unit>();
+    private ArrayList<Unit> staticMinerals = new ArrayList<Unit>();
+    private ArrayList<Unit> staticGeysers = new ArrayList<Unit>();
 
     // player lists
     private Player self;
@@ -73,7 +77,7 @@ public class JNIBWAPI {
     private native int[] getUpgradeStatus(int playerID);
 
     private native int[] getUnits();
-
+    
     private native int[] getUnitTypes();
 
     private native String getUnitTypeName(int typeID);
@@ -268,7 +272,7 @@ public class JNIBWAPI {
     public native void setCommandOptimizationLevel(int level);
 
     private native boolean isReplay();
-
+    
     // type data
     private HashMap<Integer, UnitType> unitTypes = new HashMap<Integer, UnitType>();
     private HashMap<Integer, TechType> techTypes = new HashMap<Integer, TechType>();
@@ -378,6 +382,14 @@ public class JNIBWAPI {
     public native boolean hasLoadedUnit(int unitID1, int unitID2);
 
     public native int getRemainingLatencyFrames();
+    
+    // static unit commands (cerko)
+    
+    private native int[] getStaticNeutralUnits();
+    
+    private native int[] getStaticMinerals();
+    
+    private native int[] getStaticGeysers();
 
     // game state accessors
 
@@ -424,6 +436,18 @@ public class JNIBWAPI {
 
     public ArrayList<Unit> getNeutralUnits() {
         return neutralUnits;
+    }
+    
+    public ArrayList<Unit> getAllStaticNeutralUnits(){
+    	return staticNeutralUnits;
+    }
+    
+    public ArrayList<Unit> getAllStaticMinerals(){
+    	return staticMinerals;
+    }
+    
+    public ArrayList<Unit> getAllStaticGeysers(){
+    	return staticGeysers;
     }
 
     /**
@@ -779,6 +803,7 @@ public class JNIBWAPI {
             alliedUnits.clear();
             enemyUnits.clear();
             neutralUnits.clear();
+            
             int[] unitData = getUnits();
 
             for (int index = 0; index < unitData.length; index += Unit.numAttributes) {
@@ -804,7 +829,10 @@ public class JNIBWAPI {
                 } else {
                     neutralUnits.add(unit);
                 }
+                
             }
+            
+            loadStaticUnits();
 
             listener.gameStarted();
         } catch (Error e) {
@@ -963,6 +991,40 @@ public class JNIBWAPI {
             listener.keyPressed(keyCode);
         } catch (Error e) {
             e.printStackTrace();
+        }
+    }
+    
+    private void loadStaticUnits(){
+    	staticNeutralUnits.clear();
+        staticGeysers.clear();
+        staticMinerals.clear();
+        
+        int[] unitData = getStaticNeutralUnits();
+        
+        for (int index = 0; index < unitData.length; index += Unit.numAttributes) {
+            int id = unitData[index];
+            Unit unit = new Unit(id);
+            unit.update(unitData, index);
+
+            staticNeutralUnits.add(unit);
+        }
+        
+        unitData = getStaticMinerals();
+        for (int index = 0; index < unitData.length; index += Unit.numAttributes) {
+            int id = unitData[index];
+            Unit unit = new Unit(id);
+            unit.update(unitData, index);
+
+            staticMinerals.add(unit);
+        }
+        
+        unitData = getStaticGeysers();
+        for (int index = 0; index < unitData.length; index += Unit.numAttributes) {
+            int id = unitData[index];
+            Unit unit = new Unit(id);
+            unit.update(unitData, index);
+
+            staticGeysers.add(unit);
         }
     }
 }

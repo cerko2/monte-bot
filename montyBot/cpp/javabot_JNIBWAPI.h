@@ -839,6 +839,30 @@ JNIEXPORT jboolean JNICALL Java_javabot_JNIBWAPI_hasLoadedUnit
 JNIEXPORT jint JNICALL Java_javabot_JNIBWAPI_getRemainingLatencyFrames
   (JNIEnv *, jobject);
 
+/*
+ * Class:     javabot_JNIBWAPI
+ * Method:    getStaticNeutralUnits
+ * Signature: ()[I
+ */
+JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getStaticNeutralUnits
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     javabot_JNIBWAPI
+ * Method:    getStaticMinerals
+ * Signature: ()[I
+ */
+JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getStaticMinerals
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     javabot_JNIBWAPI
+ * Method:    getStaticGeysers
+ * Signature: ()[I
+ */
+JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getStaticGeysers
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif

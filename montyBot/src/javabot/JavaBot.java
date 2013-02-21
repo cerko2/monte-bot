@@ -14,6 +14,8 @@ import javabot.util.BWColor;
 import javabot.util.Wall;
 
 public class JavaBot extends AbstractManager {
+	
+	private static final boolean STATIC_UNIT_DEBUG = true;
 
 	// Managers & Modules:
 	private Boss boss;
@@ -139,6 +141,28 @@ public class JavaBot extends AbstractManager {
 				bwapi.drawBox(bt.x*32, bt.y*32, (bt.x + tileWidth)*32, (bt.y + tileHeight)*32, BWColor.YELLOW, false, false);
 				bwapi.drawText(new Point(bt.x*32+4, bt.y*32+2), bwapi.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getName()+" "+String.valueOf(bt.x)+","+String.valueOf(bt.y), false);
 			}
+		}
+		
+		//Static unit debugging
+		if (STATIC_UNIT_DEBUG){
+			for (Unit unit : bwapi.getAllStaticNeutralUnits()){
+				int tileWidth = bwapi.getUnitType(unit.getTypeID()).getTileWidth();
+				int tileHeight = bwapi.getUnitType(unit.getTypeID()).getTileHeight();
+				bwapi.drawBox(unit.getTileX()*32, unit.getTileY()*32, (unit.getTileX() + tileWidth)*32, (unit.getTileY() + tileHeight)*32, BWColor.GREY, false, false);
+			}
+
+			for (Unit unit : bwapi.getAllStaticMinerals()){
+				int tileWidth = bwapi.getUnitType(unit.getTypeID()).getTileWidth();
+				int tileHeight = bwapi.getUnitType(unit.getTypeID()).getTileHeight();
+				bwapi.drawBox(unit.getTileX()*32, unit.getTileY()*32, (unit.getTileX() + tileWidth)*32, (unit.getTileY() + tileHeight)*32, BWColor.CYAN, false, false);
+			}
+
+			for (Unit unit : bwapi.getAllStaticGeysers()){
+				int tileWidth = bwapi.getUnitType(unit.getTypeID()).getTileWidth();
+				int tileHeight = bwapi.getUnitType(unit.getTypeID()).getTileHeight();
+				bwapi.drawBox(unit.getTileX()*32, unit.getTileY()*32, (unit.getTileX() + tileWidth)*32, (unit.getTileY() + tileHeight)*32, BWColor.GREEN, false, false);
+			}
+			
 		}
 		
 	}

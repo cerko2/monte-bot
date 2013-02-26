@@ -2,6 +2,8 @@ package javabot;
 
 import javabot.model.*;
 import javabot.types.*;
+import javabot.types.UnitType.UnitTypes;
+import javabot.util.UnitUtils;
 
 import java.awt.*;
 import java.io.*;
@@ -50,9 +52,9 @@ public class JNIBWAPI {
     private ArrayList<Unit> enemyUnits = new ArrayList<Unit>();
     private ArrayList<Unit> neutralUnits = new ArrayList<Unit>();
     
-    private ArrayList<Unit> staticNeutralUnits = new ArrayList<Unit>();
-    private ArrayList<Unit> staticMinerals = new ArrayList<Unit>();
-    private ArrayList<Unit> staticGeysers = new ArrayList<Unit>();
+    private HashMap<Integer, Unit> staticNeutralUnits = new HashMap<Integer, Unit>();
+    private HashMap<Integer, Unit> staticMinerals = new HashMap<Integer, Unit>();
+    private HashMap<Integer, Unit> staticGeysers = new HashMap<Integer, Unit>();
 
     // player lists
     private Player self;
@@ -438,25 +440,20 @@ public class JNIBWAPI {
         return neutralUnits;
     }
     
-    public ArrayList<Unit> getAllStaticNeutralUnits(){
-    	return staticNeutralUnits;
+    public Collection<Unit> getAllStaticNeutralUnits(){
+    	return staticNeutralUnits.values();
     }
     
-    public ArrayList<Unit> getAllStaticMinerals(){
-    	return staticMinerals;
+    public Collection<Unit> getAllStaticMinerals(){
+    	return staticMinerals.values();
     }
     
-    public ArrayList<Unit> getAllStaticGeysers(){
-    	return staticGeysers;
+    public Collection<Unit> getAllStaticGeysers(){
+    	return staticGeysers.values();
     }
     
     public Unit getStaticNeutralUnit(int unitID){
-    	for (Unit unit : staticNeutralUnits){
-    		if (unit.getID() == unitID){
-    			return unit;
-    		}
-    	}
-    	return null;
+    	return staticNeutralUnits.get(unitID);
     }
 
     /**
@@ -567,17 +564,7 @@ public class JNIBWAPI {
 
         // get region and choke point data
         // need to save bwta files to different folders depending on race since static unit data seems to change depending on player race
-        String race = "UNKNOWN";
-        if (getSelf().getRaceID() == 0){
-        	race = "ZERG";
-        }
-        else if (getSelf().getRaceID() == 1){
-        	race = "TERRAN";
-        }
-        else if (getSelf().getRaceID() == 2){
-        	race = "PROTOSS";
-        }
-        File bwtaFile = new File("BWTA-DATA/" + race + "/" + map.getHash() + ".bwta");
+        File bwtaFile = new File("BWTA-DATA/" + map.getHash() + ".bwta");
         boolean analyzed = bwtaFile.exists();
         int[] regionData = null;
         int[] chokePointData = null;
@@ -719,31 +706,30 @@ public class JNIBWAPI {
                 map.getChokePoints().add(chokePoint);
             }
         }
-
         // base locations
         if (baseLocationData != null) {
-            for (int index = 0, resourceIndex = 0; index < baseLocationData.length; index = resourceIndex + 1) {
-                BaseLocation baseLocation = new BaseLocation(baseLocationData, index);
-                
-                //resource mapping
-                resourceIndex = index + BaseLocation.numAttributes;
-               
-                ArrayList<Unit> geysers = new ArrayList<Unit>();
-                for (int geyserCount = baseLocationData[resourceIndex]; geyserCount > 0; geyserCount--, resourceIndex++){
-                	geysers.add(getStaticNeutralUnit(baseLocationData[resourceIndex+1]));
-                }
-                
-                resourceIndex++;
-                ArrayList<Unit> minerals = new ArrayList<Unit>();
-                for (int mineralCount = baseLocationData[resourceIndex]; mineralCount > 0; mineralCount--, resourceIndex++){
-                	minerals.add(getStaticNeutralUnit(baseLocationData[resourceIndex+1]));
-                }
-                baseLocation.setGeysers(geysers);
-                baseLocation.setStaticMinerals(minerals);
-                map.getBaseLocations().add(baseLocation);
+            for (int index=0; index<baseLocationData.length; index+=BaseLocation.numAttributes) {
+                    BaseLocation baseLocation = new BaseLocation(baseLocationData, index);
+                    map.getBaseLocations().add(baseLocation);
             }
-            
-            
+        }
+
+        //since ids were constantly changing between loads of saved files had to use euclidean distance for resource mapping onto baseLocs
+        for (BaseLocation base : map.getBaseLocations()){
+        	ArrayList<Unit> minerals = new ArrayList<Unit>();
+        	ArrayList<Unit> geysers = new ArrayList<Unit>();
+        	for (Unit unit : staticMinerals.values()){
+        		if (UnitUtils.getDistance(unit.getX(), unit.getY(), base.getTx() * 32, base.getTy() * 32) < 12 * 32){
+        			minerals.add(unit);
+        		}
+        	}
+        	for (Unit unit : staticGeysers.values()){
+        		if (UnitUtils.getDistance(unit.getX(), unit.getY(), base.getTx() * 32, base.getTy() * 32) < 12 * 32){
+        			geysers.add(unit);
+        		}
+        	}
+        	base.setStaticMinerals(minerals);
+        	base.setGeysers(geysers);
         }
 
         // connect the region graph
@@ -928,6 +914,9 @@ public class JNIBWAPI {
                         enemyList.add(unit);
                     } else {
                         neutralList.add(unit);
+                        if (staticNeutralUnits.containsKey(id)){
+                        	staticNeutralUnits.get(id).update(unitData, index);
+                        }
                     }
                 } else if (allyIDs.contains(unit.getPlayerID())) {
                     alliedList.add(unit);
@@ -935,6 +924,13 @@ public class JNIBWAPI {
                     enemyList.add(unit);
                 } else {
                     neutralList.add(unit);
+                    if (staticNeutralUnits.containsKey(id)){
+                    	staticNeutralUnits.get(id).update(unitData, index);
+                    }
+                }
+                
+                if (getUnitType(unit.getTypeID()).isResourceContainer() && staticNeutralUnits.containsKey(id)){
+                    staticNeutralUnits.get(id).update(unitData, index);
                 }
             }
 
@@ -947,7 +943,7 @@ public class JNIBWAPI {
                 units.get(unitID).setDestroyed();
                 units.remove(unitID);
             }
-
+            
             listener.gameUpdate();
         } catch (Error e) {
             e.printStackTrace();
@@ -1044,25 +1040,32 @@ public class JNIBWAPI {
             Unit unit = new Unit(id);
             unit.update(unitData, index);
 
-            staticNeutralUnits.add(unit);
+            staticNeutralUnits.put(id, unit);
         }
         
         unitData = getStaticMinerals();
         for (int index = 0; index < unitData.length; index += Unit.numAttributes) {
             int id = unitData[index];
-            Unit unit = new Unit(id);
+            Unit unit = staticNeutralUnits.get(id);
+            if (unit == null){
+            	unit = new Unit(id);
+            }
             unit.update(unitData, index);
 
-            staticMinerals.add(unit);
+            staticMinerals.put(id, unit);
         }
         
         unitData = getStaticGeysers();
         for (int index = 0; index < unitData.length; index += Unit.numAttributes) {
             int id = unitData[index];
-            Unit unit = new Unit(id);
+            Unit unit = staticNeutralUnits.get(id);
+            if (unit == null){
+            	unit = new Unit(id);
+            }
             unit.update(unitData, index);
 
-            staticGeysers.add(unit);
+            staticGeysers.put(id, unit);
         }
+        
     }
 }

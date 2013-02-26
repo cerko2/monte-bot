@@ -169,10 +169,12 @@ public class JavaBot extends AbstractManager {
 		if (BASELOC_RESOURCES_DEBUG){
 			for (BaseLocation base : bwapi.getMap().getBaseLocations()){
 				for (Unit unit : base.getStaticMinerals()){
+					bwapi.drawText(unit.getX(), unit.getY(), unit.getResources() + "", false);
 					bwapi.drawLine(base.getX(), base.getY(), unit.getX(), unit.getY(), BWColor.CYAN, false);
 				}
 				
 				for (Unit unit : base.getGeysers()){
+					bwapi.drawText(unit.getX(), unit.getY(), unit.getResources() + "", false);
 					bwapi.drawLine(base.getX(), base.getY(), unit.getX(), unit.getY(), BWColor.GREEN, false);
 				}
 			}

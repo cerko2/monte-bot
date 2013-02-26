@@ -8,6 +8,7 @@ import javabot.macro.UnitProductionManager;
 import javabot.model.ChokePoint;
 import javabot.model.Region;
 import javabot.model.Unit;
+import javabot.strategy.OpeningManager;
 import javabot.strategy.WallInModule;
 import javabot.types.UnitType.UnitTypes;
 import javabot.util.BWColor;
@@ -53,15 +54,16 @@ public class JavaBot extends AbstractManager {
 	}
 	
 	public void initialize(){
-		
 		// Create the managers
 		boss = new Boss(bwapi);
+		OpeningManager openingManager = new OpeningManager(bwapi);
 		wallInModule = new WallInModule(bwapi);
 		unitProductionManager = new UnitProductionManager(boss); 
 		buildManager = new  BuildManager(boss);
 		
 		// Add the managers
 		addManager(boss);
+		addManager(openingManager);
 		addManager(wallInModule);			// miso certicky
 		addManager(buildManager);			// azder
 		addManager(unitProductionManager);	// azder

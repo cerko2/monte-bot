@@ -863,6 +863,14 @@ JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getStaticMinerals
 JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getStaticGeysers
   (JNIEnv *, jobject);
 
+/*
+ * Class:     javabot_JNIBWAPI
+ * Method:    getPlayerName
+ * Signature: (I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_javabot_JNIBWAPI_getPlayerName
+  (JNIEnv *, jobject, jint);
+
 #ifdef __cplusplus
 }
 #endif

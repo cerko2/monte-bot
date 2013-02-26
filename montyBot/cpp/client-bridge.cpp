@@ -2102,3 +2102,9 @@ JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getStaticGeysers
 		env->SetIntArrayRegion(result, 0, index, intBuf);
 		return result;
 }
+
+JNIEXPORT jstring JNICALL Java_javabot_JNIBWAPI_getPlayerName(JNIEnv *env, jobject jObj, jint playerID)
+{
+	Player* p = Broodwar->getPlayer(playerID);
+	return jEnv->NewStringUTF(p->getName().c_str());
+}

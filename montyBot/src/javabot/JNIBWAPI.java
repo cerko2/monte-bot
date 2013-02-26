@@ -73,7 +73,7 @@ public class JNIBWAPI {
     private native int[] getPlayerInfo();
 
     private native int[] getPlayerUpdate(int playerID);
-
+    
     private native int[] getResearchStatus(int playerID);
 
     private native int[] getUpgradeStatus(int playerID);
@@ -393,6 +393,8 @@ public class JNIBWAPI {
     
     private native int[] getStaticGeysers();
 
+    private native String getPlayerName(int playerID);
+    
     // game state accessors
 
 
@@ -807,7 +809,7 @@ public class JNIBWAPI {
 
             int[] playerData = getPlayerInfo();
             for (int index = 0; index < playerData.length; index += Player.numAttributes) {
-                Player player = new Player(playerData, index);
+                Player player = new Player(playerData, index, getPlayerName(playerData[index]));
                 players.put(player.getID(), player);
 
                 if (player.isSelf()) {

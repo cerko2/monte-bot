@@ -297,6 +297,18 @@ public class javabot.JNIBWAPI {
   public java.util.ArrayList<javabot.model.Unit> getNeutralUnits();
     Signature: ()Ljava/util/ArrayList;
 
+  public java.util.Collection<javabot.model.Unit> getAllStaticNeutralUnits();
+    Signature: ()Ljava/util/Collection;
+
+  public java.util.Collection<javabot.model.Unit> getAllStaticMinerals();
+    Signature: ()Ljava/util/Collection;
+
+  public java.util.Collection<javabot.model.Unit> getAllStaticGeysers();
+    Signature: ()Ljava/util/Collection;
+
+  public javabot.model.Unit getStaticNeutralUnit(int);
+    Signature: (I)Ljavabot/model/Unit;
+
   public javabot.model.Map getMap();
     Signature: ()Ljavabot/model/Map;
 

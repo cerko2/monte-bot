@@ -1027,7 +1027,25 @@ JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getBaseLocations(JNIEnv *env, 
 	  intBuf[index++] = (*i)->isIsland() ? 1 : 0;
 	  intBuf[index++] = (*i)->isMineralOnly() ? 1 : 0;
 	  intBuf[index++] = (*i)->isStartLocation() ? 1 : 0;
+
+	  /*
+	  //TESTING mapping resources to baseLocations
+	  intBuf[index++] = (*i)->getGeysers().size();
+
+	  std::set<Unit*> geysers = (*i)->getGeysers();
+	  for (std::set<Unit*>::iterator j=geysers.begin();j!=geysers.end();j++){
+			intBuf[index++] = (*j)->getID();
+	  }
+
+	  intBuf[index++] = (*i)->getStaticMinerals().size();
+	  std::set<Unit*> staticMinerals = (*i)->getStaticMinerals();
+	  for (std::set<Unit*>::iterator j=staticMinerals.begin();j!=staticMinerals.end();j++){
+		  intBuf[index++] = (*j)->getID();
+	  }
+	  */
   }
+
+   
 
   jintArray result =env->NewIntArray(index);
   env->SetIntArrayRegion(result, 0, index, intBuf);
@@ -1669,4 +1687,424 @@ JNIEXPORT jint JNICALL Java_javabot_JNIBWAPI_getRemainingLatencyFrames
 	(JNIEnv *, jobject){
 
 		return Broodwar->getRemainingLatencyFrames();
+}
+
+JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getStaticNeutralUnits
+  (JNIEnv *env, jobject jObj){
+
+	  int index = 0;
+
+	  std::set<Unit*> units = Broodwar->getStaticNeutralUnits();
+	  for(std::set<Unit*>::iterator i=units.begin();i!=units.end();i++) {
+		  intBuf[index++] = (*i)->getID();
+		  intBuf[index++] = (*i)->getPlayer()->getID();
+		  intBuf[index++] = (*i)->getType().getID();
+		  intBuf[index++] = (*i)->getPosition().x();
+		  intBuf[index++] = (*i)->getPosition().y();
+		  intBuf[index++] = (*i)->getTilePosition().x();
+		  intBuf[index++] = (*i)->getTilePosition().y();
+		  intBuf[index++] = (int)(TO_DEGREES*(*i)->getAngle());
+		  intBuf[index++] = (int)(fixedScale*(*i)->getVelocityX());
+		  intBuf[index++] = (int)(fixedScale*(*i)->getVelocityY());
+		  intBuf[index++] = (*i)->getHitPoints();
+		  intBuf[index++] = (*i)->getShields();
+		  intBuf[index++] = (*i)->getEnergy();
+		  intBuf[index++] = (*i)->getResources();
+		  intBuf[index++] = (*i)->getResourceGroup();
+		  intBuf[index++] = (*i)->getLastCommandFrame();
+		  intBuf[index++] = (*i)->getLastCommand().getType().getID();
+		  intBuf[index++] = (*i)->getInitialType().getID();
+		  intBuf[index++] = (*i)->getInitialPosition().x();
+		  intBuf[index++] = (*i)->getInitialPosition().y();
+		  intBuf[index++] = (*i)->getInitialTilePosition().x();
+		  intBuf[index++] = (*i)->getInitialTilePosition().y();
+		  intBuf[index++] = (*i)->getInitialHitPoints();
+		  intBuf[index++] = (*i)->getInitialResources();
+		  intBuf[index++] = (*i)->getKillCount();
+		  intBuf[index++] = (*i)->getAcidSporeCount();
+		  intBuf[index++] = (*i)->getInterceptorCount();
+		  intBuf[index++] = (*i)->getScarabCount();
+		  intBuf[index++] = (*i)->getSpiderMineCount();
+		  intBuf[index++] = (*i)->getGroundWeaponCooldown();
+		  intBuf[index++] = (*i)->getAirWeaponCooldown();
+		  intBuf[index++] = (*i)->getSpellCooldown();
+		  intBuf[index++] = (*i)->getDefenseMatrixPoints();
+		  intBuf[index++] = (*i)->getDefenseMatrixTimer();
+		  intBuf[index++] = (*i)->getEnsnareTimer();
+		  intBuf[index++] = (*i)->getIrradiateTimer();
+		  intBuf[index++] = (*i)->getLockdownTimer();
+		  intBuf[index++] = (*i)->getMaelstromTimer();
+		  intBuf[index++] = (*i)->getOrderTimer();
+		  intBuf[index++] = (*i)->getPlagueTimer();
+		  intBuf[index++] = (*i)->getRemoveTimer();
+		  intBuf[index++] = (*i)->getStasisTimer();
+		  intBuf[index++] = (*i)->getStimTimer();
+		  intBuf[index++] = (*i)->getBuildType().getID();
+		  intBuf[index++] = (*i)->getTrainingQueue().size();
+		  intBuf[index++] = (*i)->getTech().getID();
+		  intBuf[index++] = (*i)->getUpgrade().getID();
+		  intBuf[index++] = (*i)->getRemainingBuildTime();
+		  intBuf[index++] = (*i)->getRemainingTrainTime();
+		  intBuf[index++] = (*i)->getRemainingResearchTime();
+		  intBuf[index++] = (*i)->getRemainingUpgradeTime();
+		  intBuf[index++] = ((*i)->getBuildUnit() != NULL) ? (*i)->getBuildUnit()->getID() : -1;
+		  intBuf[index++] = ((*i)->getTarget() != NULL) ? (*i)->getTarget()->getID() : -1;
+		  intBuf[index++] = (*i)->getTargetPosition().x();
+		  intBuf[index++] = (*i)->getTargetPosition().y();
+		  intBuf[index++] = (*i)->getOrder().getID();
+		  intBuf[index++] = ((*i)->getOrderTarget() != NULL) ? (*i)->getOrderTarget()->getID() : -1;
+		  intBuf[index++] = (*i)->getSecondaryOrder().getID();
+		  intBuf[index++] = (*i)->getRallyPosition().x();
+		  intBuf[index++] = (*i)->getRallyPosition().y();
+		  intBuf[index++] = ((*i)->getRallyUnit() != NULL) ? (*i)->getRallyUnit()->getID() : -1;
+		  intBuf[index++] = ((*i)->getAddon() != NULL) ? (*i)->getAddon()->getID() : -1;
+		  intBuf[index++] = ((*i)->getTransport() != NULL) ? (*i)->getTransport()->getID() : -1;
+		  intBuf[index++] = (*i)->getLoadedUnits().size();
+		  intBuf[index++] = (*i)->getLarva().size();
+		  intBuf[index++] = (*i)->exists() ? 1 : 0;
+		  intBuf[index++] = (*i)->hasNuke() ? 1 : 0;
+		  intBuf[index++] = (*i)->isAccelerating() ? 1 : 0;
+		  intBuf[index++] = (*i)->isAttacking() ? 1 : 0;
+		  intBuf[index++] = (*i)->isAttackFrame() ? 1 : 0;
+		  intBuf[index++] = (*i)->isBeingConstructed() ? 1 : 0;
+		  intBuf[index++] = (*i)->isBeingGathered() ? 1 : 0;
+		  intBuf[index++] = (*i)->isBeingHealed() ? 1 : 0;
+		  intBuf[index++] = (*i)->isBlind() ? 1 : 0;
+		  intBuf[index++] = (*i)->isBraking() ? 1 : 0;
+		  intBuf[index++] = (*i)->isBurrowed() ? 1 : 0;
+		  intBuf[index++] = (*i)->isCarryingGas() ? 1 : 0;
+		  intBuf[index++] = (*i)->isCarryingMinerals() ? 1 : 0;
+		  intBuf[index++] = (*i)->isCloaked() ? 1 : 0;
+		  intBuf[index++] = (*i)->isCompleted() ? 1 : 0;
+		  intBuf[index++] = (*i)->isDefenseMatrixed() ? 1 : 0;
+		  intBuf[index++] = (*i)->isDetected() ? 1 : 0;
+		  intBuf[index++] = (*i)->isEnsnared() ? 1 : 0;
+		  intBuf[index++] = (*i)->isFollowing() ? 1 : 0;
+		  intBuf[index++] = (*i)->isGatheringGas() ? 1 : 0;
+		  intBuf[index++] = (*i)->isGatheringMinerals() ? 1 : 0;
+		  intBuf[index++] = (*i)->isHallucination() ? 1 : 0;
+		  intBuf[index++] = (*i)->isHoldingPosition() ? 1 : 0;
+		  intBuf[index++] = (*i)->isIdle() ? 1 : 0;
+		  intBuf[index++] = (*i)->isInterruptible() ? 1 : 0;
+		  intBuf[index++] = (*i)->isInvincible() ? 1 : 0;
+		  intBuf[index++] = (*i)->isIrradiated() ? 1 : 0;
+		  intBuf[index++] = (*i)->isLifted() ? 1 : 0;
+		  intBuf[index++] = (*i)->isLoaded() ? 1 : 0;
+		  intBuf[index++] = (*i)->isLockedDown() ? 1 : 0;
+		  intBuf[index++] = (*i)->isMaelstrommed() ? 1 : 0;
+		  intBuf[index++] = (*i)->isMorphing() ? 1 : 0;
+		  intBuf[index++] = (*i)->isMoving() ? 1 : 0;
+		  intBuf[index++] = (*i)->isParasited() ? 1 : 0;
+		  intBuf[index++] = (*i)->isPatrolling() ? 1 : 0;
+		  intBuf[index++] = (*i)->isPlagued() ? 1 : 0;
+		  intBuf[index++] = (*i)->isRepairing() ? 1 : 0;
+		  intBuf[index++] = (*i)->isSieged() ? 1 : 0;
+		  intBuf[index++] = (*i)->isStartingAttack() ? 1 : 0;
+		  intBuf[index++] = (*i)->isStasised() ? 1 : 0;
+		  intBuf[index++] = (*i)->isStimmed() ? 1 : 0;
+		  intBuf[index++] = (*i)->isStuck() ? 1 : 0;
+		  intBuf[index++] = (*i)->isTraining() ? 1 : 0;
+		  intBuf[index++] = (*i)->isUnderStorm() ? 1 : 0;
+		  intBuf[index++] = (*i)->isUnpowered() ? 1 : 0;
+		  intBuf[index++] = (*i)->isUpgrading() ? 1 : 0;
+		  intBuf[index++] = (*i)->isVisible() ? 1 : 0;
+		  intBuf[index++] = (*i)->isConstructing() ? 1 : 0;
+
+		  intBuf[index++] = (*i)->isUnderAttack() ? 1 : 0;
+		  // last attacking player
+		  // Nydus exit
+		  // Carrier
+		  // Interceptors
+		  // Hatchery
+		  // Power up
+		  // intBuf[index++] = (*i)->isUnderAttack() ? 1 : 0;
+		  // intBuf[index++] = (*i)->isUnderDarkSwarm() ? 1 : 0;
+		  // intBuf[index++] = (*i)->sUnderDisruptionWeb() ? 1 : 0;
+	  }
+
+	  jintArray result = env->NewIntArray(index);
+	  env->SetIntArrayRegion(result, 0, index, intBuf);
+	  return result;
+}
+
+JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getStaticMinerals
+	(JNIEnv *env, jobject jObj){
+
+		int index = 0;
+
+		std::set<Unit*> units = Broodwar->getStaticMinerals();
+		for(std::set<Unit*>::iterator i=units.begin();i!=units.end();i++) {
+			intBuf[index++] = (*i)->getID();
+			intBuf[index++] = (*i)->getPlayer()->getID();
+			intBuf[index++] = (*i)->getType().getID();
+			intBuf[index++] = (*i)->getPosition().x();
+			intBuf[index++] = (*i)->getPosition().y();
+			intBuf[index++] = (*i)->getTilePosition().x();
+			intBuf[index++] = (*i)->getTilePosition().y();
+			intBuf[index++] = (int)(TO_DEGREES*(*i)->getAngle());
+			intBuf[index++] = (int)(fixedScale*(*i)->getVelocityX());
+			intBuf[index++] = (int)(fixedScale*(*i)->getVelocityY());
+			intBuf[index++] = (*i)->getHitPoints();
+			intBuf[index++] = (*i)->getShields();
+			intBuf[index++] = (*i)->getEnergy();
+			intBuf[index++] = (*i)->getResources();
+			intBuf[index++] = (*i)->getResourceGroup();
+			intBuf[index++] = (*i)->getLastCommandFrame();
+			intBuf[index++] = (*i)->getLastCommand().getType().getID();
+			intBuf[index++] = (*i)->getInitialType().getID();
+			intBuf[index++] = (*i)->getInitialPosition().x();
+			intBuf[index++] = (*i)->getInitialPosition().y();
+			intBuf[index++] = (*i)->getInitialTilePosition().x();
+			intBuf[index++] = (*i)->getInitialTilePosition().y();
+			intBuf[index++] = (*i)->getInitialHitPoints();
+			intBuf[index++] = (*i)->getInitialResources();
+			intBuf[index++] = (*i)->getKillCount();
+			intBuf[index++] = (*i)->getAcidSporeCount();
+			intBuf[index++] = (*i)->getInterceptorCount();
+			intBuf[index++] = (*i)->getScarabCount();
+			intBuf[index++] = (*i)->getSpiderMineCount();
+			intBuf[index++] = (*i)->getGroundWeaponCooldown();
+			intBuf[index++] = (*i)->getAirWeaponCooldown();
+			intBuf[index++] = (*i)->getSpellCooldown();
+			intBuf[index++] = (*i)->getDefenseMatrixPoints();
+			intBuf[index++] = (*i)->getDefenseMatrixTimer();
+			intBuf[index++] = (*i)->getEnsnareTimer();
+			intBuf[index++] = (*i)->getIrradiateTimer();
+			intBuf[index++] = (*i)->getLockdownTimer();
+			intBuf[index++] = (*i)->getMaelstromTimer();
+			intBuf[index++] = (*i)->getOrderTimer();
+			intBuf[index++] = (*i)->getPlagueTimer();
+			intBuf[index++] = (*i)->getRemoveTimer();
+			intBuf[index++] = (*i)->getStasisTimer();
+			intBuf[index++] = (*i)->getStimTimer();
+			intBuf[index++] = (*i)->getBuildType().getID();
+			intBuf[index++] = (*i)->getTrainingQueue().size();
+			intBuf[index++] = (*i)->getTech().getID();
+			intBuf[index++] = (*i)->getUpgrade().getID();
+			intBuf[index++] = (*i)->getRemainingBuildTime();
+			intBuf[index++] = (*i)->getRemainingTrainTime();
+			intBuf[index++] = (*i)->getRemainingResearchTime();
+			intBuf[index++] = (*i)->getRemainingUpgradeTime();
+			intBuf[index++] = ((*i)->getBuildUnit() != NULL) ? (*i)->getBuildUnit()->getID() : -1;
+			intBuf[index++] = ((*i)->getTarget() != NULL) ? (*i)->getTarget()->getID() : -1;
+			intBuf[index++] = (*i)->getTargetPosition().x();
+			intBuf[index++] = (*i)->getTargetPosition().y();
+			intBuf[index++] = (*i)->getOrder().getID();
+			intBuf[index++] = ((*i)->getOrderTarget() != NULL) ? (*i)->getOrderTarget()->getID() : -1;
+			intBuf[index++] = (*i)->getSecondaryOrder().getID();
+			intBuf[index++] = (*i)->getRallyPosition().x();
+			intBuf[index++] = (*i)->getRallyPosition().y();
+			intBuf[index++] = ((*i)->getRallyUnit() != NULL) ? (*i)->getRallyUnit()->getID() : -1;
+			intBuf[index++] = ((*i)->getAddon() != NULL) ? (*i)->getAddon()->getID() : -1;
+			intBuf[index++] = ((*i)->getTransport() != NULL) ? (*i)->getTransport()->getID() : -1;
+			intBuf[index++] = (*i)->getLoadedUnits().size();
+			intBuf[index++] = (*i)->getLarva().size();
+			intBuf[index++] = (*i)->exists() ? 1 : 0;
+			intBuf[index++] = (*i)->hasNuke() ? 1 : 0;
+			intBuf[index++] = (*i)->isAccelerating() ? 1 : 0;
+			intBuf[index++] = (*i)->isAttacking() ? 1 : 0;
+			intBuf[index++] = (*i)->isAttackFrame() ? 1 : 0;
+			intBuf[index++] = (*i)->isBeingConstructed() ? 1 : 0;
+			intBuf[index++] = (*i)->isBeingGathered() ? 1 : 0;
+			intBuf[index++] = (*i)->isBeingHealed() ? 1 : 0;
+			intBuf[index++] = (*i)->isBlind() ? 1 : 0;
+			intBuf[index++] = (*i)->isBraking() ? 1 : 0;
+			intBuf[index++] = (*i)->isBurrowed() ? 1 : 0;
+			intBuf[index++] = (*i)->isCarryingGas() ? 1 : 0;
+			intBuf[index++] = (*i)->isCarryingMinerals() ? 1 : 0;
+			intBuf[index++] = (*i)->isCloaked() ? 1 : 0;
+			intBuf[index++] = (*i)->isCompleted() ? 1 : 0;
+			intBuf[index++] = (*i)->isDefenseMatrixed() ? 1 : 0;
+			intBuf[index++] = (*i)->isDetected() ? 1 : 0;
+			intBuf[index++] = (*i)->isEnsnared() ? 1 : 0;
+			intBuf[index++] = (*i)->isFollowing() ? 1 : 0;
+			intBuf[index++] = (*i)->isGatheringGas() ? 1 : 0;
+			intBuf[index++] = (*i)->isGatheringMinerals() ? 1 : 0;
+			intBuf[index++] = (*i)->isHallucination() ? 1 : 0;
+			intBuf[index++] = (*i)->isHoldingPosition() ? 1 : 0;
+			intBuf[index++] = (*i)->isIdle() ? 1 : 0;
+			intBuf[index++] = (*i)->isInterruptible() ? 1 : 0;
+			intBuf[index++] = (*i)->isInvincible() ? 1 : 0;
+			intBuf[index++] = (*i)->isIrradiated() ? 1 : 0;
+			intBuf[index++] = (*i)->isLifted() ? 1 : 0;
+			intBuf[index++] = (*i)->isLoaded() ? 1 : 0;
+			intBuf[index++] = (*i)->isLockedDown() ? 1 : 0;
+			intBuf[index++] = (*i)->isMaelstrommed() ? 1 : 0;
+			intBuf[index++] = (*i)->isMorphing() ? 1 : 0;
+			intBuf[index++] = (*i)->isMoving() ? 1 : 0;
+			intBuf[index++] = (*i)->isParasited() ? 1 : 0;
+			intBuf[index++] = (*i)->isPatrolling() ? 1 : 0;
+			intBuf[index++] = (*i)->isPlagued() ? 1 : 0;
+			intBuf[index++] = (*i)->isRepairing() ? 1 : 0;
+			intBuf[index++] = (*i)->isSieged() ? 1 : 0;
+			intBuf[index++] = (*i)->isStartingAttack() ? 1 : 0;
+			intBuf[index++] = (*i)->isStasised() ? 1 : 0;
+			intBuf[index++] = (*i)->isStimmed() ? 1 : 0;
+			intBuf[index++] = (*i)->isStuck() ? 1 : 0;
+			intBuf[index++] = (*i)->isTraining() ? 1 : 0;
+			intBuf[index++] = (*i)->isUnderStorm() ? 1 : 0;
+			intBuf[index++] = (*i)->isUnpowered() ? 1 : 0;
+			intBuf[index++] = (*i)->isUpgrading() ? 1 : 0;
+			intBuf[index++] = (*i)->isVisible() ? 1 : 0;
+			intBuf[index++] = (*i)->isConstructing() ? 1 : 0;
+
+			intBuf[index++] = (*i)->isUnderAttack() ? 1 : 0;
+			// last attacking player
+			// Nydus exit
+			// Carrier
+			// Interceptors
+			// Hatchery
+			// Power up
+			// intBuf[index++] = (*i)->isUnderAttack() ? 1 : 0;
+			// intBuf[index++] = (*i)->isUnderDarkSwarm() ? 1 : 0;
+			// intBuf[index++] = (*i)->sUnderDisruptionWeb() ? 1 : 0;
+		}
+
+		jintArray result = env->NewIntArray(index);
+		env->SetIntArrayRegion(result, 0, index, intBuf);
+		return result;
+}
+
+JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getStaticGeysers
+	(JNIEnv *env, jobject jObj){
+
+		int index = 0;
+
+		std::set<Unit*> units = Broodwar->getStaticGeysers();
+		for(std::set<Unit*>::iterator i=units.begin();i!=units.end();i++) {
+			intBuf[index++] = (*i)->getID();
+			intBuf[index++] = (*i)->getPlayer()->getID();
+			intBuf[index++] = (*i)->getType().getID();
+			intBuf[index++] = (*i)->getPosition().x();
+			intBuf[index++] = (*i)->getPosition().y();
+			intBuf[index++] = (*i)->getTilePosition().x();
+			intBuf[index++] = (*i)->getTilePosition().y();
+			intBuf[index++] = (int)(TO_DEGREES*(*i)->getAngle());
+			intBuf[index++] = (int)(fixedScale*(*i)->getVelocityX());
+			intBuf[index++] = (int)(fixedScale*(*i)->getVelocityY());
+			intBuf[index++] = (*i)->getHitPoints();
+			intBuf[index++] = (*i)->getShields();
+			intBuf[index++] = (*i)->getEnergy();
+			intBuf[index++] = (*i)->getResources();
+			intBuf[index++] = (*i)->getResourceGroup();
+			intBuf[index++] = (*i)->getLastCommandFrame();
+			intBuf[index++] = (*i)->getLastCommand().getType().getID();
+			intBuf[index++] = (*i)->getInitialType().getID();
+			intBuf[index++] = (*i)->getInitialPosition().x();
+			intBuf[index++] = (*i)->getInitialPosition().y();
+			intBuf[index++] = (*i)->getInitialTilePosition().x();
+			intBuf[index++] = (*i)->getInitialTilePosition().y();
+			intBuf[index++] = (*i)->getInitialHitPoints();
+			intBuf[index++] = (*i)->getInitialResources();
+			intBuf[index++] = (*i)->getKillCount();
+			intBuf[index++] = (*i)->getAcidSporeCount();
+			intBuf[index++] = (*i)->getInterceptorCount();
+			intBuf[index++] = (*i)->getScarabCount();
+			intBuf[index++] = (*i)->getSpiderMineCount();
+			intBuf[index++] = (*i)->getGroundWeaponCooldown();
+			intBuf[index++] = (*i)->getAirWeaponCooldown();
+			intBuf[index++] = (*i)->getSpellCooldown();
+			intBuf[index++] = (*i)->getDefenseMatrixPoints();
+			intBuf[index++] = (*i)->getDefenseMatrixTimer();
+			intBuf[index++] = (*i)->getEnsnareTimer();
+			intBuf[index++] = (*i)->getIrradiateTimer();
+			intBuf[index++] = (*i)->getLockdownTimer();
+			intBuf[index++] = (*i)->getMaelstromTimer();
+			intBuf[index++] = (*i)->getOrderTimer();
+			intBuf[index++] = (*i)->getPlagueTimer();
+			intBuf[index++] = (*i)->getRemoveTimer();
+			intBuf[index++] = (*i)->getStasisTimer();
+			intBuf[index++] = (*i)->getStimTimer();
+			intBuf[index++] = (*i)->getBuildType().getID();
+			intBuf[index++] = (*i)->getTrainingQueue().size();
+			intBuf[index++] = (*i)->getTech().getID();
+			intBuf[index++] = (*i)->getUpgrade().getID();
+			intBuf[index++] = (*i)->getRemainingBuildTime();
+			intBuf[index++] = (*i)->getRemainingTrainTime();
+			intBuf[index++] = (*i)->getRemainingResearchTime();
+			intBuf[index++] = (*i)->getRemainingUpgradeTime();
+			intBuf[index++] = ((*i)->getBuildUnit() != NULL) ? (*i)->getBuildUnit()->getID() : -1;
+			intBuf[index++] = ((*i)->getTarget() != NULL) ? (*i)->getTarget()->getID() : -1;
+			intBuf[index++] = (*i)->getTargetPosition().x();
+			intBuf[index++] = (*i)->getTargetPosition().y();
+			intBuf[index++] = (*i)->getOrder().getID();
+			intBuf[index++] = ((*i)->getOrderTarget() != NULL) ? (*i)->getOrderTarget()->getID() : -1;
+			intBuf[index++] = (*i)->getSecondaryOrder().getID();
+			intBuf[index++] = (*i)->getRallyPosition().x();
+			intBuf[index++] = (*i)->getRallyPosition().y();
+			intBuf[index++] = ((*i)->getRallyUnit() != NULL) ? (*i)->getRallyUnit()->getID() : -1;
+			intBuf[index++] = ((*i)->getAddon() != NULL) ? (*i)->getAddon()->getID() : -1;
+			intBuf[index++] = ((*i)->getTransport() != NULL) ? (*i)->getTransport()->getID() : -1;
+			intBuf[index++] = (*i)->getLoadedUnits().size();
+			intBuf[index++] = (*i)->getLarva().size();
+			intBuf[index++] = (*i)->exists() ? 1 : 0;
+			intBuf[index++] = (*i)->hasNuke() ? 1 : 0;
+			intBuf[index++] = (*i)->isAccelerating() ? 1 : 0;
+			intBuf[index++] = (*i)->isAttacking() ? 1 : 0;
+			intBuf[index++] = (*i)->isAttackFrame() ? 1 : 0;
+			intBuf[index++] = (*i)->isBeingConstructed() ? 1 : 0;
+			intBuf[index++] = (*i)->isBeingGathered() ? 1 : 0;
+			intBuf[index++] = (*i)->isBeingHealed() ? 1 : 0;
+			intBuf[index++] = (*i)->isBlind() ? 1 : 0;
+			intBuf[index++] = (*i)->isBraking() ? 1 : 0;
+			intBuf[index++] = (*i)->isBurrowed() ? 1 : 0;
+			intBuf[index++] = (*i)->isCarryingGas() ? 1 : 0;
+			intBuf[index++] = (*i)->isCarryingMinerals() ? 1 : 0;
+			intBuf[index++] = (*i)->isCloaked() ? 1 : 0;
+			intBuf[index++] = (*i)->isCompleted() ? 1 : 0;
+			intBuf[index++] = (*i)->isDefenseMatrixed() ? 1 : 0;
+			intBuf[index++] = (*i)->isDetected() ? 1 : 0;
+			intBuf[index++] = (*i)->isEnsnared() ? 1 : 0;
+			intBuf[index++] = (*i)->isFollowing() ? 1 : 0;
+			intBuf[index++] = (*i)->isGatheringGas() ? 1 : 0;
+			intBuf[index++] = (*i)->isGatheringMinerals() ? 1 : 0;
+			intBuf[index++] = (*i)->isHallucination() ? 1 : 0;
+			intBuf[index++] = (*i)->isHoldingPosition() ? 1 : 0;
+			intBuf[index++] = (*i)->isIdle() ? 1 : 0;
+			intBuf[index++] = (*i)->isInterruptible() ? 1 : 0;
+			intBuf[index++] = (*i)->isInvincible() ? 1 : 0;
+			intBuf[index++] = (*i)->isIrradiated() ? 1 : 0;
+			intBuf[index++] = (*i)->isLifted() ? 1 : 0;
+			intBuf[index++] = (*i)->isLoaded() ? 1 : 0;
+			intBuf[index++] = (*i)->isLockedDown() ? 1 : 0;
+			intBuf[index++] = (*i)->isMaelstrommed() ? 1 : 0;
+			intBuf[index++] = (*i)->isMorphing() ? 1 : 0;
+			intBuf[index++] = (*i)->isMoving() ? 1 : 0;
+			intBuf[index++] = (*i)->isParasited() ? 1 : 0;
+			intBuf[index++] = (*i)->isPatrolling() ? 1 : 0;
+			intBuf[index++] = (*i)->isPlagued() ? 1 : 0;
+			intBuf[index++] = (*i)->isRepairing() ? 1 : 0;
+			intBuf[index++] = (*i)->isSieged() ? 1 : 0;
+			intBuf[index++] = (*i)->isStartingAttack() ? 1 : 0;
+			intBuf[index++] = (*i)->isStasised() ? 1 : 0;
+			intBuf[index++] = (*i)->isStimmed() ? 1 : 0;
+			intBuf[index++] = (*i)->isStuck() ? 1 : 0;
+			intBuf[index++] = (*i)->isTraining() ? 1 : 0;
+			intBuf[index++] = (*i)->isUnderStorm() ? 1 : 0;
+			intBuf[index++] = (*i)->isUnpowered() ? 1 : 0;
+			intBuf[index++] = (*i)->isUpgrading() ? 1 : 0;
+			intBuf[index++] = (*i)->isVisible() ? 1 : 0;
+			intBuf[index++] = (*i)->isConstructing() ? 1 : 0;
+
+			intBuf[index++] = (*i)->isUnderAttack() ? 1 : 0;
+			// last attacking player
+			// Nydus exit
+			// Carrier
+			// Interceptors
+			// Hatchery
+			// Power up
+			// intBuf[index++] = (*i)->isUnderAttack() ? 1 : 0;
+			// intBuf[index++] = (*i)->isUnderDarkSwarm() ? 1 : 0;
+			// intBuf[index++] = (*i)->sUnderDisruptionWeb() ? 1 : 0;
+		}
+
+		jintArray result = env->NewIntArray(index);
+		env->SetIntArrayRegion(result, 0, index, intBuf);
+		return result;
+}
+
+JNIEXPORT jstring JNICALL Java_javabot_JNIBWAPI_getPlayerName(JNIEnv *env, jobject jObj, jint playerID)
+{
+	Player* p = Broodwar->getPlayer(playerID);
+	return jEnv->NewStringUTF(p->getName().c_str());
 }

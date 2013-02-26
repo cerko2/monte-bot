@@ -9,6 +9,7 @@ public class Player {
 	public static final int numAttributes = 8;
 
 	private int ID;
+	private String name;
 	private int raceID;
 	private int typeID;
 	private boolean self;
@@ -33,7 +34,7 @@ public class Player {
 	private boolean[] upgrading = null;
 	private int[] upgradeLevel = null;
 		
-	public Player(int[] data, int index) {
+	public Player(int[] data, int index, String name) {
 		ID = data[index++];	
 		raceID = data[index++];	
 		typeID = data[index++];	
@@ -41,7 +42,8 @@ public class Player {
 		ally = (data[index++] == 1);	
 		enemy = (data[index++] == 1);	
 		neutral = (data[index++] == 1);	
-		color = data[index++];	
+		color = data[index++];
+		this.name = name;
 	}
 
 	public void update(int[] data) {
@@ -78,6 +80,10 @@ public class Player {
 	
 	public int getID() {
 		return ID;
+	}
+	
+	public String getName(){
+		return name;
 	}
 
 	public int getRaceID() {

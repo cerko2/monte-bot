@@ -5,6 +5,7 @@ import java.awt.Point;
 import javabot.macro.Boss;
 import javabot.macro.BuildManager;
 import javabot.macro.UnitProductionManager;
+import javabot.model.BaseLocation;
 import javabot.model.ChokePoint;
 import javabot.model.Region;
 import javabot.model.Unit;
@@ -15,6 +16,9 @@ import javabot.util.BWColor;
 import javabot.util.Wall;
 
 public class JavaBot extends AbstractManager {
+	
+	private static final boolean STATIC_UNIT_DEBUG = true;
+	private static final boolean BASELOC_RESOURCES_DEBUG = true;
 
 	// Managers & Modules:
 	private Boss boss;
@@ -140,6 +144,41 @@ public class JavaBot extends AbstractManager {
 				Integer tileHeight = bwapi.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileHeight();
 				bwapi.drawBox(bt.x*32, bt.y*32, (bt.x + tileWidth)*32, (bt.y + tileHeight)*32, BWColor.YELLOW, false, false);
 				bwapi.drawText(new Point(bt.x*32+4, bt.y*32+2), bwapi.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getName()+" "+String.valueOf(bt.x)+","+String.valueOf(bt.y), false);
+			}
+		}
+		
+		//Static unit debugging
+		if (STATIC_UNIT_DEBUG){
+			for (Unit unit : bwapi.getAllStaticNeutralUnits()){
+				int tileWidth = bwapi.getUnitType(unit.getTypeID()).getTileWidth();
+				int tileHeight = bwapi.getUnitType(unit.getTypeID()).getTileHeight();
+				bwapi.drawBox(unit.getTileX()*32, unit.getTileY()*32, (unit.getTileX() + tileWidth)*32, (unit.getTileY() + tileHeight)*32, BWColor.GREY, false, false);
+			}
+
+			for (Unit unit : bwapi.getAllStaticMinerals()){
+				int tileWidth = bwapi.getUnitType(unit.getTypeID()).getTileWidth();
+				int tileHeight = bwapi.getUnitType(unit.getTypeID()).getTileHeight();
+				bwapi.drawBox(unit.getTileX()*32, unit.getTileY()*32, (unit.getTileX() + tileWidth)*32, (unit.getTileY() + tileHeight)*32, BWColor.CYAN, false, false);
+			}
+
+			for (Unit unit : bwapi.getAllStaticGeysers()){
+				int tileWidth = bwapi.getUnitType(unit.getTypeID()).getTileWidth();
+				int tileHeight = bwapi.getUnitType(unit.getTypeID()).getTileHeight();
+				bwapi.drawBox(unit.getTileX()*32, unit.getTileY()*32, (unit.getTileX() + tileWidth)*32, (unit.getTileY() + tileHeight)*32, BWColor.GREEN, false, false);
+			}
+		}
+		
+		if (BASELOC_RESOURCES_DEBUG){
+			for (BaseLocation base : bwapi.getMap().getBaseLocations()){
+				for (Unit unit : base.getStaticMinerals()){
+					bwapi.drawText(unit.getX(), unit.getY(), unit.getResources() + "", false);
+					bwapi.drawLine(base.getX(), base.getY(), unit.getX(), unit.getY(), BWColor.CYAN, false);
+				}
+				
+				for (Unit unit : base.getGeysers()){
+					bwapi.drawText(unit.getX(), unit.getY(), unit.getResources() + "", false);
+					bwapi.drawLine(base.getX(), base.getY(), unit.getX(), unit.getY(), BWColor.GREEN, false);
+				}
 			}
 		}
 		

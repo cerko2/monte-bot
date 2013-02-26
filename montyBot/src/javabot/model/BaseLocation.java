@@ -1,4 +1,7 @@
 package javabot.model;
+
+import java.util.ArrayList;
+
 /**
  * Represents a StarCraft base location.
  * 
@@ -18,6 +21,9 @@ public class BaseLocation {
 	private boolean island;
 	private boolean mineralOnly;
 	private boolean startLocation;
+	
+	private ArrayList<Unit> staticMinerals;
+	private ArrayList<Unit> geysers;
 	
 	public BaseLocation(int[] data, int index) {
 		x = data[index++];	
@@ -70,5 +76,21 @@ public class BaseLocation {
 
 	public boolean isStartLocation() {
 		return startLocation;
+	}
+
+	public ArrayList<Unit> getStaticMinerals() {
+		return staticMinerals;
+	}
+
+	public void setStaticMinerals(ArrayList<Unit> staticMinerals) {
+		this.staticMinerals = staticMinerals;
+	}
+
+	public ArrayList<Unit> getGeysers() {
+		return geysers;
+	}
+
+	public void setGeysers(ArrayList<Unit> geysers) {
+		this.geysers = geysers;
 	}
 }

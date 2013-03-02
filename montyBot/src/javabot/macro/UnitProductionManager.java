@@ -74,9 +74,29 @@ public class UnitProductionManager extends AbstractManager{
 		}
 		drawDebugInfo();		
 	}
+	public Vector<Integer> getConstructionPlans(){
+		return new Vector<Integer>(); /*TODO*/
+	}
+	
+	/**
+	 * Void function to switch Unit Production Manager into "Free Mode", it must be done 
+	 * after Opening Manager has ended.
+	 * @param Boolean freeMode - set private variable to false(Unit Production Manager
+	 * produce units requested by Opening Manager) or true(Unit Production Manager 
+	 * manage unit production by self)
+	 * 
+	 */
 	public void setFreeMode(Boolean freeMode){
 		this.freeMode = freeMode;
 	}
+	
+	/**
+	 * 
+	 * @param typeID - ID of unit, that you want to train
+	 * @param minerals - minerals needed for unit of type typeID
+	 * @param gas - gas needed for unit of type typeID
+	 * @return true, if particular unit was added to the stack of unit production order list
+	 */
 	public boolean createUnit(int typeID,int minerals,int gas){	//true ak to akceptujem
 		if(minerals >= game.getUnitType(typeID).getMineralPrice() && gas >= game.getUnitType(typeID).getGasPrice()){
 			setAddResources(minerals, gas);

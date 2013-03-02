@@ -1,5 +1,7 @@
 package javabot.macro;
 
+import java.util.Vector;
+
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 
@@ -35,6 +37,9 @@ public class BuildManager extends AbstractManager{
 				myAct();
 		}
 		drawDebugInfo();		
+	}
+	public Vector<Integer> getConstructionPlans(){
+		return new Vector<Integer>(); /*TODO*/
 	}
 //-----------------------------------------------------------------------------------------	
 	private void setSettings(){

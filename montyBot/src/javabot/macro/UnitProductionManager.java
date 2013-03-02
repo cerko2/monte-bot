@@ -98,6 +98,9 @@ public class UnitProductionManager extends AbstractManager{
 		}
 		return false;
 	}
+	public Vector<Integer> getConstructionPlans(){
+		return new Vector<Integer>(); /*TODO*/
+	}
 //-----------------------------------------------------------------------------------------
 	private double sumRate(ArrayList<Double> rateArmy){
 		double sum = 0.0;

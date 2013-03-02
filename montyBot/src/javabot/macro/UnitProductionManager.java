@@ -75,7 +75,8 @@ public class UnitProductionManager extends AbstractManager{
 		drawDebugInfo();		
 	}
 	public Vector<Integer> getConstructionPlans(){
-		return new Vector<Integer>(); /*TODO*/
+		setCrateStack();
+		return createStack; /*TODO*/
 	}
 	
 	/**
@@ -101,6 +102,7 @@ public class UnitProductionManager extends AbstractManager{
 		if(minerals >= game.getUnitType(typeID).getMineralPrice() && gas >= game.getUnitType(typeID).getGasPrice()){
 			setAddResources(minerals, gas);
 			createStackExternal.add(typeID);
+			buildEcternalStack();
 			return true;
 		}
 		return false;
@@ -144,13 +146,7 @@ public class UnitProductionManager extends AbstractManager{
 	}
 	private void myAct(){
 		useBuilding = new ArrayList<Unit>();
-		boolean createExternal = true;
-		while (!createStackExternal.isEmpty() && minerals > 0 && createExternal) {
-			int typeID = createStackExternal.get(0);
-			createExternal = productionUnit(typeID);
-			if(createExternal) // ak ju dalo stavat tak vyzaz
-				createStackExternal.remove(0);
-		}
+		buildEcternalStack();
 		if(freeMode){ // AK je modul aktivny
 			setRateArmyActual();
 			setRateArmyGap();	
@@ -162,8 +158,18 @@ public class UnitProductionManager extends AbstractManager{
 				productionUnit(typeID);
 			}
 		}
+		useBuilding = new ArrayList<Unit>();
 	}	
 //-----------------------------------------------------------------------------------------
+	private void buildEcternalStack(){
+		boolean createExternal = true;
+		while (!createStackExternal.isEmpty() && minerals > 0 && createExternal) {
+			int typeID = createStackExternal.get(0);
+			createExternal = productionUnit(typeID);
+			if(createExternal) // ak ju dalo stavat tak vyraz
+				createStackExternal.remove(0);
+		}	
+	}
 	private void setRateArmyActual(){	
 		rateArmyActual = new ArrayList<Double>();
 		for(int i = 0 ; i < numArmy ; i++){
@@ -222,7 +228,17 @@ public class UnitProductionManager extends AbstractManager{
 				createStack.add(InternalID_To_UnitTypeID(i));
 			}	
 		}
-		
+		Vector<Integer> productBuild = new Vector<Integer>();
+		for(int i = 0; i < createStack.size();i++) {
+			int typeID = createStack.get(i);
+			int buildingID = game.getUnitType(typeID).getWhatBuildID();
+			Unit building = findBuilding(buildingID,productBuild);
+			if(building  != null){
+				productBuild.add(building.getID());
+			}else{
+				createStack.remove(i);
+			}
+		}
 		
 	}
 //---------->>
@@ -250,6 +266,15 @@ public class UnitProductionManager extends AbstractManager{
 		}
 		return null;	
 	}
+	private Unit findBuilding(int building,Vector<Integer> array){
+		for(Unit u : game.getMyUnits()){
+			if(u.getTypeID() == building ){	
+				if(!u.isTraining() && !inArray( u.getID(),array))
+					return u;
+			}
+		}
+		return null;	
+	}
 	private boolean createUnit(Unit building, int typeID){
 		Boolean testInGroup = false;
 		int freeSuply = game.getSelf().getSupplyTotal() - game.getSelf().getSupplyUsed();
@@ -263,9 +288,17 @@ public class UnitProductionManager extends AbstractManager{
 		}
 		return false;
 	}
+//------------------------------------------------------------------------------------------
 	private boolean isInGroup(Unit u, ArrayList<Unit> list){
 		for(Unit l:list){
 			if(l.getID() == u.getID())
+				return true;
+		}
+		return false;
+	}
+	private boolean inArray(Integer ID,Vector<Integer> zoz){
+		for(Integer i: zoz){
+			if (i == ID)
 				return true;
 		}
 		return false;

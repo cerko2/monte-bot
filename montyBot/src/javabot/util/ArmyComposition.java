@@ -68,8 +68,7 @@ public class ArmyComposition {
 			if (this.unitTypes.get(i) == id) return this.ratio.get(i);
 			
 		}
-		
-		return -1;
+		return 0;
 	}
 	
 	

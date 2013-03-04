@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import javabot.*;
+import javabot.macro.UnitProductionManager;
 import javabot.model.*;
 import javabot.util.*;
 import javabot.types.*;
@@ -17,11 +18,55 @@ public class ArmyCompositionManager extends AbstractManager {
 	
 	// Deklarovanie nejakych privatnych premennych 
 	private JNIBWAPI bwapi;
+	private UnitProductionManager unitProductionManager;
 	private ArrayList<String> casesFromFile;	// tu je pole casov nacitanych zo suboru vo funkcii gameStarted()
 	
+	// GameUpdate event
+	public void gameUpdate() {
+		if (bwapi.getFrameCount() % 34 == 0) {
+			// debug (order units based on some made up enemy composition)
+			ArmyComposition enemyArmy = new ArmyComposition("50;Marine,50;Firebat");
+			ArmyComposition ourResponse = getArmyComposition(enemyArmy);
+			
+			// order the composition from Unit Production Manager
+			ArrayList<Double> order = new ArrayList<>();
+			order.add(0,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Zealot.ordinal())));
+			order.add(1,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Dragoon.ordinal())));
+			order.add(2,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_High_Templar.ordinal())));
+			order.add(3,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Dark_Templar.ordinal())));
+			order.add(4,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Shuttle.ordinal())));
+			order.add(5,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Reaver.ordinal())));
+			order.add(6,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Observer.ordinal())));
+			order.add(7,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Scout.ordinal())));
+			order.add(8,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Corsair.ordinal())));
+			order.add(9,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Carrier.ordinal())));
+			order.add(10,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Arbiter.ordinal())));
+			order.add(11,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Archon.ordinal())));
+			order.add(12,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Dark_Archon.ordinal())));
+			
+			this.unitProductionManager.setRateArmy(order);
+			/*
+			ID = 0 is Zealot
+			ID = 1 is Dragoon
+			ID = 2 is High Templar
+			ID = 3 is Dark Templar
+			ID = 4 is Shuttle
+			ID = 5 is Reaver
+			ID = 6 is Observer
+			ID = 7 is Scout
+			ID = 8 is Corsair
+			ID = 9 is Carrier
+			ID = 10 is Arbiter
+			ID = 11 is Archon
+			ID = 12 is Dark Archon
+			 */
+		}
+	}
+	
 	// Konstruktor (vola sa ked sa vytvori armyCompositionManager objekt v JavaBot.java)
-	public ArmyCompositionManager(JNIBWAPI game) {
+	public ArmyCompositionManager(JNIBWAPI game, UnitProductionManager upm) {
 		this.bwapi = game;
+		this.unitProductionManager = upm;
 	}
 	
 	// Eventy (volane napriklad na zaciatku hry alebo na kazdom frame):
@@ -34,7 +79,7 @@ public class ArmyCompositionManager extends AbstractManager {
 			riadky = citajZoSuboru("bwapi-data/AI/montyBot/cbr-cases.txt");
 		} catch (IOException e) {
 			e.printStackTrace();
-			bwapi.printText("ERROR: Failed to load CBR cases file!");
+			bwapi.printText("ERROR: Failed to load a file with CBR cases!");
 		}
 		
 		for (String kejs : riadky) {

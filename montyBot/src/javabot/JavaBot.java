@@ -65,9 +65,9 @@ public class JavaBot extends AbstractManager {
 		boss = new Boss(bwapi);
 		OpeningManager openingManager = new OpeningManager(bwapi);
 		wallInModule = new WallInModule(bwapi);
-		unitProductionManager = new UnitProductionManager(boss); 
+		unitProductionManager = new UnitProductionManager(boss);
 		buildManager = new  BuildManager(boss);
-		armyCompositionManager = new ArmyCompositionManager(bwapi);
+		armyCompositionManager = new ArmyCompositionManager(bwapi,unitProductionManager);
 		
 		// Add the managers
 		addManager(boss);
@@ -114,12 +114,6 @@ public class JavaBot extends AbstractManager {
 				wallInModule.computeWall( c, home, UnitTypes.Zerg_Zergling.ordinal());
 			}
 		}
-		
-		if (bwapi.getFrameCount() % 100 == 0 && bwapi.getFrameCount()>50) {
-			// compute some debug army composition
-			bwapi.printText(armyCompositionManager.getArmyComposition(new ArmyComposition("50;Marine,50;Firebat")).getString(bwapi));
-		}
-		
 		// END DEBUG
 
 	}

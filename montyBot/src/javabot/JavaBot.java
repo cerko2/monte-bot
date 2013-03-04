@@ -9,9 +9,11 @@ import javabot.model.BaseLocation;
 import javabot.model.ChokePoint;
 import javabot.model.Region;
 import javabot.model.Unit;
+import javabot.strategy.ArmyCompositionManager;
 import javabot.strategy.OpeningManager;
 import javabot.strategy.WallInModule;
 import javabot.types.UnitType.UnitTypes;
+import javabot.util.ArmyComposition;
 import javabot.util.BWColor;
 import javabot.util.Wall;
 
@@ -25,6 +27,7 @@ public class JavaBot extends AbstractManager {
 	private WallInModule wallInModule;
 	private UnitProductionManager unitProductionManager;
 	private BuildManager buildManager;
+	private ArmyCompositionManager armyCompositionManager;
 	
 	private Region home; // Needed only for DEBUGGING (miso certikcy)
 
@@ -64,6 +67,7 @@ public class JavaBot extends AbstractManager {
 		wallInModule = new WallInModule(bwapi);
 		unitProductionManager = new UnitProductionManager(boss); 
 		buildManager = new  BuildManager(boss);
+		armyCompositionManager = new ArmyCompositionManager(bwapi);
 		
 		// Add the managers
 		addManager(boss);
@@ -71,6 +75,7 @@ public class JavaBot extends AbstractManager {
 		addManager(wallInModule);			// miso certicky
 		addManager(buildManager);			// azder
 		addManager(unitProductionManager);	// azder
+		addManager(armyCompositionManager);	// mato certicky
 
 	}
 	
@@ -109,6 +114,12 @@ public class JavaBot extends AbstractManager {
 				wallInModule.computeWall( c, home, UnitTypes.Zerg_Zergling.ordinal());
 			}
 		}
+		
+		if (bwapi.getFrameCount() % 100 == 0 && bwapi.getFrameCount()>50) {
+			// compute some debug army composition
+			bwapi.printText(armyCompositionManager.getArmyComposition(new ArmyComposition("50;Marine,50;Firebat")).getString(bwapi));
+		}
+		
 		// END DEBUG
 
 	}
@@ -117,7 +128,7 @@ public class JavaBot extends AbstractManager {
 	// Reimplement this function however you want. 
 	public void drawDebugInfo() {
 
-		// Draw our home position and chokes
+		// Wall debugging
 		if (home != null) {
 			bwapi.drawText(new Point(5,0), "Our home position: "+String.valueOf(home.getCenterX())+","+String.valueOf(home.getCenterY()), true);
 			bwapi.drawText(new Point(5,14), "Map: "+bwapi.getMap().getName(), true);
@@ -129,15 +140,12 @@ public class JavaBot extends AbstractManager {
 				bwapi.drawCircle(c.getCenterX(),c.getCenterY(), 10, BWColor.TEAL, true, false);
 			}
 		}
-
 		for (int i=1; i < bwapi.getMap().getWidth(); i++) {
 			for (int j=1; j < bwapi.getMap().getHeight(); j++) {
 				if (wallInModule.obstructedByNeutrals(i, j))
 					bwapi.drawCircle(i*32,j*32, 5, BWColor.GREEN, false, false);
 			}
 		}
-		
-		// Draw all previously computed walls
 		for (Wall w : wallInModule.getAllWalls()) {
 			for (Point bt : w.getBuildTiles()) {
 				Integer tileWidth = bwapi.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileWidth();
@@ -147,7 +155,7 @@ public class JavaBot extends AbstractManager {
 			}
 		}
 		
-		//Static unit debugging
+		// Static unit debugging
 		if (STATIC_UNIT_DEBUG){
 			for (Unit unit : bwapi.getAllStaticNeutralUnits()){
 				int tileWidth = bwapi.getUnitType(unit.getTypeID()).getTileWidth();

@@ -146,88 +146,530 @@ public class JNIBWAPI {
     private native int[] getBaseLocations();
 
     // unit commands: http://code.google.com/p/bwapi/wiki/Unit
+    
+	/**
+	 * <h2>attack</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to attack move to a specified location <code>[x, y]</code>
+	 * </p>
+     * 
+     * @param unitID - ID of attacking unit
+     * @param x - x-coordinate of the specified location
+     * @param y - y-coordinate of the specified location
+     */
     public native void attack(int unitID, int x, int y);
 
+	/**
+	 * <h2>attack</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to attack a single unit.
+	 * </p>
+     * 
+     * @param unitID - ID of the attacking unit
+     * @param targetID - ID of the target unit
+     */
     public native void attack(int unitID, int targetID);
 
+	/**
+	 * <h2>build</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to build the given unit type at the given position. Note that if the player 
+	 * does not have enough resources when the unit attempts to place the building down, the order 
+	 * will fail. The tile position specifies where the top left corner of the building will be placed.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit used for this build
+     * @param tx - x-coordinate of the building tile position
+     * @param ty - y-coordinate of the building tile position
+     * @param typeID - ID of the unit being built by building unit
+     */
     public native void build(int unitID, int tx, int ty, int typeID);
 
+	/**
+	 * <h2>buildAddon</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to build the given add-on. The unit must be a Terran building that can have 
+	 * an add-on and the specified unit type must be an add-on unit type. The build() command can also 
+	 * be used to build add-ons.
+	 * </p>
+     * 
+     * @param unitID - ID of the Terran building that can have the add-on
+     * @param typeID - ID of the add-on
+     */
     public native void buildAddon(int unitID, int typeID);
 
+	/**
+	 * <h2>train</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to add the specified unit type to the training queue. Note that the player must have 
+	 * sufficient resources to train. If you wish to make units from a hatchery, use getLarva to get the larva 
+	 * associated with the hatchery and then call morph on the larva you want to morph. This command can also 
+	 * be used to make interceptors and scarabs.
+	 * </p>
+     * 
+     * @param unitID - ID of the building that is possible to train unit of type <code>typeID</code>
+     * @param typeID - ID of the unit that will be trained 
+     */
     public native void train(int unitID, int typeID);
 
+	/**
+	 * <h2>morph</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to morph into the specified unit type.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit to be morphed
+     * @param typeID - ID of the unit type in which will be unit morphed
+     */
     public native void morph(int unitID, int typeID);
 
+	/**
+	 * <h2>research</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to research the given tech type.
+	 * </p>
+     * 
+     * @param unitID - ID of the building that will be researching
+     * @param techID - ID of the researched tech type
+     */
     public native void research(int unitID, int techID);
 
+	/**
+	 * <h2>upgrade</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to upgrade the given upgrade type.
+	 * </p>
+     * 
+     * @param unitID - ID of the building that will be upgrading
+     * @param updateID - ID of the upgrade type
+     */
     public native void upgrade(int unitID, int updateID);
 
+	/**
+	 * <h2>setRallyPoint</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to set its rally position to the specified position.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit to be set its rally position
+     * @param x - x-coordinate of the specified position
+     * @param y - y-coordinate of the specified position
+     */
     public native void setRallyPoint(int unitID, int x, int y);
 
+	/**
+	 * <h2>setRallyPoint</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to set its rally position to the specified unit.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit to be set its rally position
+     * @param targetID - ID of the specified unit
+     */
     public native void setRallyPoint(int unitID, int targetID);
 
+	/**
+	 * <h2>move</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to move to the specified position.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit to be moved
+     * @param x - x-coordinate of the specified position
+     * @param y - y-coordinate of the specified position
+     */
     public native void move(int unitID, int x, int y);
 
+	/**
+	 * <h2>patrol</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to patrol between its current position and the specified position.
+	 * </p>
+     * 
+     * @param unitID - ID of the patrol unit
+     * @param x - x-coordinate of the specified position
+     * @param y - y-coordinate of the specified position
+     */
     public native void patrol(int unitID, int x, int y);
 
+	/**
+	 * <h2>holdPosition</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to hold its position. <br />
+	 * Note: Reavers and Carriers can only hold position if they have at least one Scarab or 
+	 * Interceptor.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will hold its position
+     */
     public native void holdPosition(int unitID);
 
+	/**
+	 * <h2>stop</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to stop.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will be stopped
+     */
     public native void stop(int unitID);
 
+	/**
+	 * <h2>follow</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to follow the specified unit.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will follow
+     * @param targetID - ID of the unit that will be followed
+     */
     public native void follow(int unitID, int targetID);
 
-    public native void gather(int unitID, int trargetID);
+	/**
+	 * <h2>gather</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to gather the specified unit. Only workers can be ordered to gather, and the target 
+	 * must be a mineral patch, Refinery, Assimilator, or Extractor.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will be gathering
+     * @param targetID - ID of the specified unit
+     */
+    public native void gather(int unitID, int targetID);
 
+	/**
+	 * <h2>returnCargo</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to return its cargo to a nearby resource depot such as a Command Center. 
+	 * Only workers that are carrying minerals or gas can be ordered to return cargo.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will return its cargo
+     */
     public native void returnCargo(int unitID);
 
+	/**
+	 * <h2>repair</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to repair the specified unit. Only Terran SCVs can be ordered to repair, 
+	 * and the target must be a mechanical Terran unit or building.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will repair the specified unit
+     * @param targetID - ID of the specified unit need to be repaired
+     */
     public native void repair(int unitID, int targetID);
 
+	/**
+	 * <h2>burrow</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to burrow. Either the unit must be a Zerg Lurker, or the unit must be a Zerg 
+	 * ground unit and burrow tech must be researched.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will burrow
+     */
     public native void burrow(int unitID);
 
+	/**
+	 * <h2>unburrow</h2>
+	 * 
+	 * <p>
+	 * Orders the burrowed unit to unburrow.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will unburrow
+     */
     public native void unburrow(int unitID);
 
+	/**
+	 * <h2>cloak</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to cloak.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will be cloaked
+     */
     public native void cloak(int unitID);
 
+	/**
+	 * <h2>decloak</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to decloak.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will be decloaked
+     */
     public native void decloak(int unitID);
 
+	/**
+	 * <h2>siege</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to siege. <br />
+	 * Note: unit must be a Terran siege tank.
+	 * </p>
+     * 
+     * @param unitID - ID of the siege tank that will siege
+     */
     public native void siege(int unitID);
 
+	/**
+	 * <h2>unsiege</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to unsiege. <br />
+	 * Note: unit must be a Terran siege tank.
+	 * </p>
+     * 
+     * @param unitID - ID of the siege tank that will stop siege
+     */
     public native void unsiege(int unitID);
 
+	/**
+	 * <h2>lift</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to lift. <br />
+	 * Note: unit must be a Terran building that can be lifted.
+	 * </p>
+     * 
+     * @param unitID - ID of the building that will be lifted
+     */
     public native void lift(int unitID);
 
+	/**
+	 * <h2>land</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to land. <br />
+	 * Note: unit must be a Terran building that is currently lifted.
+	 * </p>
+     * 
+     * @param unitID - ID of the building that will be landed
+     * @param tx - x-coordinate of the landed tile position
+     * @param ty - y-coordinate of the landed tile position
+     */
     public native void land(int unitID, int tx, int ty);
 
+	/**
+	 * <h2>load</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to load the target unit.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will load the target unit
+     * @param targetID - ID of the target unit
+     */
     public native void load(int unitID, int targetID);
 
+	/**
+	 * <h2>unload</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to unload the target unit.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will unload the target unit
+     * @param targetID - ID of the target unit
+     */
     public native void unload(int unitID, int targetID);
 
+	/**
+	 * <h2>unloadAll</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to unload all loaded units at the unit's current position.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will unload all loaded units
+     */
     public native void unloadAll(int unitID);
 
+	/**
+	 * <h2>unloadAll</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to unload all loaded units at the specified location. Unit should be a 
+	 * Terran Dropship, Protoss Shuttle, or Zerg Overlord. If the unit is a Terran Bunker, the units 
+	 * will be unloaded right outside the bunker, like in the first version of unloadAll.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will unload all loaded units
+     * @param x - x-coordinate of the specified location
+     * @param y - y-coordinate of the specified location
+     */
     public native void unloadAll(int unitID, int x, int y);
 
+	/**
+	 * <h2>rightClick</h2>
+	 * 
+	 * <p>
+	 * Works like the right click in the GUI. Right click on a mineral patch to order a worker to mine, 
+	 * right click on an enemy to attack it.
+	 * </p>
+     * 
+     * @param unitID - ID of the selected unit
+     * @param x - x-coordinate of the clicked position
+     * @param y - y-coordinate of the clicked position
+     */
     public native void rightClick(int unitID, int x, int y);
 
+	/**
+	 * <h2>rightClick</h2>
+	 * 
+	 * <p>
+	 * Works like the right click in the GUI. Right click on a mineral patch to order a worker to mine, 
+	 * right click on an enemy to attack it.
+	 * </p>
+     * 
+     * @param unitID - ID of the selected unit
+     * @param targetID - ID of the clicked unit
+     */
     public native void rightClick(int unitID, int targetID);
 
+	/**
+	 * <h2>haltConstruction</h2>
+	 * 
+	 * <p>
+	 * Orders the SCV to stop constructing the building, and the building is left in a partially 
+	 * complete state until it is canceled, destroyed, or completed.
+	 * </p>
+     * 
+     * @param unitID - ID of the SCV that will hold construction
+     */
     public native void haltConstruction(int unitID);
 
+	/**
+	 * <h2>cancelConstruction</h2>
+	 * 
+	 * <p>
+	 * Orders the building to stop being constructed.
+	 * </p>
+     * 
+     * @param unitID - ID of the building
+     */
     public native void cancelConstruction(int unitID);
 
+	/**
+	 * <h2>cancelAddon</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to stop making the addon.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will stop making the addon
+     */
     public native void cancelAddon(int unitID);
 
+	/**
+	 * <h2>cancelTrain</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to remove the specified unit from its training queue. Leaving the default 
+	 * value will remove the last unit from the training queue.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will remove the specified unit
+     * @param slot - slot that will be removed from training queue
+     */
     public native void cancelTrain(int unitID, int slot);
 
+	/**
+	 * <h2>cancelMorph</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to stop morphing.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will stop morphing
+     */
     public native void cancelMorph(int unitID);
 
+	/**
+	 * <h2>cancelResearch</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to cancel a research in progress.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will cancel research
+     */
     public native void cancelResearch(int unitID);
 
+	/**
+	 * <h2>cancelUpgrade</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to cancel an upgrade in progress.
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will cancel the upgrade
+     */
     public native void cancelUpgrade(int unitID);
 
+	/**
+	 * <h2>useTech</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to use a technology either not requiring a target (i.e. Stim Pack), a target 
+	 * position (i.e. Spider Mines), or a target unit (i.e. Irradiate).
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will use certain technology
+     * @param typeID - ID of the useTech type
+     */
     public native void useTech(int unitID, int typeID);
 
+	/**
+	 * <h2>useTech</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to use a technology either not requiring a target (i.e. Stim Pack), a target 
+	 * position (i.e. Spider Mines), or a target unit (i.e. Irradiate).
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will use certain technology
+     * @param typeID - ID of the useTech type
+     * @param x - x-coordinate of the target position
+     * @param y - y-coordinate of the target position
+     */
     public native void useTech(int unitID, int typeID, int x, int y);
 
+	/**
+	 * <h2>useTech</h2>
+	 * 
+	 * <p>
+	 * Orders the unit to use a technology either not requiring a target (i.e. Stim Pack), a target 
+	 * position (i.e. Spider Mines), or a target unit (i.e. Irradiate).
+	 * </p>
+     * 
+     * @param unitID - ID of the unit that will use certain technology
+     * @param typeID - ID of the useTech type
+     * @param targetID - ID of the target unit
+     */
     public native void useTech(int unitID, int typeID, int targetID);
 
     // utility commands

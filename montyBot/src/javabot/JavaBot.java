@@ -17,8 +17,8 @@ import javabot.util.Wall;
 
 public class JavaBot extends AbstractManager {
 	
-	private static final boolean STATIC_UNIT_DEBUG = true;
-	private static final boolean BASELOC_RESOURCES_DEBUG = true;
+	private static final boolean STATIC_UNIT_DEBUG = false;
+	private static final boolean BASELOC_RESOURCES_DEBUG = false;
 
 	// Managers & Modules:
 	private Boss boss;
@@ -48,7 +48,7 @@ public class JavaBot extends AbstractManager {
 		bwapi.enableUserInput();
 		
 		// set game speed to 30 (0 is the fastest. Tournament speed is 20)
-		bwapi.setGameSpeed(30);
+		bwapi.setGameSpeed(20);
 		
 		// analyze the map
 		bwapi.loadMapData(true);
@@ -106,7 +106,7 @@ public class JavaBot extends AbstractManager {
 			}
 
 			for (ChokePoint c : home.getChokePoints()) {
-				wallInModule.computeWall( c, home, UnitTypes.Zerg_Zergling.ordinal());
+			//	wallInModule.computeWall( c, home, UnitTypes.Zerg_Zergling.ordinal());
 			}
 		}
 		// END DEBUG

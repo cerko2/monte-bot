@@ -107,6 +107,11 @@ public class UnitProductionManager extends AbstractManager{
 		}
 		return false;
 	}
+	/**
+	 * 
+	 * @param rateArmy 
+	 * @return
+	 */
 	public boolean setRateArmy( ArrayList<Double> rateArmy){ //true ak to akceptujem
 		//TODO  bud mi to nastavia alebo si to ja zistim 
 		if(this.rateArmy.size() == rateArmy.size()){ 
@@ -342,14 +347,16 @@ public class UnitProductionManager extends AbstractManager{
 	}
 	private void drawDebugInfo() {
 		if(testing){
-			game.drawText(new Point(5,15), "Rate: "+rate, true);
+			int hh = 180 ;
+			int ww = 500;
+			game.drawText(new Point(ww,hh - 15), "Rate: "+rate, true);
 			for(int i = 0; i < rateArmyGap.size();i++){
 				int s = (int) Math.round(rateArmyGap.get(i).gap);
-				game.drawText(new Point(100,25+(i*10)), rateArmyGap.get(i).ID + ": "+ s, true);
+				game.drawText(new Point(ww,hh+(i*10)), rateArmyGap.get(i).ID + ": "+ s, true);
 				int ss = (int) Math.round( rateArmyActual.get(i));
-				game.drawText(new Point(150,25+(i*10)), i + ": "+  ss, true);
+				game.drawText(new Point(ww+30,hh+(i*10)), i + ": "+  ss, true);
 				int sss = (int) Math.round( rateArmy.get(i));
-				game.drawText(new Point(200,25+(i*10)), i + ": "+ sss , true);
+				game.drawText(new Point(ww+60,hh+(i*10)), i + ": "+ sss , true);
 			}
 		}
 	}	

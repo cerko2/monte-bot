@@ -49,10 +49,36 @@ public class OpeningManager extends AbstractManager{
 		//TODO maybe not needed;
 	}
 	
+	/**
+	 * <ul>
+	 * 	<li>isActive</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * Returns <code>true</code>, if the Opening Manager is still active.
+	 * </p>
+	 * 
+	 * @return <code>true</code>, if the Opening Manager is active
+	 */
 	public boolean isActive(){
 		return isActive;
 	}
 	
+	/**
+	 * <ul>
+	 * 	<li>nextWorker</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * Returns <code>true</code> if the Worker Manager must train new worker or <code>false</code> if 
+	 * there is no request to train new worker by the Opening Manager. This method is 
+	 * determined to be used by the Worker Manager and should by used in Worker Manager's  
+	 * <code>public void gameUpdate()</code> method.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if the Worker Manager must train new worker or <code>false</code> 
+	 * otherwise
+	 */	
 	public boolean nextWorker(){
 		boolean result = nextWorker;
 		if (!result){
@@ -63,7 +89,22 @@ public class OpeningManager extends AbstractManager{
 		nextWorker = false;
 		return result;
 	}
-	
+
+	/**
+	 * <ul>
+	 * 	<li>nextUnit</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * Returns <code>unitID</code> of a unit that must be trained by the Unit Production Manager or 
+	 * <code>-1</code> if there is no unit requested by the Opening Manager to be trained. This method 
+	 * is determined to be used by the Unit Production Manager and should by used in 
+	 * Unit Production Manager's <code>public void gameUpdate()</code> method.
+	 * </p>
+	 * 
+	 * @return <code>unitID</code> of a unit that must be trained by the Unit Production Manager or 
+	 * <code>-1</code> otherwise
+	 */	
 	public int nextUnit(){
 		int result = nextUnit;
 		if (result == -1){
@@ -74,7 +115,22 @@ public class OpeningManager extends AbstractManager{
 		nextUnit = -1;
 		return result;
 	}
-	
+
+	/**
+	 * <ul>
+	 * 	<li>nextBuilding</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * Returns <code>unitID</code> of a building that must be built by the Building Manager or <code>-1</code>  
+	 * if there is no building requested by the Opening Manager to be built. This method is determined 
+	 * to be used by the Building Manager and should by used in Building Manager's  
+	 * <code>public void gameUpdate()</code> method.
+	 * </p>
+	 * 
+	 * @return <code>unitID</code> of a building that must be built by the Building Manager or 
+	 * <code>-1</code> otherwise
+	 */
 	public int nextBuilding(){
 		int result = nextBuilding;
 		if (result == -1){
@@ -85,7 +141,22 @@ public class OpeningManager extends AbstractManager{
 		nextBuilding = -1;
 		return result;
 	}
-	
+
+	/**
+	 * <ul>
+	 * 	<li>sendScout</li>
+	 * </ul>
+	 * 
+	 * <p>
+	 * Returns <code>true</code> if a Scout Manager must send a scout to scouting or <code>false</code>  
+	 * if there is no request to scouting by the Opening Manager. This method is determined 
+	 * to be used by the Scout Manager and should by used in Scout Manager's  
+	 * <code>public void gameUpdate()</code> method.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if the Scout Manager must send a scout to scouting or <code>false</code> 
+	 * otherwise
+	 */	
 	public boolean sendScout(){
 		boolean result = sendScout;
 		if (!result){

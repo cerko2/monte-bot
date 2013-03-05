@@ -11,8 +11,6 @@ public class OpeningManager extends AbstractManager{
 	private boolean isActive;
 	private ArrayList<OpeningTask> openingList;
 	private int taskIndex;
-	//private ArrayList<Integer> openingBuildList;
-	//private ArrayList<Integer> openingUnitProductionList;
 	private int nextBuilding;
 	private int nextUnit;
 	private boolean nextWorker;
@@ -50,29 +48,26 @@ public class OpeningManager extends AbstractManager{
 	}
 	
 	/**
-	 * <ul>
-	 * 	<li>isActive</li>
-	 * </ul>
+	 * <h2>isActive</h2>
 	 * 
 	 * <p>
-	 * Returns <code>true</code>, if the Opening Manager is still active.
+	 * Returns <code>true</code> if the Opening Manager is still active or <code>false</code> if 
+	 * he's done.
 	 * </p>
 	 * 
-	 * @return <code>true</code>, if the Opening Manager is active
+	 * @return <code>true</code> if the Opening Manager is active or <code>false</code> otherwise
 	 */
 	public boolean isActive(){
 		return isActive;
 	}
 	
 	/**
-	 * <ul>
-	 * 	<li>nextWorker</li>
-	 * </ul>
+	 * <h2>nextWorker</h2>
 	 * 
 	 * <p>
 	 * Returns <code>true</code> if the Worker Manager must train new worker or <code>false</code> if 
-	 * there is no request to train new worker by the Opening Manager. This method is 
-	 * determined to be used by the Worker Manager and should by used in Worker Manager's  
+	 * there is no request to train new worker by the Opening Manager. This method is determined to be 
+	 * used by the Worker Manager and should by used in Worker Manager's  
 	 * <code>public void gameUpdate()</code> method.
 	 * </p>
 	 * 
@@ -91,9 +86,7 @@ public class OpeningManager extends AbstractManager{
 	}
 
 	/**
-	 * <ul>
-	 * 	<li>nextUnit</li>
-	 * </ul>
+	 * <h2>nextUnit</h2>
 	 * 
 	 * <p>
 	 * Returns <code>unitID</code> of a unit that must be trained by the Unit Production Manager or 
@@ -117,9 +110,7 @@ public class OpeningManager extends AbstractManager{
 	}
 
 	/**
-	 * <ul>
-	 * 	<li>nextBuilding</li>
-	 * </ul>
+	 * <h2>nextBuilding</h2>
 	 * 
 	 * <p>
 	 * Returns <code>unitID</code> of a building that must be built by the Building Manager or <code>-1</code>  
@@ -143,9 +134,7 @@ public class OpeningManager extends AbstractManager{
 	}
 
 	/**
-	 * <ul>
-	 * 	<li>sendScout</li>
-	 * </ul>
+	 * <h2>sendScout</h2>
 	 * 
 	 * <p>
 	 * Returns <code>true</code> if a Scout Manager must send a scout to scouting or <code>false</code>  

@@ -16,6 +16,7 @@ public class OpeningManager extends AbstractManager{
 	private int nextBuilding;
 	private int nextUnit;
 	private boolean nextWorker;
+	private boolean sendScout;
 	
 	public OpeningManager(JNIBWAPI game){
 		this.game = game;
@@ -24,6 +25,7 @@ public class OpeningManager extends AbstractManager{
 		taskIndex = 0;
 		nextBuilding = nextUnit = -1;
 		nextWorker = false;
+		sendScout = false;
 		setOpening();
 	}
 	
@@ -84,6 +86,17 @@ public class OpeningManager extends AbstractManager{
 		return result;
 	}
 	
+	public boolean sendScout(){
+		boolean result = sendScout;
+		if (!result){
+			return result;
+		}
+		openingList.get(taskIndex).done();
+		taskIndex++;
+		sendScout = false;
+		return result;		
+	}
+	
 	private void setInactive(){
 		isActive = false;
 	}
@@ -92,24 +105,24 @@ public class OpeningManager extends AbstractManager{
 		//TODO depending on opponent race
 		//TODO next lines are only for testing
 		// 9/9 Gateway
-		/*
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
-		//openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.SCOUTING_ACTION, -1));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.SCOUTING_ACTION, -1));
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 15, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
-		*/
+		/*
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
 		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		*/
 	}
 	
-	public void perform(OpeningTask task){
+	private void perform(OpeningTask task){
 		switch (task.constraintType){
 			case OpeningTask.SUPPLY_CONSTRAINT:
 				if (game.getSelf().getSupplyUsed() / 2 < task.constraint){
@@ -132,21 +145,22 @@ public class OpeningManager extends AbstractManager{
 			case OpeningTask.PRODUCING_ACTION:
 				if (game.getUnitType(task.unitTypeID).isBuilding()){
 					nextBuilding = task.unitTypeID;
-					game.printText("postav budovu");
+					//game.printText("postav budovu");
 				}
 				else{
 					if (task.unitTypeID == UnitTypes.Protoss_Probe.ordinal()){
 						nextWorker = true;
-						game.printText("trenuj workera");
+						//game.printText("trenuj workera");
 					}
 					else{
 						nextUnit = task.unitTypeID;
-						game.printText("trenuj unit");
+						//game.printText("trenuj unit");
 					}
 				}
 			break;
 			case OpeningTask.SCOUTING_ACTION:
-				//TODO send scout;
+				sendScout = true;
+				//game.printText("posli scouta");
 			break;
 		}
 	}

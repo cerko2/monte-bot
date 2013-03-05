@@ -99,7 +99,7 @@ public class Map {
 	public ArrayList<ChokePoint> getChokePoints() {
 		return chokePoints;
 	}
-
+	
 	public ArrayList<BaseLocation> getBaseLocations() {
 		return baseLocations;
 	}

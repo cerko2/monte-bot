@@ -49,7 +49,6 @@ public class WallInModule extends AbstractManager {
 	}
 	
 	private boolean isBuildable(int x, int y, int w, int h, Point forbidden1, Point forbidden2, int margin1, int margin2, int margin3, int margin4) {
-		if (obstructedByNeutrals(x, y)) return false;
 		for (int i = x; i < x+w; i++) {
 			for (int j = y; j < y+h; j++) {
 				if ((!bwapi.isBuildable(i, j))
@@ -58,6 +57,9 @@ public class WallInModule extends AbstractManager {
 						){
 					return false;
 				}
+				if (obstructedByNeutrals(i, j)) 
+					return false;
+				
 				if ((i == margin1) || (i == margin2) || (j == margin3) || (j == margin4)) {
 					return false;
 				}
@@ -71,23 +73,12 @@ public class WallInModule extends AbstractManager {
 	}
 	
 	public boolean obstructedByNeutrals(int tx, int ty) {
-		return false;
-		/* 
-		 * TODO: We need to have access to complete list of static neutrals (resources, neut. buildings, etc.) 
-		 */
-		
-		/*
 		UnitType nType;
-		int xDiff;
-		int yDiff;
-		for (Unit u : SOME REPRESENTATION OF ALL THE NEUTRAL BUILDINGS / RESOURCES) {
+		for (Unit u : bwapi.getAllStaticNeutralUnits()) {
 			nType = bwapi.getUnitType(u.getTypeID());
-			xDiff = u.getTileX()-tx+nType.getTileWidth();
-			yDiff = u.getTileY()-ty+nType.getTileHeight();
-			if ((xDiff > 0) && (yDiff > 0)) return true;
+			if ((tx >= u.getTileX()) && (tx <= u.getTileX()+nType.getTileWidth()) && (ty >= u.getTileY()) && (ty <= u.getTileY()+nType.getTileHeight())) return true;
 		}
 		return false;
-		*/
 	}
 	
 	public void computeWall(ChokePoint choke, Region insideRegion, Integer unitTypeId) {
@@ -231,9 +222,9 @@ public class WallInModule extends AbstractManager {
 			for (int y = choke.getCenterY()/32-CHOKEPOINT_RADIUS; y <=choke.getCenterY()/32+CHOKEPOINT_RADIUS; y++) {
 				// walkable tiles
 				if (bwapi.getMap().isWalkable(x*4+2, y*4+2)) {
-					if (!obstructedByNeutrals(x,y)) {
+					//if (!obstructedByNeutrals(x,y)) {
 						dynAtoms.add("walkable("+String.valueOf(x)+","+String.valueOf(y)+").\n");
-					}
+					//}
 				}
 				
 				// buildable 
@@ -242,6 +233,11 @@ public class WallInModule extends AbstractManager {
 				if (this.isBuildable(x, y, buildingWidth3, buildingHeight3, new Point(insideX,insideY), new Point(outsideX,outsideY), choke.getCenterX()/32-CHOKEPOINT_RADIUS, choke.getCenterX()/32+CHOKEPOINT_RADIUS, choke.getCenterY()/32-CHOKEPOINT_RADIUS, choke.getCenterY()/32+CHOKEPOINT_RADIUS)) dynAtoms.add("buildable("+buildingName3+"Type,"+String.valueOf(x)+","+String.valueOf(y)+").\n");
 				if (this.isBuildable(x, y, buildingWidth4, buildingHeight4, new Point(insideX,insideY), new Point(outsideX,outsideY), choke.getCenterX()/32-CHOKEPOINT_RADIUS, choke.getCenterX()/32+CHOKEPOINT_RADIUS, choke.getCenterY()/32-CHOKEPOINT_RADIUS, choke.getCenterY()/32+CHOKEPOINT_RADIUS)) dynAtoms.add("buildable("+buildingName4+"Type,"+String.valueOf(x)+","+String.valueOf(y)+").\n");
 				if (this.isBuildable(x, y, buildingWidth5, buildingHeight5, new Point(insideX,insideY), new Point(outsideX,outsideY), choke.getCenterX()/32-CHOKEPOINT_RADIUS, choke.getCenterX()/32+CHOKEPOINT_RADIUS, choke.getCenterY()/32-CHOKEPOINT_RADIUS, choke.getCenterY()/32+CHOKEPOINT_RADIUS)) dynAtoms.add("buildable("+buildingName5+"Type,"+String.valueOf(x)+","+String.valueOf(y)+").\n");
+				
+				// blocked by neutrals
+				//if (obstructedByNeutrals(x, y)) {
+				//	dynAtoms.add("blocked("+String.valueOf(x)+","+String.valueOf(y)+").\n");
+				//}
 			}
 		}
 		

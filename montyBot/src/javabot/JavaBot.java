@@ -1,21 +1,9 @@
 package javabot;
 
-import java.awt.Point;
-
 import javabot.macro.Boss;
-import javabot.macro.BuildManager;
-import javabot.macro.UnitProductionManager;
 import javabot.model.BaseLocation;
-import javabot.model.ChokePoint;
-import javabot.model.Region;
 import javabot.model.Unit;
-import javabot.strategy.ArmyCompositionManager;
-import javabot.strategy.OpeningManager;
-import javabot.strategy.WallInModule;
-import javabot.types.UnitType.UnitTypes;
-import javabot.util.ArmyComposition;
 import javabot.util.BWColor;
-import javabot.util.Wall;
 
 public class JavaBot extends AbstractManager {
 	

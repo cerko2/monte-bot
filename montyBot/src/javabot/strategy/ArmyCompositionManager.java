@@ -19,54 +19,143 @@ public class ArmyCompositionManager extends AbstractManager {
 	// Deklarovanie nejakych privatnych premennych 
 	private JNIBWAPI bwapi;
 	private UnitProductionManager unitProductionManager;
+	private OpponentPositioning opponentPositioningManager;
+	private OpponentModeling opponentModellingManager;
 	private ArrayList<String> casesFromFile;	// tu je pole casov nacitanych zo suboru vo funkcii gameStarted()
+
+	
+	private boolean isRelevantType(int typeID) {
+		if (
+			typeID == UnitTypes.Protoss_Zealot.ordinal() ||
+			typeID == UnitTypes.Protoss_Dark_Templar.ordinal() ||
+			typeID == UnitTypes.Protoss_High_Templar.ordinal() ||
+			typeID == UnitTypes.Protoss_Dragoon.ordinal() ||
+			typeID == UnitTypes.Protoss_Reaver.ordinal() ||
+			typeID == UnitTypes.Protoss_Scout.ordinal() ||
+			typeID == UnitTypes.Protoss_Carrier.ordinal() ||
+			typeID == UnitTypes.Protoss_Corsair.ordinal() ||
+			typeID == UnitTypes.Protoss_Arbiter.ordinal() ||
+			typeID == UnitTypes.Protoss_Archon.ordinal() ||
+			typeID == UnitTypes.Protoss_Dark_Archon.ordinal() ||
+			typeID == UnitTypes.Zerg_Zergling.ordinal() ||
+			typeID == UnitTypes.Zerg_Hydralisk.ordinal() ||
+			typeID == UnitTypes.Zerg_Lurker.ordinal() ||
+			typeID == UnitTypes.Zerg_Devourer.ordinal() ||
+			typeID == UnitTypes.Zerg_Mutalisk.ordinal() ||
+			typeID == UnitTypes.Zerg_Guardian.ordinal() ||
+			typeID == UnitTypes.Zerg_Ultralisk.ordinal() ||
+			typeID == UnitTypes.Zerg_Defiler.ordinal() ||
+			typeID == UnitTypes.Zerg_Scourge.ordinal() ||
+			typeID == UnitTypes.Zerg_Queen.ordinal() ||
+			typeID == UnitTypes.Terran_Marine.ordinal() ||
+			typeID == UnitTypes.Terran_Firebat.ordinal() ||
+			typeID == UnitTypes.Terran_Medic.ordinal() ||
+			typeID == UnitTypes.Terran_Ghost.ordinal() ||
+			typeID == UnitTypes.Terran_Vulture.ordinal() ||
+			typeID == UnitTypes.Terran_Siege_Tank_Tank_Mode.ordinal() ||
+			typeID == UnitTypes.Terran_Goliath.ordinal() ||
+			typeID == UnitTypes.Terran_Wraith.ordinal() ||
+			typeID == UnitTypes.Terran_Science_Vessel.ordinal() ||
+			typeID == UnitTypes.Terran_Battlecruiser.ordinal() ||
+			typeID == UnitTypes.Terran_Valkyrie.ordinal()
+		){
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+	
+	// Toto vrati pole typeIDciek vsetkych relevantnych nepriatelovych jednotiek.
+	// Ak je tam povedzme marinak 5x, tak v tom poli bude jeho typeID 5x.
+	private ArrayList<Integer> getRelevantUnitsTypeIDs() {
+		ArrayList<Integer> ret = new ArrayList<>();
+		for (Unit u : opponentPositioningManager.getEnemyUnits()) {
+			if (isRelevantType(u.getTypeID())) ret.add(u.getTypeID());
+		}
+		return ret;
+	}
+	
+	private int getRatio(ArrayList<Integer> units, int typeID) {
+		int count = 0;
+		for (int i : units) {
+			if (i == typeID) count++;
+		}
+		return Math.round(Math.round(((double)count / (double)units.size()) * (double)100));
+	}
 	
 	// GameUpdate event
 	public void gameUpdate() {
 		if (bwapi.getFrameCount() % 34 == 0) {
-			// debug (order units based on some made up enemy composition)
-			ArmyComposition enemyArmy = new ArmyComposition("50;Marine,50;Firebat");
-			ArmyComposition ourResponse = getArmyComposition(enemyArmy);
 			
-			// order the composition from Unit Production Manager
-			ArrayList<Double> order = new ArrayList<>();
-			order.add(0,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Zealot.ordinal())));
-			order.add(1,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Dragoon.ordinal())));
-			order.add(2,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_High_Templar.ordinal())));
-			order.add(3,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Dark_Templar.ordinal())));
-			order.add(4,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Shuttle.ordinal())));
-			order.add(5,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Reaver.ordinal())));
-			order.add(6,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Observer.ordinal())));
-			order.add(7,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Scout.ordinal())));
-			order.add(8,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Corsair.ordinal())));
-			order.add(9,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Carrier.ordinal())));
-			order.add(10,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Arbiter.ordinal())));
-			order.add(11,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Archon.ordinal())));
-			order.add(12,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Dark_Archon.ordinal())));
+			// Create an object for enemy army composition 
 			
-			this.unitProductionManager.setRateArmy(order);
-			/*
-			ID = 0 is Zealot
-			ID = 1 is Dragoon
-			ID = 2 is High Templar
-			ID = 3 is Dark Templar
-			ID = 4 is Shuttle
-			ID = 5 is Reaver
-			ID = 6 is Observer
-			ID = 7 is Scout
-			ID = 8 is Corsair
-			ID = 9 is Carrier
-			ID = 10 is Arbiter
-			ID = 11 is Archon
-			ID = 12 is Dark Archon
-			 */
+			// first, get all the relevant units that enemy has now
+			ArrayList<Integer> rel = getRelevantUnitsTypeIDs();
+			
+			// now, add units that he probably will have in a few minutes
+			//for (int i : opponentModellingManager.getPredictedUnits()){
+			//	bwapi.printText(String.valueOf(i));
+			//	rel.add(i);
+			//}
+			
+			String enemyStr = "";
+			for (int i : rel) {
+				if (!enemyStr.contains(getRatio(rel, i)+";"+translateUnitTypeIDtoString(i))) {
+					enemyStr += getRatio(rel, i)+";"+translateUnitTypeIDtoString(i)+",";
+				}
+			}
+			if ((enemyStr.length() > 2) && (enemyStr.lastIndexOf(",") == enemyStr.length()-1)) 
+				enemyStr = enemyStr.substring(0, enemyStr.length()-1);
+			
+			// if there is some enemy army
+			if (enemyStr.length() > 2) {
+			
+				ArmyComposition enemyArmy = new ArmyComposition(enemyStr);
+				ArmyComposition ourResponse = getArmyComposition(enemyArmy);
+				
+				// order the composition from Unit Production Manager
+				ArrayList<Double> order = new ArrayList<>();
+				order.add(0,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Zealot.ordinal())));
+				order.add(1,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Dragoon.ordinal())));
+				order.add(2,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_High_Templar.ordinal())));
+				order.add(3,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Dark_Templar.ordinal())));
+				order.add(4,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Shuttle.ordinal())));
+				order.add(5,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Reaver.ordinal())));
+				order.add(6,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Observer.ordinal())));
+				order.add(7,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Scout.ordinal())));
+				order.add(8,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Corsair.ordinal())));
+				order.add(9,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Carrier.ordinal())));
+				order.add(10,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Arbiter.ordinal())));
+				order.add(11,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Archon.ordinal())));
+				order.add(12,Double.valueOf(ourResponse.getRatio(UnitTypes.Protoss_Dark_Archon.ordinal())));
+				
+				this.unitProductionManager.setRateArmy(order);
+				/*
+				ID = 0 is Zealot
+				ID = 1 is Dragoon
+				ID = 2 is High Templar
+				ID = 3 is Dark Templar
+				ID = 4 is Shuttle
+				ID = 5 is Reaver
+				ID = 6 is Observer
+				ID = 7 is Scout
+				ID = 8 is Corsair
+				ID = 9 is Carrier
+				ID = 10 is Arbiter
+				ID = 11 is Archon
+				ID = 12 is Dark Archon
+				 */
+			}
 		}
 	}
 	
 	// Konstruktor (vola sa ked sa vytvori armyCompositionManager objekt v JavaBot.java)
-	public ArmyCompositionManager(JNIBWAPI game, UnitProductionManager upm) {
+	public ArmyCompositionManager(JNIBWAPI game, UnitProductionManager upm, OpponentPositioning op, OpponentModeling om) {
 		this.bwapi = game;
 		this.unitProductionManager = upm;
+		this.opponentPositioningManager = op;
+		this.opponentModellingManager = om;
 	}
 	
 	// Eventy (volane napriklad na zaciatku hry alebo na kazdom frame):
@@ -175,7 +264,10 @@ public class ArmyCompositionManager extends AbstractManager {
         return vysledok;
     }
 	
-	
+	private String translateUnitTypeIDtoString(int typeID) {
+		String nam = bwapi.getUnitType(typeID).getName();
+		return nam.substring(nam.indexOf(" ")).replace(" ", "").replace("TankMode", "").replace("SiegeMode", "");
+	}
 	
 	
 }

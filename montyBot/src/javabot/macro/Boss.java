@@ -12,7 +12,9 @@ import javabot.model.Player;
 import javabot.model.Region;
 import javabot.model.Unit;
 import javabot.strategy.OpeningManager;
+import javabot.strategy.OpponentPositioning;
 import javabot.strategy.WallInModule;
+import javabot.types.UnitType;
 import javabot.types.UnitType.UnitTypes;
 import javabot.util.BWColor;
 import javabot.util.Wall;
@@ -21,6 +23,7 @@ public class Boss extends AbstractManager{
 	
 	public static final boolean BOSS_DEBUG = true;
 	public static final boolean WALLIN_DEBUG = true;
+	public static final boolean OPPONENT_POSITIONING_DEBUG = true;
 	
 	private Region home; // Needed only for DEBUGGING (miso certikcy)
 	
@@ -33,6 +36,7 @@ public class Boss extends AbstractManager{
 	private BuildManager buildManager;
 	private MonteCarloPlanner montePlanner;
 	private OpeningManager openingManager;
+	private OpponentPositioning opponentPositioning;
 	private ScoutingManager scoutManager;
 	private UnitProductionManager unitProductionManager;
 	private WallInModule wallInModule;
@@ -70,12 +74,14 @@ public class Boss extends AbstractManager{
 		assignedUnits = new ArrayList<Unit>();
 		
 		//subordinate initialization
+		buildManager = new  BuildManager(this);
 		openingManager = new OpeningManager(game);
+		opponentPositioning = new OpponentPositioning(game);
 		wallInModule = new WallInModule(game);
 		unitProductionManager = new UnitProductionManager(this); 
-		buildManager = new  BuildManager(this);
 		
 		addManager(openingManager);
+		addManager(opponentPositioning);
 		addManager(wallInModule);			// miso certicky
 		addManager(buildManager);			// azder
 		addManager(unitProductionManager);	// azder
@@ -269,8 +275,8 @@ public class Boss extends AbstractManager{
 				home = game.getMap().getRegions().get(0);
 
 				Unit homeNexus = game.getMyUnits().get(0);
-				Integer dist = 999999;
-				Integer dist2;
+				int dist = 999999;
+				int dist2;
 				for (Unit u : game.getMyUnits()) {
 					if (u.getTypeID() == UnitTypes.Protoss_Nexus.ordinal()) {
 						homeNexus = u;
@@ -314,10 +320,27 @@ public class Boss extends AbstractManager{
 			// Draw all previously computed walls
 			for (Wall w : wallInModule.getAllWalls()) {
 				for (Point bt : w.getBuildTiles()) {
-					Integer tileWidth = game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileWidth();
-					Integer tileHeight = game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileHeight();
+					int tileWidth = game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileWidth();
+					int tileHeight = game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileHeight();
 					game.drawBox(bt.x*32, bt.y*32, (bt.x + tileWidth)*32, (bt.y + tileHeight)*32, BWColor.YELLOW, false, false);
 					game.drawText(new Point(bt.x*32+4, bt.y*32+2), game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getName()+" "+String.valueOf(bt.x)+","+String.valueOf(bt.y), false);
+				}
+			}
+		}
+		
+		if (OPPONENT_POSITIONING_DEBUG){
+			UnitType type = null;
+			for (Unit unit : opponentPositioning.getEnemyUnits()){
+				type = game.getUnitType(unit.getTypeID());
+				if (type.isBuilding()){
+					int tileWidth = type.getTileWidth();
+					int tileHeight = type.getTileHeight();
+					game.drawBox(unit.getTileX()*32, unit.getTileY()*32, (unit.getTileX() + tileWidth)*32, (unit.getTileY() + tileHeight)*32, BWColor.RED, false, false);
+					game.drawText(new Point(unit.getTileX()*32+4, unit.getTileY()*32+2), type.getName(), false);
+				}
+				else {
+					game.drawBox(unit.getX() - type.getDimensionLeft(), unit.getY() - type.getDimensionUp(), (unit.getX() + type.getDimensionRight()), (unit.getY() + type.getDimensionDown()), BWColor.RED, false, false);
+					game.drawText(new Point(unit.getX()+4, unit.getY()+2), type.getName(), false);
 				}
 			}
 		}

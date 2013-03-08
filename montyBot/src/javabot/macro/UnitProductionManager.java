@@ -16,7 +16,7 @@ import javabot.types.UnitType.UnitTypes;
  * otestovat funciu createUnit
  */
 public class UnitProductionManager extends AbstractManager{
-	private boolean testing = false; //testovacie vypisy.
+	private boolean testing = true; //testovacie vypisy.
 	private boolean freeMode = false; // dokym neskonci opening som obmedzeny.
 	
 	private JNIBWAPI game = null;
@@ -57,7 +57,6 @@ public class UnitProductionManager extends AbstractManager{
 			rateArmy.add(0.0);
 		}  
 		if(testing){ // testing  /*TODO*/
-			freeMode = true;
 			rateArmy.set(0, 75.0);
 			rateArmy.set(1, 25.0);
 		}
@@ -90,7 +89,6 @@ public class UnitProductionManager extends AbstractManager{
 	public void setFreeMode(Boolean freeMode){
 		this.freeMode = freeMode;
 	}
-	
 	/**
 	 * 
 	 * @param typeID - ID of unit, that you want to train
@@ -102,7 +100,7 @@ public class UnitProductionManager extends AbstractManager{
 		if(minerals >= game.getUnitType(typeID).getMineralPrice() && gas >= game.getUnitType(typeID).getGasPrice()){
 			setAddResources(minerals, gas);
 			createStackExternal.add(typeID);
-			buildEcternalStack();
+			buildExternalStack();
 			return true;
 		}
 		return false;
@@ -151,7 +149,18 @@ public class UnitProductionManager extends AbstractManager{
 	}
 	private void myAct(){
 		useBuilding = new ArrayList<Unit>();
-		buildEcternalStack();
+		if(!boss.getOpeningManager().isActive())
+			freeMode = true;
+		if(!freeMode){
+			boolean unit1 = boss.getOpeningManager().nextWorker();
+			if(unit1)
+				createStackExternal.add(UnitTypes.Protoss_Probe.ordinal());
+			int unitID = boss.getOpeningManager().nextUnit();
+			if(unitID >= 0)
+				createStackExternal.add(unitID);
+		}
+		
+		buildExternalStack();
 		if(freeMode){ // AK je modul aktivny
 			setRateArmyActual();
 			setRateArmyGap();	
@@ -162,11 +171,15 @@ public class UnitProductionManager extends AbstractManager{
 				createStack.remove(0);
 				productionUnit(typeID);
 			}
+			for(int i =0 ; i < numArmy;i++){
+				if(rateArmy.get(i) > 0)
+					boss.getBuildManager().needBuilding(InternalID_To_UnitTypeID(i));
+			}
 		}
 		useBuilding = new ArrayList<Unit>();
 	}	
 //-----------------------------------------------------------------------------------------
-	private void buildEcternalStack(){
+	private void buildExternalStack(){
 		boolean createExternal = true;
 		while (!createStackExternal.isEmpty() && minerals > 0 && createExternal) {
 			int typeID = createStackExternal.get(0);
@@ -265,7 +278,7 @@ public class UnitProductionManager extends AbstractManager{
 	private Unit findBuilding(int building){
 		for(Unit u : game.getMyUnits()){
 			if(u.getTypeID() == building ){	
-				if(!u.isTraining())
+				if(!u.isTraining() && u.isCompleted())
 					return u;
 			}
 		}
@@ -274,12 +287,13 @@ public class UnitProductionManager extends AbstractManager{
 	private Unit findBuilding(int building,Vector<Integer> array){
 		for(Unit u : game.getMyUnits()){
 			if(u.getTypeID() == building ){	
-				if(!u.isTraining() && !inArray( u.getID(),array))
+				if(!u.isTraining() && !inArray( u.getID(),array) && u.isCompleted())
 					return u;
 			}
 		}
 		return null;	
 	}
+
 	private boolean createUnit(Unit building, int typeID){
 		Boolean testInGroup = false;
 		int freeSuply = game.getSelf().getSupplyTotal() - game.getSelf().getSupplyUsed();
@@ -349,15 +363,22 @@ public class UnitProductionManager extends AbstractManager{
 		if(testing){
 			int hh = 180 ;
 			int ww = 500;
-			game.drawText(new Point(ww,hh - 15), "Rate: "+rate, true);
 			for(int i = 0; i < rateArmyGap.size();i++){
+				if(i == 0) 
+					game.drawText(new Point(ww,hh - 15), "Rate: "+rate, true);
 				int s = (int) Math.round(rateArmyGap.get(i).gap);
 				game.drawText(new Point(ww,hh+(i*10)), rateArmyGap.get(i).ID + ": "+ s, true);
 				int ss = (int) Math.round( rateArmyActual.get(i));
-				game.drawText(new Point(ww+30,hh+(i*10)), i + ": "+  ss, true);
+				game.drawText(new Point(ww+40,hh+(i*10)), i + ": "+  ss, true);
 				int sss = (int) Math.round( rateArmy.get(i));
-				game.drawText(new Point(ww+60,hh+(i*10)), i + ": "+ sss , true);
+				game.drawText(new Point(ww+80,hh+(i*10)), i + ": "+ sss , true);
 			}
+			for(int i = 0; i < createStackExternal.size(); i++ ){
+				int s = (int) Math.round(createStackExternal.get(i));
+				game.drawText(new Point(ww,20 + (i*10)), i + ": "+ s, true);
+			}
+			if(createStackExternal.isEmpty())
+				game.drawText(new Point(ww,20),"-1 : empty", true);
 		}
 	}	
 }

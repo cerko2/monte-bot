@@ -16,22 +16,38 @@ import javabot.util.BWColor;
 * 
 */
 public class BuildManager extends AbstractManager{
-	private boolean testing = false; //testovacie vypisy.
+	private boolean testing = true; //testovacie vypisy.
+	private boolean freeMode = false; // dokym neskonci opening som obmedzeny.
+	private int time = 0;
 	
 	private JNIBWAPI game = null;
 	private Boss boss  = null;
 	private int minerals = 0;
 	private int gas = 0;
+	ArrayList<MyCount> myCount = new ArrayList<MyCount>();
 	private Vector<MyStack> createStack = new Vector<MyStack>();
 	private ArrayList<ArrayList<MyPlan>> myPlan = new ArrayList<ArrayList<MyPlan>>();
 	private ArrayList<MyUnit> workers = new ArrayList<MyUnit>();
 	
+	private static int timeExpires = 100;
 	private static int actFrequency = 30; //frekvecia myAct
 	private static int initMyPlanFrequency = 100000;
 	private static int jobs = 0;
 	private int homeX = 0;
 	private int homeY = 0;
 	
+	private class MyCount{
+		private int count = 0;
+		public void add(){
+			count++;
+		}
+		public void reset(){
+			count = 0;
+		}
+		public int getCount(){
+			return count;
+		}
+	}
 	private class MyPlan{
 		Boolean build = false;
 		Boolean lock = false;
@@ -39,9 +55,11 @@ public class BuildManager extends AbstractManager{
 	private class MyUnit{
 		Unit worker = null;
 		int jobID = -1;
+		int t = 0;
 		public MyUnit(Unit worker,int jobID){
 			this.worker = worker;
 			this.jobID = jobID;
+			this.t = time;
 		}
 	}
 	private class MyStack{
@@ -74,27 +92,27 @@ public class BuildManager extends AbstractManager{
 		}
 		return true;
 	}
-
+	private void restetMyCount(){
+		for(int i=0; i <myCount.size(); i++)
+			myCount.get(i).reset();
+		for (Unit unit : game.getMyUnits()) {	
+			int id = unit.getTypeID();
+			myCount.get(id).add();
+		}
+	}
 //-----------------------------------------------------------------------------------------	
 	public BuildManager(Boss boss){
 		this.boss = boss;
 		this.game = boss.game;
 		sendText("Start: Build Manager");
-		if(testing){ /*TODO*/
-			createStack.add( new MyStack(UnitTypes.Protoss_Pylon.ordinal()));
-			createStack.add(new MyStack(UnitTypes.Protoss_Assimilator.ordinal()));
-			createStack.add(new MyStack(UnitTypes.Protoss_Gateway.ordinal()));
-			createStack.add(new MyStack(UnitTypes.Protoss_Pylon.ordinal()));
-			createStack.add(new MyStack(UnitTypes.Protoss_Pylon.ordinal()));
-			createStack.add(new MyStack(UnitTypes.Protoss_Pylon.ordinal()));
-			createStack.add(new MyStack(UnitTypes.Protoss_Cybernetics_Core.ordinal()));
-			createStack.add(new MyStack(UnitTypes.Protoss_Gateway.ordinal()));
-		}
 		for(Unit u: game.getMyUnits()){
 			if(u.getTypeID() == UnitTypes.Protoss_Nexus.ordinal()){
 				homeX = u.getX();
 				homeY = u.getY();
 			}
+		}
+		for(int i = 0; i < 235;i++){
+			myCount.add(new MyCount());
 		}
 		initializationMyPlan();		
 	}
@@ -122,7 +140,52 @@ public class BuildManager extends AbstractManager{
 	public boolean isWorkerFree(int unitID){
 		return isInGroup(unitID, workers);
 	}
+	public boolean createBuilding(int typeID){
+		if(game.getUnitType(typeID).isBuilding()){
+			createStack.add(new MyStack(typeID));
+			buildStack();
+			return true;
+		}
+		return false;
+	}
+	public boolean needBuilding(int typeID){
+		if(!game.getUnitType(typeID).isBuilding()){
+			if(typeID == UnitTypes.Protoss_Zealot.ordinal()) {
+				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
+			} else if(typeID == UnitTypes.Protoss_Dragoon.ordinal()) {
+				reControlBuilding(UnitTypes.Protoss_Assimilator.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
+			} else if(typeID == UnitTypes.Protoss_High_Templar.ordinal()) {} 
+			else if(typeID == UnitTypes.Protoss_Dark_Templar.ordinal()) {} 
+			else if(typeID == UnitTypes.Protoss_Shuttle.ordinal()) {} 
+			else if(typeID == UnitTypes.Protoss_Reaver.ordinal()) {} 
+			else if(typeID == UnitTypes.Protoss_Observer.ordinal()) {} 
+			else if(typeID == UnitTypes.Protoss_Scout.ordinal()) {} 
+			else if(typeID == UnitTypes.Protoss_Corsair.ordinal()) {} 
+			else if(typeID == UnitTypes.Protoss_Carrier.ordinal()) {} 
+			else if(typeID == UnitTypes.Protoss_Arbiter.ordinal()){} 
+			else if(typeID == UnitTypes.Protoss_Archon.ordinal()) {} 
+			else if(typeID == UnitTypes.Protoss_Dark_Archon.ordinal()) {} 
+			else {return false;}
+			return true;
+		}
+		return false;
+	}
 //-----------------------------------------------------------------------------------------
+	private void reControlBuilding(int typeID){
+		if(myCount.get(typeID).count <= 0 && !isInStack(typeID)){
+			sendText("treba budovu!!!");
+			createBuilding(typeID);
+		}
+	}
+	private boolean isInStack(int typeID){
+		for(MyStack my: createStack){
+			if(my.typeJob == typeID)
+				return true;
+		}
+		return false;
+	}
 	private void initializationMyPlan(){
 		myPlan = new ArrayList<>();
 		for(int i = 0 ; i < game.getMap().getWidth();i++){
@@ -161,11 +224,28 @@ public class BuildManager extends AbstractManager{
 		}else sendText("err: boss = null");
 	}
 	private void myAct(){
+		int supply = 5 ; // udrzuj tolko miesta 
+		time++;
+		
 		ArrayList<MyUnit> workerss = new ArrayList<>(workers);
 		for(MyUnit u : workerss){
-			if(u.worker.isIdle())
+			if(u.worker.isIdle() || u.t + timeExpires >= time)
 				workers.remove(u);
 		}
+		
+		restetMyCount();
+		if(!boss.getOpeningManager().isActive())
+			freeMode = true;
+		if(freeMode){
+			int freeSupply = game.getSelf().getSupplyTotal() - game.getSelf().getSupplyUsed();
+			if(freeSupply < supply && !isInStack(UnitTypes.Protoss_Pylon.ordinal()))
+				createStack.add(0,new MyStack(UnitTypes.Protoss_Pylon.ordinal()));
+		}
+		int building = boss.getOpeningManager().nextBuilding();
+		if(building >= 0)
+			createStack.add(new MyStack(building));
+		
+		
 		myPlan();
 		buildStack();
 	}
@@ -308,6 +388,7 @@ public class BuildManager extends AbstractManager{
 		/*TODO*/ //dat doprec ked bude WM.
 		for(Unit u : game.getMyUnits()){
 			if(u.getTypeID() == UnitTypes.Protoss_Probe.ordinal()&& !isInGroup(u, workers) ){	
+				game.move(u.getID(), u.getX(),u.getY());
 				return u.getID();
 			}
 		}
@@ -366,10 +447,14 @@ public class BuildManager extends AbstractManager{
 	}
 	private void drawDebugInfo() {
 		if(testing){
+			int ww = 440;
 			for(int i = 0; i < createStack.size();i++){
 				int s = (int) Math.round(createStack.get(i).typeJob);
-				game.drawText(new Point(440,25+(i*10)), createStack.get(i).jobID + ": "+ s, true);
+				game.drawText(new Point(ww,20+(i*10)), createStack.get(i).jobID + ": "+ s, true);
 			}
+			if(createStack.isEmpty())
+				game.drawText(new Point(ww,20),"-1 : empty", true);
+			
 			for(Unit u : game.getMyUnits()){
 				if(game.getUnitType(u.getTypeID()).isBuilding()){
 					int tileWidth = game.getUnitType(u.getTypeID()).getTileWidth();
@@ -389,6 +474,7 @@ public class BuildManager extends AbstractManager{
 			for(MyUnit u : workers){
 				game.drawCircle(u.worker.getX(),u.worker.getY(), 16, BWColor.RED, false, false);
 			}
+
 			/*
 			for(int i = 0 ; i < game.getMap().getWidth();i++){
 				for(int j = 0 ; j < game.getMap().getHeight();j++){

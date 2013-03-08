@@ -13,6 +13,7 @@ import javabot.model.Region;
 import javabot.model.Unit;
 import javabot.strategy.ArmyCompositionManager;
 import javabot.strategy.OpeningManager;
+import javabot.strategy.OpponentModeling;
 import javabot.strategy.OpponentPositioning;
 import javabot.strategy.WallInModule;
 import javabot.types.UnitType;
@@ -38,6 +39,7 @@ public class Boss extends AbstractManager{
 	private BuildManager buildManager;
 	private MonteCarloPlanner montePlanner;
 	private OpeningManager openingManager;
+	private OpponentModeling opponentModeling;
 	private OpponentPositioning opponentPositioning;
 	private ScoutingManager scoutManager;
 	private UnitProductionManager unitProductionManager;
@@ -82,7 +84,8 @@ public class Boss extends AbstractManager{
 		wallInModule = new WallInModule(game);
 		unitProductionManager = new UnitProductionManager(this); 
 		
-		armyCompositionManager = new ArmyCompositionManager(game, unitProductionManager);
+		opponentModeling = new OpponentModeling(game, opponentPositioning);
+		armyCompositionManager = new ArmyCompositionManager(game, unitProductionManager, opponentPositioning, opponentModeling);
 		
 		addManager(openingManager);
 		addManager(opponentPositioning);

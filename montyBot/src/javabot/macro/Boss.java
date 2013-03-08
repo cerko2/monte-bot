@@ -11,6 +11,7 @@ import javabot.model.ChokePoint;
 import javabot.model.Player;
 import javabot.model.Region;
 import javabot.model.Unit;
+import javabot.strategy.ArmyCompositionManager;
 import javabot.strategy.OpeningManager;
 import javabot.strategy.OpponentPositioning;
 import javabot.strategy.WallInModule;
@@ -33,6 +34,7 @@ public class Boss extends AbstractManager{
 	private final int workerDefenseTreshold = 3;
 	
 	// Managers & Modules:
+	private ArmyCompositionManager armyCompositionManager;
 	private BuildManager buildManager;
 	private MonteCarloPlanner montePlanner;
 	private OpeningManager openingManager;
@@ -80,11 +82,14 @@ public class Boss extends AbstractManager{
 		wallInModule = new WallInModule(game);
 		unitProductionManager = new UnitProductionManager(this); 
 		
+		armyCompositionManager = new ArmyCompositionManager(game, unitProductionManager);
+		
 		addManager(openingManager);
 		addManager(opponentPositioning);
 		addManager(wallInModule);			// miso certicky
 		addManager(buildManager);			// azder
 		addManager(unitProductionManager);	// azder
+		addManager(armyCompositionManager);
 	}
 	
 	public void gameStarted(){

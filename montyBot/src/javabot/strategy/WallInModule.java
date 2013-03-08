@@ -272,12 +272,13 @@ public class WallInModule extends AbstractManager {
 				}
 				walls.get(newId).getBuildTiles().add(new Point( Integer.valueOf(pars[1]), Integer.valueOf(pars[2])  ));
 			}
+			// correct the wall (remove isolated buildings)
+			walls.get(newId).correct(CHOKEPOINT_RADIUS, bwapi);
 		} else {
 			bwapi.printText("Wall at "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" couldn't be found.");
 			walls.add(new Wall());
 			walls.get(walls.size()-1).setSuccessfullyFound(false);
 		}
-		
 		
 	}
 	

@@ -7,8 +7,8 @@ import javabot.util.BWColor;
 
 public class JavaBot extends AbstractManager {
 	
-	private static final boolean STATIC_UNIT_DEBUG = true;
-	private static final boolean BASELOC_RESOURCES_DEBUG = true;
+	private static final boolean STATIC_UNIT_DEBUG = false;
+	private static final boolean BASELOC_RESOURCES_DEBUG = false;
 
 	// Managers & Modules:
 	private Boss boss;

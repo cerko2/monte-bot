@@ -172,8 +172,9 @@ public class UnitProductionManager extends AbstractManager{
 				productionUnit(typeID);
 			}
 			for(int i =0 ; i < numArmy;i++){
-				if(rateArmy.get(i) > 0)
+				if(rateArmy.get(i) > 0){
 					boss.getBuildManager().needBuilding(InternalID_To_UnitTypeID(i));
+				}
 			}
 		}
 		useBuilding = new ArrayList<Unit>();
@@ -259,7 +260,7 @@ public class UnitProductionManager extends AbstractManager{
 		}
 		
 	}
-//---------->>
+//---------->>""
 	private boolean productionUnit(int typeID){
 		if(typeID == UnitTypes.Protoss_Archon.ordinal()||typeID == UnitTypes.Protoss_Dark_Archon.ordinal()){	
 			return productionArchon(typeID);

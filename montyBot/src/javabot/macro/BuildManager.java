@@ -13,6 +13,8 @@ import javabot.util.BWColor;
 //Azder BM
 /*TODO*/
 /* 
+* getBuildTile
+* fix add building
 * 
 */
 public class BuildManager extends AbstractManager{
@@ -29,10 +31,10 @@ public class BuildManager extends AbstractManager{
 	private ArrayList<ArrayList<MyPlan>> myPlan = new ArrayList<ArrayList<MyPlan>>();
 	private ArrayList<MyUnit> workers = new ArrayList<MyUnit>();
 	
-	private static int timeExpires = 100;
-	private static int actFrequency = 30; //frekvecia myAct
-	private static int initMyPlanFrequency = 100000;
-	private static int jobs = 0;
+	private static int TIME_EXPIRES = 100;
+	private static int ACT_FREQUENCY = 30; //frekvecia myAct
+	private static int INIT_MY_PLAN_FREQUENCY = 100000;
+	private static int JOBS = 0;
 	private int homeX = 0;
 	private int homeY = 0;
 	
@@ -63,11 +65,11 @@ public class BuildManager extends AbstractManager{
 		}
 	}
 	private class MyStack{
-		int typeJob = -1;
+		int typeID = -1;
 		int jobID = -1;
-		public MyStack(int typeJob){
-			this.typeJob = typeJob;
-			this.jobID = ++jobs;
+		public MyStack(int typeID){
+			this.typeID = typeID;
+			this.jobID = ++JOBS;
 		}
 	}
 	private void setBuild(int x,int y,boolean hod){
@@ -105,6 +107,7 @@ public class BuildManager extends AbstractManager{
 		this.boss = boss;
 		this.game = boss.game;
 		sendText("Start: Build Manager");
+		if(testing) freeMode = true;
 		for(Unit u: game.getMyUnits()){
 			if(u.getTypeID() == UnitTypes.Protoss_Nexus.ordinal()){
 				homeX = u.getX();
@@ -121,7 +124,7 @@ public class BuildManager extends AbstractManager{
 		this.gas += gas;
 	}
 	public void gameUpdate(){
-		if((game.getFrameCount() % actFrequency == 0 )){
+		if((game.getFrameCount() % ACT_FREQUENCY == 0 )){
 			setSettings();
 			if(minerals > 0) 
 				myAct();
@@ -131,7 +134,7 @@ public class BuildManager extends AbstractManager{
 	public Vector<Integer> getConstructionPlans(){
 		Vector<Integer> rad = new Vector<Integer>();
 		for(MyStack m: createStack)
-			rad.add(m.typeJob);
+			rad.add(m.typeID);
 		return rad; 
 	}
 	public boolean isWorkerFree(Unit u){
@@ -148,7 +151,7 @@ public class BuildManager extends AbstractManager{
 		}
 		return false;
 	}
-	public boolean needBuilding(int typeID){
+	public boolean needBuilding(int typeID){ /*TODO*/
 		if(!game.getUnitType(typeID).isBuilding()){
 			if(typeID == UnitTypes.Protoss_Zealot.ordinal()) {
 				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
@@ -174,14 +177,19 @@ public class BuildManager extends AbstractManager{
 	}
 //-----------------------------------------------------------------------------------------
 	private void reControlBuilding(int typeID){
-		if(myCount.get(typeID).count <= 0 && !isInStack(typeID)){
-			sendText("treba budovu!!!");
-			createBuilding(typeID);
+		if(typeID == UnitTypes.Protoss_Assimilator.ordinal()){
+			if(myCount.get(157).count <= 0 && !isInStack(157)){
+				createBuilding(typeID);
+			}	
+		}else{
+			if(myCount.get(typeID).count <= 0 && !isInStack(typeID)){
+				createBuilding(typeID);
+			}
 		}
 	}
 	private boolean isInStack(int typeID){
 		for(MyStack my: createStack){
-			if(my.typeJob == typeID)
+			if(my.typeID == typeID)
 				return true;
 		}
 		return false;
@@ -224,22 +232,24 @@ public class BuildManager extends AbstractManager{
 		}else sendText("err: boss = null");
 	}
 	private void myAct(){
-		int supply = 5 ; // udrzuj tolko miesta 
+		freeMode = false;
+		int SUPPLY = 6 ; // udrzuj tolko miesta 
 		time++;
 		
 		ArrayList<MyUnit> workerss = new ArrayList<>(workers);
 		for(MyUnit u : workerss){
-			if(u.worker.isIdle() || u.t + timeExpires >= time)
+			if(u.worker.isIdle() || u.t + TIME_EXPIRES >= time)
 				workers.remove(u);
 		}
 		
 		restetMyCount();
 		if(!boss.getOpeningManager().isActive())
 			freeMode = true;
-		if(freeMode){
-			int freeSupply = game.getSelf().getSupplyTotal() - game.getSelf().getSupplyUsed();
-			if(freeSupply < supply && !isInStack(UnitTypes.Protoss_Pylon.ordinal()))
+		if(freeMode && game.getSelf().getSupplyTotal() < 200){
+			int freeSupply = getTotalSupply() - game.getSelf().getSupplyUsed();
+			if((freeSupply < SUPPLY) && !isInStack(UnitTypes.Protoss_Pylon.ordinal())){
 				createStack.add(0,new MyStack(UnitTypes.Protoss_Pylon.ordinal()));
+			}
 		}
 		int building = boss.getOpeningManager().nextBuilding();
 		if(building >= 0)
@@ -297,7 +307,7 @@ public class BuildManager extends AbstractManager{
 	private void buildStack(){
 		Boolean goStack =  true;
 		if(!createStack.isEmpty()){
-			int typeID = createStack.get(0).typeJob;
+			int typeID = createStack.get(0).typeID;
 			int jobID = createStack.get(0).jobID;
 			if (!isExWorker(jobID))
 			if(minerals >= game.getUnitType(typeID).getMineralPrice() && gas >= game.getUnitType(typeID).getGasPrice()){
@@ -314,7 +324,7 @@ public class BuildManager extends AbstractManager{
 
 		if(workerID != -1 && workerUnit != null){
 			workers.add(new MyUnit(workerUnit, jobID));
-			Point targer = getBuildTile(workerID, typeID, homeX, homeY); 
+			Point targer = getBuildTile(workerID, typeID, homeX, homeY);
 			targer.x *= 32;
 			targer.y *= 32;
 			if(targer.x >= 0){
@@ -330,7 +340,6 @@ public class BuildManager extends AbstractManager{
 		}
 		return false;
 	}
-
 	private Point getBuildTile(int builderID, int buildingTypeID, int x, int y) {
 		Point ret = new Point(-1, -1);
 		int maxDist = 3;
@@ -361,6 +370,7 @@ public class BuildManager extends AbstractManager{
 							ret.x = i; ret.y = j;
 							return ret;
 						}
+						/*
 						// creep for Zerg (this may not be needed - not tested yet)
 						if (game.getUnitType(buildingTypeID).isRequiresCreep()) {
 							boolean creepMissing = false;
@@ -372,6 +382,7 @@ public class BuildManager extends AbstractManager{
 							}
 							if (creepMissing) continue; 
 						}
+						*/
 						// psi power for Protoss (this seems to work out of the box)
 						if (game.getUnitType(buildingTypeID).isRequiresPsi()) {}
 					}
@@ -383,7 +394,6 @@ public class BuildManager extends AbstractManager{
 		if (ret.x == -1) game.printText("Unable to find suitable build position for "+game.getUnitType(buildingTypeID).getName());
 		return ret;
 	}
-
 	private int getWorker(){
 		/*TODO*/ //dat doprec ked bude WM.
 		for(Unit u : game.getMyUnits()){
@@ -441,7 +451,11 @@ public class BuildManager extends AbstractManager{
 		}
 		return false;
 	}
-//------------------------------------ only testing ----------------------------------------
+	private int getTotalSupply(){
+		int sum = (myCount.get(UnitTypes.Protoss_Pylon.ordinal()).count * 8) + (myCount.get(UnitTypes.Protoss_Nexus.ordinal()).count * 9);
+		return sum * 2 ; 
+	}
+	//------------------------------------ only testing ----------------------------------------
 	private void sendText(String msg){
 		if(testing) game.sendText("BM: " + msg);
 	}
@@ -449,7 +463,7 @@ public class BuildManager extends AbstractManager{
 		if(testing){
 			int ww = 440;
 			for(int i = 0; i < createStack.size();i++){
-				int s = (int) Math.round(createStack.get(i).typeJob);
+				int s = (int) Math.round(createStack.get(i).typeID);
 				game.drawText(new Point(ww,20+(i*10)), createStack.get(i).jobID + ": "+ s, true);
 			}
 			if(createStack.isEmpty())
@@ -487,4 +501,7 @@ public class BuildManager extends AbstractManager{
 			
 		}
 	}	
+
+	
 }
+

@@ -43,7 +43,7 @@ public class JavaBot extends AbstractManager {
 		bwapi.enableUserInput();
 		
 		// set game speed to 30 (0 is the fastest. Tournament speed is 20)
-		bwapi.setGameSpeed(30);
+		bwapi.setGameSpeed(15);
 		
 		// analyze the map
 		bwapi.loadMapData(true);

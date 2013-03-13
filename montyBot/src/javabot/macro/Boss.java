@@ -52,6 +52,8 @@ public class Boss extends AbstractManager{
 	private ArrayList<Unit> scoutUnits;
 	private ArrayList<Unit> assignedUnits;
 	
+	private boolean scouting;
+	
 	public int minerals;
 	public int gas;
 	
@@ -69,7 +71,7 @@ public class Boss extends AbstractManager{
 	
 	public void initialize(){
 		montePlanner = new MonteCarloPlanner();
-		workerManager =new WorkerManager();
+		workerManager = new WorkerManager(this);
 		
 		validUnits = new ArrayList<Unit>();
 		combatUnits = new ArrayList<Unit>();
@@ -81,6 +83,7 @@ public class Boss extends AbstractManager{
 		buildManager = new  BuildManager(this);
 		openingManager = new OpeningManager(game);
 		opponentPositioning = new OpponentPositioning(game);
+		scoutManager = new ScoutingManager(game);
 		wallInModule = new WallInModule(game);
 		unitProductionManager = new UnitProductionManager(this); 
 		
@@ -168,14 +171,16 @@ public class Boss extends AbstractManager{
 	private void setScoutUnits(){
 		scoutUnits.clear();
 		
-		for (Unit unit : validUnits){
-			if (!assignedUnits.contains(unit) 
-					&& (game.getUnitType(unit.getTypeID()).isWorker()
-					|| unit.getTypeID() == UnitTypes.Protoss_Observer.ordinal()))
-			{
-				scoutUnits.add(unit);
-				assignedUnits.add(unit);
-				break;
+		if (scouting){
+			for (Unit unit : validUnits){
+				if (!assignedUnits.contains(unit) 
+						&& (game.getUnitType(unit.getTypeID()).isWorker()
+								|| unit.getTypeID() == UnitTypes.Protoss_Observer.ordinal()))
+				{
+					scoutUnits.add(unit);
+					assignedUnits.add(unit);
+					break;
+				}
 			}
 		}
 	}
@@ -273,6 +278,10 @@ public class Boss extends AbstractManager{
 
 	public WorkerManager getWorkerManager() {
 		return workerManager;
+	}
+	
+	public void startScouting(){
+		scouting = true;
 	}
 	
 	private void debug(){

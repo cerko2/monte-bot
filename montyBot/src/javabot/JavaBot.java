@@ -4,6 +4,7 @@ import javabot.macro.Boss;
 import javabot.model.BaseLocation;
 import javabot.model.Unit;
 import javabot.util.BWColor;
+import javabot.util.map.MapGrid;
 
 public class JavaBot extends AbstractManager {
 	
@@ -12,6 +13,7 @@ public class JavaBot extends AbstractManager {
 
 	// Managers & Modules:
 	private Boss boss;
+	private MapGrid mapGrid;
 
 	private JNIBWAPI bwapi;
 	public static void main(String[] args) {
@@ -39,6 +41,7 @@ public class JavaBot extends AbstractManager {
 		bwapi.loadMapData(true);
 		initialize();
 		
+		mapGrid.gameStarted();
 		super.gameStarted();
 	}
 	
@@ -48,12 +51,16 @@ public class JavaBot extends AbstractManager {
 		
 		// Add the managers
 		addManager(boss);
+		
+		mapGrid = MapGrid.getInstance();
+		mapGrid.setGame(bwapi);
 	}
 	
 	
 	// Method called on every frame (approximately 30x every second).
 	public void gameUpdate() {
 		
+		mapGrid.gameUpdate();
 		super.gameUpdate();
 		
 		// Draw debug information on screen

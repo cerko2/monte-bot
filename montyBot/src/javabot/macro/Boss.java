@@ -83,6 +83,7 @@ public class Boss extends AbstractManager{
 		buildManager = new  BuildManager(this);
 		openingManager = new OpeningManager(game);
 		opponentPositioning = new OpponentPositioning(game);
+		scoutManager = new ScoutingManager(game);
 		wallInModule = new WallInModule(game);
 		unitProductionManager = new UnitProductionManager(this); 
 		

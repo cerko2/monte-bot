@@ -326,14 +326,7 @@ public class Boss extends AbstractManager{
 					game.drawCircle(c.getCenterX(),c.getCenterY(), 10, BWColor.TEAL, true, false);
 				}
 			}
-
-			for (int i=1; i < game.getMap().getWidth(); i++) {
-				for (int j=1; j < game.getMap().getHeight(); j++) {
-					if (wallInModule.obstructedByNeutrals(i, j))
-						game.drawCircle(i*32,j*32, 5, BWColor.GREEN, false, false);
-				}
-			}
-
+				
 			// Draw all previously computed walls
 			for (Wall w : wallInModule.getAllWalls()) {
 				for (Point bt : w.getBuildTiles()) {

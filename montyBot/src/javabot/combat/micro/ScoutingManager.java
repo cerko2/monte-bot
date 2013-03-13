@@ -1,6 +1,8 @@
 package javabot.combat.micro;
 
-public class ScoutingManager {
+import javabot.AbstractManager;
+
+public class ScoutingManager extends AbstractManager{
 	
 	public ScoutingManager(){
 		

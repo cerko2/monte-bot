@@ -103,7 +103,7 @@ public class JavaBot extends AbstractManager {
 					bwapi.drawLine(base.getX(), base.getY(), unit.getX(), unit.getY(), BWColor.CYAN, false);
 				}
 				
-				for (Unit unit : base.getGeysers()){
+				for (Unit unit : base.getGeysers()) {
 					bwapi.drawText(unit.getX(), unit.getY(), unit.getResources() + "", false);
 					bwapi.drawLine(base.getX(), base.getY(), unit.getX(), unit.getY(), BWColor.GREEN, false);
 				}

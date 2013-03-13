@@ -137,11 +137,11 @@ public class OpeningManager extends AbstractManager{
 				else{
 					if (task.unitTypeID == UnitTypes.Protoss_Probe.ordinal()){
 						nextWorker = true;
-						game.printText("trenuj workera");
+						//game.printText("trenuj workera");
 					}
 					else{
 						nextUnit = task.unitTypeID;
-						game.printText("trenuj unit");
+						//game.printText("trenuj unit");
 					}
 				}
 			break;

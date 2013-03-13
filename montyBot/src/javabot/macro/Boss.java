@@ -65,7 +65,7 @@ public class Boss extends AbstractManager{
 	
 	public void initialize(){
 		montePlanner = new MonteCarloPlanner();
-		workerManager =new WorkerManager();
+		workerManager = new WorkerManager(this);
 		
 		validUnits = new ArrayList<Unit>();
 		combatUnits = new ArrayList<Unit>();
@@ -101,7 +101,7 @@ public class Boss extends AbstractManager{
 		minerals = player.getMinerals();
 		gas = player.getGas();
 		
-		if (BOSS_DEBUG){
+		if (BOSS_DEBUG) {
 			debug();
 		}
 		
@@ -110,7 +110,7 @@ public class Boss extends AbstractManager{
 	
 	private void setUnits(){
 		setValidUnits();
-		setScoutUnits();
+		//setScoutUnits();
 		setCombatUnits();
 		setWorkerUnits();
 	}
@@ -149,7 +149,7 @@ public class Boss extends AbstractManager{
 		workerUnits.clear();
 
 		for (Unit unit : validUnits){
-			if (!assignedUnits.contains(unit) && game.getUnitType(unit.getTypeID()).isWorker()){
+			if (/*!assignedUnits.contains(unit) && */game.getUnitType(unit.getTypeID()).isWorker()) {
 				workerUnits.add(unit);
 				assignedUnits.add(unit);
 			}

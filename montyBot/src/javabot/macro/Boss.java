@@ -71,7 +71,7 @@ public class Boss extends AbstractManager{
 	
 	public void initialize(){
 		montePlanner = new MonteCarloPlanner();
-		workerManager =new WorkerManager();
+		workerManager = new WorkerManager(this);
 		
 		validUnits = new ArrayList<Unit>();
 		combatUnits = new ArrayList<Unit>();

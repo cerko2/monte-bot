@@ -57,4 +57,8 @@ public class Position {
 		x = tx;
 		y = ty;
 	}
+	
+	public double distance(Position pos) {
+		return Math.sqrt(Math.pow(pos.x - x, 2.0) + Math.pow(pos.y - y, 2.0)); 
+	}
 }

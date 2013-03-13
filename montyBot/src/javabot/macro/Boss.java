@@ -11,7 +11,9 @@ import javabot.model.ChokePoint;
 import javabot.model.Player;
 import javabot.model.Region;
 import javabot.model.Unit;
+import javabot.strategy.ArmyCompositionManager;
 import javabot.strategy.OpeningManager;
+import javabot.strategy.OpponentModeling;
 import javabot.strategy.OpponentPositioning;
 import javabot.strategy.WallInModule;
 import javabot.types.UnitType;
@@ -33,9 +35,11 @@ public class Boss extends AbstractManager{
 	private final int workerDefenseTreshold = 3;
 	
 	// Managers & Modules:
+	private ArmyCompositionManager armyCompositionManager;
 	private BuildManager buildManager;
 	private MonteCarloPlanner montePlanner;
 	private OpeningManager openingManager;
+	private OpponentModeling opponentModeling;
 	private OpponentPositioning opponentPositioning;
 	private ScoutingManager scoutManager;
 	private UnitProductionManager unitProductionManager;
@@ -47,6 +51,8 @@ public class Boss extends AbstractManager{
 	private ArrayList<Unit> workerUnits;
 	private ArrayList<Unit> scoutUnits;
 	private ArrayList<Unit> assignedUnits;
+	
+	private boolean scouting;
 	
 	public int minerals;
 	public int gas;
@@ -65,7 +71,7 @@ public class Boss extends AbstractManager{
 	
 	public void initialize(){
 		montePlanner = new MonteCarloPlanner();
-		workerManager =new WorkerManager();
+		workerManager = new WorkerManager(this);
 		
 		validUnits = new ArrayList<Unit>();
 		combatUnits = new ArrayList<Unit>();
@@ -77,14 +83,19 @@ public class Boss extends AbstractManager{
 		buildManager = new  BuildManager(this);
 		openingManager = new OpeningManager(game);
 		opponentPositioning = new OpponentPositioning(game);
+		scoutManager = new ScoutingManager(game);
 		wallInModule = new WallInModule(game);
 		unitProductionManager = new UnitProductionManager(this); 
+		
+		opponentModeling = new OpponentModeling(game, opponentPositioning);
+		armyCompositionManager = new ArmyCompositionManager(game, unitProductionManager, opponentPositioning, opponentModeling);
 		
 		addManager(openingManager);
 		addManager(opponentPositioning);
 		addManager(wallInModule);			// miso certicky
 		addManager(buildManager);			// azder
 		addManager(unitProductionManager);	// azder
+		addManager(armyCompositionManager);
 	}
 	
 	public void gameStarted(){
@@ -160,14 +171,16 @@ public class Boss extends AbstractManager{
 	private void setScoutUnits(){
 		scoutUnits.clear();
 		
-		for (Unit unit : validUnits){
-			if (!assignedUnits.contains(unit) 
-					&& (game.getUnitType(unit.getTypeID()).isWorker()
-					|| unit.getTypeID() == UnitTypes.Protoss_Observer.ordinal()))
-			{
-				scoutUnits.add(unit);
-				assignedUnits.add(unit);
-				break;
+		if (scouting){
+			for (Unit unit : validUnits){
+				if (!assignedUnits.contains(unit) 
+						&& (game.getUnitType(unit.getTypeID()).isWorker()
+								|| unit.getTypeID() == UnitTypes.Protoss_Observer.ordinal()))
+				{
+					scoutUnits.add(unit);
+					assignedUnits.add(unit);
+					break;
+				}
 			}
 		}
 	}
@@ -267,6 +280,10 @@ public class Boss extends AbstractManager{
 		return workerManager;
 	}
 	
+	public void startScouting(){
+		scouting = true;
+	}
+	
 	private void debug(){
 		
 		if (WALLIN_DEBUG){
@@ -309,14 +326,7 @@ public class Boss extends AbstractManager{
 					game.drawCircle(c.getCenterX(),c.getCenterY(), 10, BWColor.TEAL, true, false);
 				}
 			}
-
-			for (int i=1; i < game.getMap().getWidth(); i++) {
-				for (int j=1; j < game.getMap().getHeight(); j++) {
-					if (wallInModule.obstructedByNeutrals(i, j))
-						game.drawCircle(i*32,j*32, 5, BWColor.GREEN, false, false);
-				}
-			}
-
+				
 			// Draw all previously computed walls
 			for (Wall w : wallInModule.getAllWalls()) {
 				for (Point bt : w.getBuildTiles()) {

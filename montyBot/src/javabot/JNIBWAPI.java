@@ -1,16 +1,33 @@
 package javabot;
 
-import javabot.model.*;
-import javabot.types.*;
-import javabot.types.UnitType.UnitTypes;
-import javabot.util.UnitUtils;
-
-import java.awt.*;
-import java.io.*;
+import java.awt.Point;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import javabot.model.BaseLocation;
+import javabot.model.ChokePoint;
+import javabot.model.Map;
+import javabot.model.Player;
+import javabot.model.Region;
+import javabot.model.Unit;
+import javabot.types.BulletType;
+import javabot.types.DamageType;
+import javabot.types.ExplosionType;
+import javabot.types.OrderType;
+import javabot.types.TechType;
+import javabot.types.UnitCommandType;
+import javabot.types.UnitSizeType;
+import javabot.types.UnitType;
+import javabot.types.UpgradeType;
+import javabot.types.WeaponType;
+import javabot.util.UnitUtils;
 
 /**
  * JNI interface for the Brood War API.

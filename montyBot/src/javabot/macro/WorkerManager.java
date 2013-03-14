@@ -111,6 +111,9 @@ public class WorkerManager extends AbstractManager {
 				if (nexusBaseWithSmallestWorkerRatio != null) {
 					nexusBaseWithSmallestWorkerRatio.addWorker(worker);
 				}
+				else {
+					unassignedWorkers.add(worker);
+				}
 			}
 		}
 		
@@ -138,7 +141,7 @@ public class WorkerManager extends AbstractManager {
 		for (NexusBase nexusBase: nexusBases) {
 			nexusBase.checkMinerals();
 			nexusBase.checkAssimilators();
-			if (unassignedWorkers.size() == 0 && allWorkers.size() < workersMaxCount) {
+			if (unassignedWorkers.size() == 0 && allWorkers.size() < workersMaxCount && !boss.getOpeningManager().isActive()) {
 				nexusBase.buildWorkers();
 			}
 			nexusBase.transferWorkers();
@@ -148,6 +151,73 @@ public class WorkerManager extends AbstractManager {
 		// Show manager debug info on the map
 		if (WORKER_MANAGER_DEBUG) {
 			drawDebugInfo();
+		}
+	}
+	
+	/**
+	 * Orders WorkerManager to build one worker unit.
+	 */
+	public void buildWorker() {
+		if (nexusBases.size() > 0) {
+			nexusBases.get(0).buildWorkers();
+		}
+	}
+	
+	/**
+	 * Free one worker nearest to x,y position from WorkerManager and returns it UnitID.
+	 * 
+	 * @param x - x-coordinate
+	 * @param y - y-coordinate
+	 * @return Returns UnitID of freed worker nearest to x,y position. If none worker is present in 
+	 * WorkerManager, it returns -1.
+	 */
+	public int getWorker(int x, int y) {
+		Position target = new Position(x, y);
+		
+		Unit nearestWorker = null;
+		Position nearestPos = new Position(-1, -1);
+		
+		for (Unit worker: allWorkers) {
+			Position currentPos = new Position(worker.getX(), worker.getY());
+			
+			if (nearestWorker == null || target.distance(currentPos) < target.distance(nearestPos)) {
+				nearestWorker = worker;
+				nearestPos = currentPos;
+			}
+		}
+		
+		if (nearestWorker != null) {
+			for (NexusBase nexusBase: nexusBases) {
+				nexusBase.deleteWorker(nearestWorker);
+			}
+			
+			return nearestWorker.getID();
+		}
+		else {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Adds worker to WorkerManager.
+	 * 
+	 * @param worker - worker instance that will be added to WorkerManager.
+	 */
+	public void addWorker(Unit worker) {
+		if (!allWorkers.contains(worker)) {
+			allWorkers.add(worker);
+		}
+		
+		for (NexusBase nexusBase: nexusBases) {
+			nexusBase.deleteWorker(worker);
+		}
+		
+		NexusBase nexusBaseWithSmallestWorkerRatio = getNexusBaseWithSmallestWorkerRatio();
+		if (nexusBaseWithSmallestWorkerRatio != null) {
+			nexusBaseWithSmallestWorkerRatio.addWorker(worker);
+		}
+		else {
+			unassignedWorkers.add(worker);
 		}
 	}
 

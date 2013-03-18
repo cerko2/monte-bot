@@ -152,6 +152,12 @@ public class UnitProductionManager extends AbstractManager{
 		if(!boss.getOpeningManager().isActive())
 			freeMode = true;
 		if(!freeMode){
+			boolean unitID = boss.getOpeningManager().nextWorker();
+			if(unitID){
+				createStackExternal.add(UnitTypes.Protoss_Probe.ordinal());
+			}
+		}
+		if(!freeMode){
 			int unitID = boss.getOpeningManager().nextUnit();
 			if(unitID >= 0)
 				createStackExternal.add(unitID);

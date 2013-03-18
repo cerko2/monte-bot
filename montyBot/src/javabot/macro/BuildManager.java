@@ -238,8 +238,10 @@ public class BuildManager extends AbstractManager{
 		
 		ArrayList<MyUnit> workerss = new ArrayList<>(workers);
 		for(MyUnit u : workerss){
-			if(u.worker.isIdle() || u.t + TIME_EXPIRES >= time)
+			if(u.worker.isIdle() || u.t + TIME_EXPIRES >= time){
 				workers.remove(u);
+				boss.getWorkerManager().addWorker(u.worker);
+			}
 		}
 		
 		restetMyCount();
@@ -395,14 +397,7 @@ public class BuildManager extends AbstractManager{
 		return ret;
 	}
 	private int getWorker(){
-		/*TODO*/ //dat doprec ked bude WM.
-		for(Unit u : game.getMyUnits()){
-			if(u.getTypeID() == UnitTypes.Protoss_Probe.ordinal()&& !isInGroup(u, workers) ){	
-				game.move(u.getID(), u.getX(),u.getY());
-				return u.getID();
-			}
-		}
-		return -1;
+		return boss.getWorkerManager().getWorker(homeX, homeY);
 	}
 //------------------------------------------------------------------------------------------
 	private double getDistance (Unit a, Point b){

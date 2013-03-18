@@ -39,6 +39,9 @@ public class WorkerManager extends AbstractManager {
 	// All workers that isn't assigned to any NexusBase
 	public ArrayList<Unit> unassignedWorkers = new ArrayList<Unit>();
 	
+	// Queued number of workerst to be built
+	int numWorkersToBuild = 0;
+	
 	/**
 	 * WorkerManager constructor.
 	 *
@@ -148,6 +151,12 @@ public class WorkerManager extends AbstractManager {
 			nexusBase.handleWorkers();
 		}
 		
+		if (numWorkersToBuild > 0) {
+			if (nexusBases.get(0).buildWorkers()) {
+				numWorkersToBuild--;
+			}
+		}
+		
 		// Show manager debug info on the map
 		if (WORKER_MANAGER_DEBUG) {
 			drawDebugInfo();
@@ -155,11 +164,15 @@ public class WorkerManager extends AbstractManager {
 	}
 	
 	/**
-	 * Orders WorkerManager to build one worker unit.
+	 * Orders WorkerManager to build worker in first Nexus. If worker cannot be built
+	 * in first Nexus, it will wait until he can build worker. Building workers can be
+	 * queued. 
 	 */
 	public void buildWorker() {
 		if (nexusBases.size() > 0) {
-			nexusBases.get(0).buildWorkers();
+			if (!nexusBases.get(0).buildWorkers()) {
+				numWorkersToBuild++;
+			}
 		}
 	}
 	
@@ -220,6 +233,17 @@ public class WorkerManager extends AbstractManager {
 			unassignedWorkers.add(worker);
 		}
 	}
+	
+	/**
+	 * Assigns resources to WorkerManager.
+	 *
+	 * @param minerals - minerals that will be added to actual manager minerals
+	 * @param gas - gas that will be added to actual manager gas
+	 */
+	public void setAddResources(int minerals, int gas) {
+		this.minerals += minerals;
+		this.gas += gas;
+	}
 
 	/**
 	 * Retrieves base with Nexus which have smallest worker ratio (count of mineral and gas workers 
@@ -239,17 +263,6 @@ public class WorkerManager extends AbstractManager {
 		}
 		
 		return base;
-	}
-	
-	/**
-	 * Assigns resources to WorkerManager.
-	 *
-	 * @param minerals - minerals that will be added to actual manager minerals
-	 * @param gas - gas that will be added to actual manager gas
-	 */
-	public void setAddResources(int minerals, int gas) {
-		this.minerals += minerals;
-		this.gas += gas;
 	}
 	
 	/**
@@ -485,20 +498,23 @@ public class WorkerManager extends AbstractManager {
 		 * Build workers if this NexusBase worker ratio is smaller than 1.0 or
 		 * if other NexusBase has worker ratio smaller than 1.0
 		 */
-		public void buildWorkers() {
-			if (/*manager.minerals >= 50 &&*/ !nexus.isTraining()) {
+		public boolean buildWorkers() {
+			if (/*manager.minerals >= 50 &&*/ !nexus.isTraining() && game.getSelf().getMinerals() >= 50) {
 				if (getWorkerRatio() < 1.0) {
 					game.train(nexus.getID(), UnitTypes.Protoss_Probe.ordinal());
+					return true;
 				}
 				else {
 					for (NexusBase nexusBase: manager.nexusBases) {
 						if (nexusBase.getWorkerRatio() < 1.0) {
 							game.train(nexus.getID(), UnitTypes.Protoss_Probe.ordinal());
-							break;
+							return true;
 						}
 					}
 				}
 			}
+			
+			return false;
 		}
 		
 		public void transferWorkers() {

@@ -105,6 +105,11 @@ public class Boss extends AbstractManager{
 	}
 	
 	public void gameUpdate(){
+		
+		if (!scouting){
+			scouting = openingManager.sendScout();
+		}
+		
 		setUnits();
 		montePlanner.update(combatUnits);
 		workerManager.update(workerUnits);

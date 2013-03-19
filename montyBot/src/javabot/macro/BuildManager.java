@@ -67,7 +67,7 @@ public class BuildManager extends AbstractManager{
 	private class MyStack{
 		int typeID = -1;
 		int jobID = -1;
-		public MyStack(int typeID){
+		public MyStack(int typeID){ /*TODO*/ 
 			this.typeID = typeID;
 			this.jobID = ++JOBS;
 		}
@@ -153,23 +153,52 @@ public class BuildManager extends AbstractManager{
 	}
 	public boolean needBuilding(int typeID){ /*TODO*/
 		if(!game.getUnitType(typeID).isBuilding()){
+			restetMyCount();
+			reControlBuilding(UnitTypes.Protoss_Nexus.ordinal());
 			if(typeID == UnitTypes.Protoss_Zealot.ordinal()) {
 				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
 			} else if(typeID == UnitTypes.Protoss_Dragoon.ordinal()) {
 				reControlBuilding(UnitTypes.Protoss_Assimilator.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
-			} else if(typeID == UnitTypes.Protoss_High_Templar.ordinal()) {} 
-			else if(typeID == UnitTypes.Protoss_Dark_Templar.ordinal()) {} 
-			else if(typeID == UnitTypes.Protoss_Shuttle.ordinal()) {} 
-			else if(typeID == UnitTypes.Protoss_Reaver.ordinal()) {} 
-			else if(typeID == UnitTypes.Protoss_Observer.ordinal()) {} 
-			else if(typeID == UnitTypes.Protoss_Scout.ordinal()) {} 
-			else if(typeID == UnitTypes.Protoss_Corsair.ordinal()) {} 
-			else if(typeID == UnitTypes.Protoss_Carrier.ordinal()) {} 
-			else if(typeID == UnitTypes.Protoss_Arbiter.ordinal()){} 
-			else if(typeID == UnitTypes.Protoss_Archon.ordinal()) {} 
-			else if(typeID == UnitTypes.Protoss_Dark_Archon.ordinal()) {} 
+			} else if(typeID == UnitTypes.Protoss_High_Templar.ordinal() || typeID == UnitTypes.Protoss_Dark_Templar.ordinal()) {
+				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Citadel_of_Adun.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Templar_Archives.ordinal());
+			} 
+			else if(typeID == UnitTypes.Protoss_Shuttle.ordinal()) {
+				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Robotics_Facility.ordinal());
+			} 
+			else if(typeID == UnitTypes.Protoss_Reaver.ordinal()) {
+				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Robotics_Facility.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Robotics_Support_Bay.ordinal());
+			} 
+			else if(typeID == UnitTypes.Protoss_Observer.ordinal()) {
+				
+			} 
+			else if(typeID == UnitTypes.Protoss_Scout.ordinal()) {
+				
+			} 
+			else if(typeID == UnitTypes.Protoss_Corsair.ordinal()) {
+				
+			} 
+			else if(typeID == UnitTypes.Protoss_Carrier.ordinal()) {
+				
+			} 
+			else if(typeID == UnitTypes.Protoss_Arbiter.ordinal()){
+				
+			} 
+			else if(typeID == UnitTypes.Protoss_Archon.ordinal()) {
+				
+			} 
+			else if(typeID == UnitTypes.Protoss_Dark_Archon.ordinal()) {
+				
+			} 
 			else {return false;}
 			return true;
 		}
@@ -177,14 +206,8 @@ public class BuildManager extends AbstractManager{
 	}
 //-----------------------------------------------------------------------------------------
 	private void reControlBuilding(int typeID){
-		if(typeID == UnitTypes.Protoss_Assimilator.ordinal()){
-			if(myCount.get(157).count <= 0 && !isInStack(157)){
-				createBuilding(typeID);
-			}	
-		}else{
-			if(myCount.get(typeID).count <= 0 && !isInStack(typeID)){
-				createBuilding(typeID);
-			}
+		if(myCount.get(typeID).count <= 0 && !isInStack(typeID)){
+			createBuilding(typeID);
 		}
 	}
 	private boolean isInStack(int typeID){
@@ -238,7 +261,7 @@ public class BuildManager extends AbstractManager{
 		
 		ArrayList<MyUnit> workerss = new ArrayList<>(workers);
 		for(MyUnit u : workerss){
-			if(u.worker.isIdle() || u.t + TIME_EXPIRES >= time){
+			if(u.worker.isIdle() || u.t + TIME_EXPIRES >= time || !isExist(u.worker.getID())){
 				workers.remove(u);
 				boss.getWorkerManager().addWorker(u.worker);
 			}
@@ -247,7 +270,7 @@ public class BuildManager extends AbstractManager{
 		restetMyCount();
 		if(!boss.getOpeningManager().isActive())
 			freeMode = true;
-		if(freeMode && game.getSelf().getSupplyTotal() < 200){
+		if(freeMode && game.getSelf().getSupplyTotal() < 400){
 			int freeSupply = getTotalSupply() - game.getSelf().getSupplyUsed();
 			if((freeSupply < SUPPLY) && !isInStack(UnitTypes.Protoss_Pylon.ordinal())){
 				createStack.add(0,new MyStack(UnitTypes.Protoss_Pylon.ordinal()));
@@ -260,6 +283,12 @@ public class BuildManager extends AbstractManager{
 		
 		myPlan();
 		buildStack();
+	}
+	private boolean isExist(int id) {
+		for(Unit u : game.getMyUnits())
+			if(u.getID() == id)
+				return true;
+		return false;
 	}
 	private void myPlan(){
 		resetMyPlan();
@@ -321,14 +350,13 @@ public class BuildManager extends AbstractManager{
 		}
 	}
 	private boolean build(int typeID,int jobID){
-		int workerID = getWorker();
+		Point targer = getBuildTile(typeID, homeX, homeY);
+		targer.x *= 32;
+		targer.y *= 32;
+		int workerID = getWorker(targer.x,targer.y);
 		Unit workerUnit = getUnit(workerID);
-
 		if(workerID != -1 && workerUnit != null){
 			workers.add(new MyUnit(workerUnit, jobID));
-			Point targer = getBuildTile(workerID, typeID, homeX, homeY);
-			targer.x *= 32;
-			targer.y *= 32;
 			if(targer.x >= 0){
 				if(getDistance(workerUnit, targer) < 256){
 					game.build(workerID, (int) targer.x / 32, (int) targer.y / 32, typeID);
@@ -342,7 +370,7 @@ public class BuildManager extends AbstractManager{
 		}
 		return false;
 	}
-	private Point getBuildTile(int builderID, int buildingTypeID, int x, int y) {
+	private Point getBuildTile(int buildingTypeID, int x, int y) {
 		Point ret = new Point(-1, -1);
 		int maxDist = 3;
 		int stopDist = 40;
@@ -361,31 +389,16 @@ public class BuildManager extends AbstractManager{
 		while ((maxDist < stopDist) && (ret.x == -1)) {
 			for (int i=tileX-maxDist; i<=tileX+maxDist; i++) {
 				for (int j=tileY-maxDist; j<=tileY+maxDist; j++) {
-					if (game.canBuildHere(builderID, i, j, buildingTypeID, false)) {
+					if (game.canBuildHere(-1, i, j, buildingTypeID, false)) {
 						// units that are blocking the tile
 						boolean unitsInWay = false;
 						for (Unit u : game.getAllUnits()) {
-							if (u.getID() == builderID) continue;
 							if ((Math.abs(u.getTileX()-i) < 4) && (Math.abs(u.getTileY()-j) < 4)) unitsInWay = true;
 						}
 						if (!unitsInWay) {
 							ret.x = i; ret.y = j;
 							return ret;
 						}
-						/*
-						// creep for Zerg (this may not be needed - not tested yet)
-						if (game.getUnitType(buildingTypeID).isRequiresCreep()) {
-							boolean creepMissing = false;
-							for (int k=i; k<=i+game.getUnitType(buildingTypeID).getTileWidth(); k++) {
-								for (int l=j; l<=j+game.getUnitType(buildingTypeID).getTileHeight(); l++) {
-									if (!game.hasCreep(k, l)) creepMissing = true;
-									break;
-								}
-							}
-							if (creepMissing) continue; 
-						}
-						*/
-						// psi power for Protoss (this seems to work out of the box)
 						if (game.getUnitType(buildingTypeID).isRequiresPsi()) {}
 					}
 				}
@@ -396,8 +409,8 @@ public class BuildManager extends AbstractManager{
 		if (ret.x == -1) game.printText("Unable to find suitable build position for "+game.getUnitType(buildingTypeID).getName());
 		return ret;
 	}
-	private int getWorker(){
-		return boss.getWorkerManager().getWorker(homeX, homeY);
+	private int getWorker(int x,int y){
+		return boss.getWorkerManager().getWorker(x, y);
 	}
 //------------------------------------------------------------------------------------------
 	private double getDistance (Unit a, Point b){
@@ -463,7 +476,6 @@ public class BuildManager extends AbstractManager{
 			}
 			if(createStack.isEmpty())
 				game.drawText(new Point(ww,20),"-1 : empty", true);
-			
 			for(Unit u : game.getMyUnits()){
 				if(game.getUnitType(u.getTypeID()).isBuilding()){
 					int tileWidth = game.getUnitType(u.getTypeID()).getTileWidth();
@@ -483,16 +495,7 @@ public class BuildManager extends AbstractManager{
 			for(MyUnit u : workers){
 				game.drawCircle(u.worker.getX(),u.worker.getY(), 16, BWColor.RED, false, false);
 			}
-
-			/*
-			for(int i = 0 ; i < game.getMap().getWidth();i++){
-				for(int j = 0 ; j < game.getMap().getHeight();j++){
-					if((i-7) % 18 == 0 && (j-6) % 12 == 0)
-						game.drawBox(i*32,j*32, (i+4)*32, (j+2)*32, BWColor.ORANGE, false, false);
-	
-				}
-			}
-			*/
+			
 			
 		}
 	}	

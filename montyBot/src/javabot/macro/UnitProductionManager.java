@@ -188,6 +188,7 @@ public class UnitProductionManager extends AbstractManager{
 		while (!createStackExternal.isEmpty() && minerals > 0 && createExternal) {
 			int typeID = createStackExternal.get(0);
 			createExternal = productionUnit(typeID);
+		
 			if(createExternal) // ak ju dalo stavat tak vyraz
 				createStackExternal.remove(0);
 		}	
@@ -276,7 +277,7 @@ public class UnitProductionManager extends AbstractManager{
 		}
 	}
 	private boolean productionArchon(int typeID){
-		 //TODO zavolat bosa nech vytvory unit.
+		 //TODO zavolat MC nech vytvory unit.
 		return true;
 	}
 	private Unit findBuilding(int building){

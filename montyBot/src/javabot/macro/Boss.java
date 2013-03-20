@@ -110,6 +110,7 @@ public class Boss extends AbstractManager{
 		addManager(buildManager);			// azder
 		addManager(unitProductionManager);	// azder
 		addManager(armyCompositionManager);
+		addManager(scoutManager);
 	}
 	
 	public void gameStarted(){
@@ -119,7 +120,6 @@ public class Boss extends AbstractManager{
 	}
 	
 	public void gameUpdate(){
-		
 		if (!scouting){
 			scouting = openingManager.sendScout();
 		}

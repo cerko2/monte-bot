@@ -152,6 +152,12 @@ public class UnitProductionManager extends AbstractManager{
 		if(!boss.getOpeningManager().isActive())
 			freeMode = true;
 		if(!freeMode){
+			boolean unitID = boss.getOpeningManager().nextWorker();
+			if(unitID){
+				createStackExternal.add(UnitTypes.Protoss_Probe.ordinal());
+			}
+		}
+		if(!freeMode){
 			int unitID = boss.getOpeningManager().nextUnit();
 			if(unitID >= 0)
 				createStackExternal.add(unitID);
@@ -169,8 +175,9 @@ public class UnitProductionManager extends AbstractManager{
 				productionUnit(typeID);
 			}
 			for(int i =0 ; i < numArmy;i++){
-				if(rateArmy.get(i) > 0)
+				if(rateArmy.get(i) > 0){
 					boss.getBuildManager().needBuilding(InternalID_To_UnitTypeID(i));
+				}
 			}
 		}
 		useBuilding = new ArrayList<Unit>();
@@ -181,6 +188,7 @@ public class UnitProductionManager extends AbstractManager{
 		while (!createStackExternal.isEmpty() && minerals > 0 && createExternal) {
 			int typeID = createStackExternal.get(0);
 			createExternal = productionUnit(typeID);
+		
 			if(createExternal) // ak ju dalo stavat tak vyraz
 				createStackExternal.remove(0);
 		}	
@@ -256,7 +264,7 @@ public class UnitProductionManager extends AbstractManager{
 		}
 		
 	}
-//---------->>
+//---------->>""
 	private boolean productionUnit(int typeID){
 		if(typeID == UnitTypes.Protoss_Archon.ordinal()||typeID == UnitTypes.Protoss_Dark_Archon.ordinal()){	
 			return productionArchon(typeID);
@@ -269,7 +277,7 @@ public class UnitProductionManager extends AbstractManager{
 		}
 	}
 	private boolean productionArchon(int typeID){
-		 //TODO zavolat bosa nech vytvory unit.
+		 //TODO zavolat MC nech vytvory unit.
 		return true;
 	}
 	private Unit findBuilding(int building){

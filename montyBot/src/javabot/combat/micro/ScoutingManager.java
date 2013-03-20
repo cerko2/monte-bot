@@ -53,6 +53,7 @@ public class ScoutingManager extends AbstractManager{
 		this.map = game.getMap();
 		mapGrid = MapGrid.getInstance();
 		
+		myUnits = new HashSet<Unit>();
 		baseScoutOrder = new ArrayList<BaseLocation>();
 		groundThreats = new ArrayList<Threat>();
 		airThreats = new ArrayList<Threat>();
@@ -390,7 +391,7 @@ public class ScoutingManager extends AbstractManager{
 	}
 	
 	public void setUnits(HashSet<Unit> units){
-		myUnits = units;
+		myUnits = new HashSet<Unit>(units);
 	}
 	
 	public HashSet<Unit> getUnits(){

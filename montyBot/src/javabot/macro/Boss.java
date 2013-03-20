@@ -3,6 +3,7 @@ package javabot.macro;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Vector;
 
 import javabot.AbstractManager;
@@ -52,7 +53,7 @@ public class Boss extends AbstractManager{
 	private ArrayList<Unit> validUnits;
 	private ArrayList<Unit> combatUnits;
 	private ArrayList<Unit> workerUnits;
-	private ArrayList<Unit> scoutUnits;
+	private HashSet<Unit> scoutUnits;
 	private ArrayList<Unit> assignedUnits;
 	
 	private ArrayList<Unit> productionBuildings;
@@ -81,7 +82,7 @@ public class Boss extends AbstractManager{
 		
 		validUnits = new ArrayList<Unit>();
 		combatUnits = new ArrayList<Unit>();
-		scoutUnits = new ArrayList<Unit>();
+		scoutUnits = new HashSet<Unit>();
 		workerUnits = new ArrayList<Unit>();
 		assignedUnits = new ArrayList<Unit>();
 		
@@ -190,18 +191,28 @@ public class Boss extends AbstractManager{
 	private void setScoutUnits(){
 		scoutUnits.clear();
 		
-		if (scouting){
-			for (Unit unit : validUnits){
-				if (!assignedUnits.contains(unit) 
-						&& (game.getUnitType(unit.getTypeID()).isWorker()
-								|| unit.getTypeID() == UnitTypes.Protoss_Observer.ordinal()))
-				{
-					scoutUnits.add(unit);
-					assignedUnits.add(unit);
-					break;
+		for (Unit unit : scoutManager.getUnits()){
+			if (unit.isExists()){
+				scoutUnits.add(unit);
+			}
+		}
+		
+		if (scoutUnits.isEmpty()){
+			if (scouting){
+				for (Unit unit : validUnits){
+					if (!assignedUnits.contains(unit) 
+							&& (game.getUnitType(unit.getTypeID()).isWorker()
+									|| unit.getTypeID() == UnitTypes.Protoss_Observer.ordinal()))
+					{
+						scoutUnits.add(unit);
+						assignedUnits.add(unit);
+						break;
+					}
 				}
 			}
 		}
+		
+		scoutManager.setUnits(scoutUnits);
 	}
 	
 	private void setCombatUnits(){
@@ -266,6 +277,7 @@ public class Boss extends AbstractManager{
 	private void setBuildings() {
 		productionBuildings.clear();
 		buildingTypeCounts.clear();
+		nexuses.clear();
 		
 		UnitType type = null;
 		for (Unit unit : validUnits){

@@ -1,5 +1,6 @@
 package javabot.macro;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,9 +20,9 @@ public class WorkerManager extends AbstractManager {
 	
 	private final boolean WORKER_MANAGER_DEBUG = true;
 	
-	private final double workersPerMineralField = 2.0;
-	private final double workersPerGeyser = 3.0;
-	private final int workersMaxCount = 60;
+	private final double maxWorkersPerMineralField = 2.3;
+	private final double maxWorkersPerGeyser = 3.0;
+	private final int maxWorkersCount = 70;
 	
 	private Boss boss;
 	private JNIBWAPI game;
@@ -111,8 +112,15 @@ public class WorkerManager extends AbstractManager {
 				allWorkers.add(worker);
 				
 				NexusBase nexusBaseWithSmallestWorkerRatio = getNexusBaseWithSmallestWorkerRatio();
-				if (nexusBaseWithSmallestWorkerRatio != null) {
-					nexusBaseWithSmallestWorkerRatio.addWorker(worker);
+				NexusBase nearestNexusBase = getNearestNexusBase(new Position(worker.getX(), worker.getY()));
+				
+				if (nexusBaseWithSmallestWorkerRatio != null && nearestNexusBase != null) {
+					if (Math.abs(nexusBaseWithSmallestWorkerRatio.getWorkerRatio() - nearestNexusBase.getWorkerRatio()) <= 0.15 && nearestNexusBase.getWorkerRatio() < 1.0) {
+						nearestNexusBase.addWorker(worker);
+					}
+					else {
+						nexusBaseWithSmallestWorkerRatio.addWorker(worker);
+					}
 				}
 				else {
 					unassignedWorkers.add(worker);
@@ -124,8 +132,16 @@ public class WorkerManager extends AbstractManager {
 			Unit worker = unassignedWorkers.get(0);
 			
 			NexusBase nexusBaseWithSmallestWorkerRatio = getNexusBaseWithSmallestWorkerRatio();
-			if (nexusBaseWithSmallestWorkerRatio != null) {
-				nexusBaseWithSmallestWorkerRatio.addWorker(worker);
+			NexusBase nearestNexusBase = getNearestNexusBase(new Position(worker.getX(), worker.getY()));
+			
+			if (nexusBaseWithSmallestWorkerRatio != null && nearestNexusBase != null) {
+				if (Math.abs(nexusBaseWithSmallestWorkerRatio.getWorkerRatio() - nearestNexusBase.getWorkerRatio()) <= 0.15 && nearestNexusBase.getWorkerRatio() < 1.0) {
+					nearestNexusBase.addWorker(worker);
+				}
+				else {
+					nexusBaseWithSmallestWorkerRatio.addWorker(worker);
+				}
+				
 				unassignedWorkers.remove(worker);
 			}
 		}
@@ -137,6 +153,10 @@ public class WorkerManager extends AbstractManager {
 				for (NexusBase nexusBase: nexusBases) {
 					nexusBase.deleteWorker(worker);
 				}
+				
+				allWorkers.remove(worker);
+				unassignedWorkers.remove(worker);
+				break;
 			}
 		}
 
@@ -144,10 +164,9 @@ public class WorkerManager extends AbstractManager {
 		for (NexusBase nexusBase: nexusBases) {
 			nexusBase.checkMinerals();
 			nexusBase.checkAssimilators();
-			if (unassignedWorkers.size() == 0 && allWorkers.size() < workersMaxCount && !boss.getOpeningManager().isActive()) {
+			if (unassignedWorkers.size() == 0 && getWorkersNumIsTraining() + allWorkers.size() < maxWorkersCount && !boss.getOpeningManager().isActive()) {
 				nexusBase.buildWorkers();
 			}
-			nexusBase.transferWorkers();
 			nexusBase.handleWorkers();
 		}
 		
@@ -156,6 +175,10 @@ public class WorkerManager extends AbstractManager {
 				numWorkersToBuild--;
 			}
 		}
+		
+		// Transfer worker from base with largest worker ratio to base with smallest
+		// worker ratio
+		transferWorker();
 		
 		// Show manager debug info on the map
 		if (WORKER_MANAGER_DEBUG) {
@@ -248,8 +271,7 @@ public class WorkerManager extends AbstractManager {
 	/**
 	 * Retrieves base with Nexus which have smallest worker ratio (count of mineral and gas workers 
 	 * to max mineral and gas workers that this base at most can have).
-	 *
-	 * @param units - units assigned to worker manager
+	 * 
 	 * @return NexusBase instance with smallest worker ratio
 	 */
 	private NexusBase getNexusBaseWithSmallestWorkerRatio() {
@@ -257,8 +279,11 @@ public class WorkerManager extends AbstractManager {
 		double ratio = Double.MAX_VALUE;
 		
 		for (NexusBase nexusBase: nexusBases) {
-			if (base == null || nexusBase.getWorkerRatio() < ratio) {
+			double currentRatio = nexusBase.getWorkerRatio();
+			
+			if (base == null || currentRatio < ratio) {
 				base = nexusBase;
+				ratio = currentRatio;
 			}
 		}
 		
@@ -266,14 +291,128 @@ public class WorkerManager extends AbstractManager {
 	}
 	
 	/**
+	 * Retrieves base with Nexus which have largest worker ratio (count of mineral and gas workers 
+	 * to max mineral and gas workers that this base at most can have).
+
+	 * @return NexusBase instance with smallest worker ratio
+	 */
+	private NexusBase getNexusBaseWithLargestWorkerRatio() {
+		NexusBase base = null;
+		double ratio = Double.MIN_VALUE;
+		
+		for (NexusBase nexusBase: nexusBases) {
+			double currentRatio = nexusBase.getWorkerRatio();
+			
+			if (base == null || currentRatio > ratio) {
+				base = nexusBase;
+				ratio = currentRatio;
+			}
+		}
+		
+		return base;
+	}
+	
+	/**
+	 * Retrieves max number of workers that can be build in all bases to 
+	 * maximum effectiveness.
+
+	 * @return number of workers.
+	 */
+	private int getMaxAllWorkers() {
+		int result = 0;
+		
+		for (NexusBase nexusBase: nexusBases) {
+			result += nexusBase.getMaxAllWorkers();
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Retrieves number of workers that is currently building in all Nexuses.
+
+	 * @return number of workers.
+	 */
+	private int getWorkersNumIsTraining() {
+		int result = 0;
+		
+		for (NexusBase nexusBase: nexusBases) {
+			result += nexusBase.nexus.isTraining() ? 1 : 0;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Retrieves number of workers that can be build.
+
+	 * @return number of workers.
+	 */
+	public int getWorkersNumToBuild() {
+		return getMaxAllWorkers() - (getWorkersNumIsTraining() + allWorkers.size());
+	}
+	
+	/**
+	 * Transfers worker from base with smallest worker ratio to base with largest 
+	 * worker ratio.
+	 * 
+	 * @return number of workers.
+	 */
+	private void transferWorker() {
+		NexusBase smallest = getNexusBaseWithSmallestWorkerRatio();
+		NexusBase largest = getNexusBaseWithLargestWorkerRatio();
+		
+		if (smallest != null && largest != null && smallest != largest && largest.getWorkerRatio() - smallest.getWorkerRatio() >= 0.15) {
+			Unit worker = largest.getWorker();
+			
+			if (worker != null) {
+				largest.deleteWorker(worker);
+				smallest.addWorker(worker);
+			}
+		}
+	}
+	
+	/**
+	 * Transfers worker from base with smallest worker ratio to base with largest 
+	 * worker ratio.
+	 * 
+	 * @return number of workers.
+	 */
+	public NexusBase getNearestNexusBase(Position pos) {
+		NexusBase nearest = null;
+		Position posNearest = new Position(-1,-1);
+		
+		for (NexusBase nexusBase: nexusBases) {
+			Position posCurrent = new Position(nexusBase.nexus.getX(), nexusBase.nexus.getY());
+			
+			if (nearest == null || posCurrent.distance(pos) < posNearest.distance(pos)) {
+				nearest = nexusBase;
+				posNearest = posCurrent;
+			}
+		}
+		
+		return nearest;
+	}
+	
+	/**
 	 * Draws on map manager debug information.
 	 */
 	private void drawDebugInfo() {
+		DecimalFormat df = new DecimalFormat("#.##");
+		
+		String debug = "";
+		debug += "work: " + allWorkers.size();
+		debug += "  un. work: " + unassignedWorkers.size();
+		debug += "  ratio: ";
+		
+		int i = 1;
 		for (NexusBase nexusBase: nexusBases) {
 			nexusBase.drawDebugInfo();
+			debug += (i > 1 ? ", " : "") + df.format(nexusBase.getWorkerRatio());
+			i++;
 		}
 		
-		game.drawText(4, 32, "Unassigned workers: " + unassignedWorkers.size(), true);
+		game.drawText(6, 48, debug, true);
 	}
 	
 	
@@ -337,9 +476,6 @@ public class WorkerManager extends AbstractManager {
 					}
 				}
 			}
-			else {
-				// TODO
-			}
 		}
 		
 		/**
@@ -358,7 +494,7 @@ public class WorkerManager extends AbstractManager {
 				for (Map.Entry<Unit, ArrayList<Unit>> assimilator: assimilators.entrySet()) {
 					ArrayList<Unit> workers = assimilator.getValue();
 					
-					if (workers.size() < manager.workersPerGeyser) {
+					if (workers.size() < manager.maxWorkersPerGeyser) {
 						workers.add(worker);
 						break;
 					}
@@ -371,7 +507,7 @@ public class WorkerManager extends AbstractManager {
 				Position nexusPos = new Position(nexus.getX(), nexus.getY());
 				Position posNearest = new Position(-1,-1);
 				
-				for (int maxWorkers = 0; maxWorkers < Math.ceil(workersPerMineralField); maxWorkers++) {
+				for (int maxWorkers = 0; maxWorkers < Math.ceil(maxWorkersPerMineralField); maxWorkers++) {
 					for (Map.Entry<Unit, ArrayList<Unit>> mineral: minerals.entrySet()) {
 						Position posCurrent = new Position(mineral.getKey().getX(), mineral.getKey().getY());
 						
@@ -431,6 +567,23 @@ public class WorkerManager extends AbstractManager {
 						break;
 					}
 				}
+			}
+		}
+		
+		/**
+		 * Get one worker unit from NexusBase.
+		 *
+		 * @return worker unit
+		 */
+		public Unit getWorker() {
+			if (mineralWorkers.size() > 0) {
+				return mineralWorkers.get(0);
+			}
+			else if (gasWorkers.size() > 0) {
+				return gasWorkers.get(0);
+			}
+			else {
+				return null;
 			}
 		}
 		
@@ -500,13 +653,13 @@ public class WorkerManager extends AbstractManager {
 		 */
 		public boolean buildWorkers() {
 			if (/*manager.minerals >= 50 &&*/ !nexus.isTraining() && game.getSelf().getMinerals() >= 50) {
-				if (getWorkerRatio() < 1.0) {
+				if (getWorkerRatio() < 1.0 && manager.getWorkersNumToBuild() > 0) {
 					game.train(nexus.getID(), UnitTypes.Protoss_Probe.ordinal());
 					return true;
 				}
 				else {
 					for (NexusBase nexusBase: manager.nexusBases) {
-						if (nexusBase.getWorkerRatio() < 1.0) {
+						if (nexusBase.getWorkerRatio() < 1.0 && manager.getWorkersNumToBuild() > 0) {
 							game.train(nexus.getID(), UnitTypes.Protoss_Probe.ordinal());
 							return true;
 						}
@@ -515,10 +668,6 @@ public class WorkerManager extends AbstractManager {
 			}
 			
 			return false;
-		}
-		
-		public void transferWorkers() {
-			
 		}
 		
 		/**
@@ -549,7 +698,7 @@ public class WorkerManager extends AbstractManager {
 		}
 		
 		public int getMaxMineralWorkers() {
-			return (int)(minerals.size() * workersPerMineralField);
+			return (int)(minerals.size() * maxWorkersPerMineralField);
 		}
 		
 		public int getCountGasWorkers() {
@@ -557,9 +706,12 @@ public class WorkerManager extends AbstractManager {
 		}
 		
 		public int getMaxGasWorkers() {
-			return (int)(assimilators.size() * workersPerGeyser);
+			return (int)(assimilators.size() * maxWorkersPerGeyser);
 		}
 		
+		public int getMaxAllWorkers() {
+			return getMaxMineralWorkers() + getMaxGasWorkers();
+		}
 		public double getWorkerRatio() {
 			return (double)(getCountMineralWorkers() + getCountGasWorkers()) / (double)(getMaxMineralWorkers() + getMaxGasWorkers());
 		}

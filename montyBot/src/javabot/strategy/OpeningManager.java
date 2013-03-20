@@ -1,6 +1,7 @@
 package javabot.strategy;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
@@ -218,19 +219,22 @@ public class OpeningManager extends AbstractManager{
 	}
 	
 	private void setOpening(){
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		/*
 		int enemyRace = game.getEnemies().get(0).getRaceID();
 		ArrayList<Integer> possibleOpeningListsIDs = getOpeningLists(enemyRace);
 		//TODO vyberat podla statistiky, opponent knowledge base managera atd..
-		Random r = new Random();
-		int index = r.nextInt(possibleOpeningListsIDs.size() - 1);
+		int index;
+		
+		if (possibleOpeningListsIDs.size() - 1 == 0){
+			index = 0;
+		}
+		else{
+			Random r = new Random();
+			index = r.nextInt(possibleOpeningListsIDs.size() - 1);
+		}
+		
 		OpeningList ol = allOpeningLists.get(index); 
 		openingList = ol.getSelf();
 		game.printText("Bol zvolený opening: " + ol.getName());
-		*/
 	}	
 	
 	/*
@@ -408,6 +412,8 @@ public class OpeningManager extends AbstractManager{
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 15, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
 		aol.add(ol);
+		
+		allOpeningLists = aol;
 	}
 	
 //------------------------------------ only testing ----------------------------------------
@@ -457,6 +463,7 @@ class OpeningList{
 	public OpeningList(String name, int againstRace){
 		this.name = name;
 		this.againstRace = againstRace;
+		self = new ArrayList<OpeningTask>();
 	}
 	
 	public void add(OpeningTask o){

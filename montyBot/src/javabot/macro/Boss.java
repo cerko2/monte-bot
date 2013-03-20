@@ -2,6 +2,8 @@ package javabot.macro;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Vector;
 
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
@@ -52,6 +54,11 @@ public class Boss extends AbstractManager{
 	private ArrayList<Unit> scoutUnits;
 	private ArrayList<Unit> assignedUnits;
 	
+	private ArrayList<Unit> productionBuildings;
+	private ArrayList<Unit> nexuses;
+	
+	private HashMap<Integer, Integer> buildingTypeCounts;
+	
 	private boolean scouting;
 	
 	public int minerals;
@@ -59,10 +66,10 @@ public class Boss extends AbstractManager{
 	
 	public int workerMinerals;
 	public int monteCarloMinerals;
-	public int BuildManagerMinerals;
-	public int BuildManagerGas;
-	public int UnitProductionMinerals;
-	public int UnitProductionGas;
+	public int buildManagerMinerals;
+	public int buildManagerGas;
+	public int unitProductionMinerals;
+	public int unitProductionGas;
 	
 	public Boss (JNIBWAPI game){
 		this.game = game;
@@ -70,8 +77,6 @@ public class Boss extends AbstractManager{
 	}
 	
 	public void initialize(){
-		montePlanner = new MonteCarloPlanner();
-		workerManager = new WorkerManager(this);
 		
 		validUnits = new ArrayList<Unit>();
 		combatUnits = new ArrayList<Unit>();
@@ -79,12 +84,19 @@ public class Boss extends AbstractManager{
 		workerUnits = new ArrayList<Unit>();
 		assignedUnits = new ArrayList<Unit>();
 		
+		productionBuildings = new ArrayList<Unit>();
+		nexuses = new ArrayList<Unit>();
+		
+		buildingTypeCounts = new HashMap<Integer, Integer>();
+		
 		//subordinate initialization
 		buildManager = new  BuildManager(this);
+		montePlanner = new MonteCarloPlanner();
 		openingManager = new OpeningManager(game);
 		opponentPositioning = new OpponentPositioning(game);
 		scoutManager = new ScoutingManager(game);
 		wallInModule = new WallInModule(game);
+		workerManager = new WorkerManager(this);
 		unitProductionManager = new UnitProductionManager(this); 
 		
 		opponentModeling = new OpponentModeling(game, opponentPositioning);
@@ -129,6 +141,7 @@ public class Boss extends AbstractManager{
 		setScoutUnits();
 		setCombatUnits();
 		setWorkerUnits();
+		setBuildings();
 	}
 	
 	private void setValidUnits(){
@@ -249,12 +262,111 @@ public class Boss extends AbstractManager{
 		}
 	}
 	
+	private void setBuildings() {
+		productionBuildings.clear();
+		buildingTypeCounts.clear();
+		
+		UnitType type = null;
+		for (Unit unit : validUnits){
+			type = game.getUnitType(unit.getTypeID());
+			
+			if (type.isBuilding()){
+				int buildingTypeCount = 0;
+				if (buildingTypeCounts.containsKey(type.getID())){
+					buildingTypeCount = buildingTypeCounts.get(type.getID());
+				}
+				buildingTypeCount++;
+				buildingTypeCounts.put(type.getID(), buildingTypeCount);
+				
+				if (isProductionBuilding(type)){
+					productionBuildings.add(unit);
+				}
+				else if (type.getID() == UnitTypes.Protoss_Nexus.ordinal()){
+					nexuses.add(unit);
+				}
+			}
+		}
+	}
+	
+	private boolean isProductionBuilding(UnitType type){
+		if (type.getID() == UnitTypes.Protoss_Gateway.ordinal()
+				|| type.getID() == UnitTypes.Protoss_Stargate.ordinal()
+				|| type.getID() == UnitTypes.Protoss_Robotics_Facility.ordinal())
+		{
+			return true;
+		}
+		return false;
+	}
+	
 	private boolean shouldDefendWithWorkers(){
 		return false;
 	}
 	
 	private void divideResources(){
 		
+		if (openingManager.isActive()){
+			buildManagerMinerals = minerals;
+			buildManagerGas = gas;
+			return;
+		}
+		
+		int idleNexusCount = 0;
+		for (Unit unit : nexuses){
+			if (unit.isIdle()){
+				idleNexusCount++;
+			}
+		}
+		
+		workerMinerals = idleNexusCount * 50;
+		
+		Vector<Integer> buildQueue = buildManager.getConstructionPlans();
+		UnitType buildingType = game.getUnitType(buildQueue.get(0));
+		//if its tech building we dont have yet its high prio
+		if (isTechBuilding(buildingType) 
+				&& buildingTypeCounts.get(buildingType.getID()) == 0
+			)
+		{
+			buildManagerMinerals = buildingType.getMineralPrice();
+			buildManagerGas = buildingType.getGasPrice();
+			
+			minerals -= buildManagerMinerals;
+			gas -= buildManagerGas;
+		}
+		
+		boolean prodBuildingIdle = false;
+		
+		for (Unit unit : productionBuildings){
+			if (unit.isIdle()){
+				prodBuildingIdle = true;
+				break;
+			}
+		}
+		
+		if (prodBuildingIdle){
+			unitProductionMinerals = minerals;
+			unitProductionGas = gas;
+		}
+		else {
+			buildManagerMinerals += minerals;;
+			buildManagerGas += gas;
+		}
+		
+	}
+	
+	private boolean isTechBuilding(UnitType type){
+		if (type.getID() == UnitTypes.Protoss_Cybernetics_Core.ordinal()
+				|| type.getID() == UnitTypes.Protoss_Forge.ordinal()
+				|| type.getID() == UnitTypes.Protoss_Robotics_Facility.ordinal()
+				|| type.getID() == UnitTypes.Protoss_Robotics_Support_Bay.ordinal()
+				|| type.getID() == UnitTypes.Protoss_Citadel_of_Adun.ordinal()
+				|| type.getID() == UnitTypes.Protoss_Templar_Archives.ordinal()
+				|| type.getID() == UnitTypes.Protoss_Stargate.ordinal()
+				|| type.getID() == UnitTypes.Protoss_Fleet_Beacon.ordinal()
+			)
+		{
+			return true;
+		}
+		return false;
 	}
 	
 	public BuildManager getBuildManager() {

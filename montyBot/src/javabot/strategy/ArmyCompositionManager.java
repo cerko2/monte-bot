@@ -22,7 +22,12 @@ public class ArmyCompositionManager extends AbstractManager {
 	private OpponentPositioning opponentPositioningManager;
 	private OpponentModeling opponentModellingManager;
 	private ArrayList<String> casesFromFile;	// tu je pole casov nacitanych zo suboru vo funkcii gameStarted()
+	
+	private ArmyComposition currentComposition = new ArmyComposition("100;Zealot");
 
+	public ArmyComposition getDesiredArmyComposition() {
+		return this.currentComposition;
+	}
 	
 	private boolean isRelevantType(int typeID) {
 		if (
@@ -86,7 +91,7 @@ public class ArmyCompositionManager extends AbstractManager {
 	
 	// GameUpdate event
 	public void gameUpdate() {
-		if (bwapi.getFrameCount() % 34 == 0) {
+		if (bwapi.getFrameCount() % 97 == 0) {
 			
 			// Create an object for enemy army composition 
 			
@@ -113,6 +118,9 @@ public class ArmyCompositionManager extends AbstractManager {
 			
 				ArmyComposition enemyArmy = new ArmyComposition(enemyStr);
 				ArmyComposition ourResponse = getArmyComposition(enemyArmy);
+				
+				// update our remembered composition
+				this.currentComposition = ourResponse;
 				
 				// order the composition from Unit Production Manager
 				ArrayList<Double> order = new ArrayList<>();
@@ -160,6 +168,7 @@ public class ArmyCompositionManager extends AbstractManager {
 	
 	// Eventy (volane napriklad na zaciatku hry alebo na kazdom frame):
 	public void gameStarted() {
+		
 		// Tu sa nacitaju zo suboru vsetky casy do premennej casesFromFile
 		this.casesFromFile = new ArrayList<String>();
 
@@ -180,7 +189,6 @@ public class ArmyCompositionManager extends AbstractManager {
 		}
 		
 	}
-	
 	
 	public ArmyComposition getArmyComposition (ArmyComposition a){
 		

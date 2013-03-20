@@ -477,7 +477,7 @@ public class Boss extends AbstractManager{
 
 			// Draw our home position and chokes
 			if (home != null) {
-				game.drawText(new Point(5,0), "Our home position: "+String.valueOf(home.getCenterX())+","+String.valueOf(home.getCenterY()), true);
+				game.drawText(new Point(5,0), "Army Composition: "+String.valueOf(armyCompositionManager.getDesiredArmyComposition().getString(game)), true);
 				game.drawText(new Point(5,14), "Map: "+game.getMap().getName(), true);
 
 				// chokepoints and center of the home Region

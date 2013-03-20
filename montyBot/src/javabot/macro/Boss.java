@@ -320,6 +320,11 @@ public class Boss extends AbstractManager{
 		workerMinerals = idleNexusCount * 50;
 		
 		Vector<Integer> buildQueue = buildManager.getConstructionPlans();
+		
+		if (buildQueue.isEmpty()){
+			return;
+		}
+		
 		UnitType buildingType = game.getUnitType(buildQueue.get(0));
 		//if its tech building we dont have yet its high prio
 		if (isTechBuilding(buildingType) 

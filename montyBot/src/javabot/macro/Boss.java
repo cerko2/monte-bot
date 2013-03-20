@@ -28,6 +28,7 @@ public class Boss extends AbstractManager{
 	public static final boolean BOSS_DEBUG = true;
 	public static final boolean WALLIN_DEBUG = true;
 	public static final boolean OPPONENT_POSITIONING_DEBUG = true;
+	public static final boolean RESOURCE_DEBUG = true;
 	
 	private Region home; // Needed only for DEBUGGING (miso certikcy)
 	
@@ -303,6 +304,10 @@ public class Boss extends AbstractManager{
 	}
 	
 	private void divideResources(){
+		buildManagerMinerals = 0;
+		buildManagerGas = 0;
+		unitProductionMinerals = 0;
+		unitProductionGas = 0;
 		
 		if (openingManager.isActive()){
 			buildManagerMinerals = minerals;
@@ -321,21 +326,19 @@ public class Boss extends AbstractManager{
 		
 		Vector<Integer> buildQueue = buildManager.getConstructionPlans();
 		
-		if (buildQueue.isEmpty()){
-			return;
-		}
-		
-		UnitType buildingType = game.getUnitType(buildQueue.get(0));
-		//if its tech building we dont have yet its high prio
-		if (isTechBuilding(buildingType) 
-				&& buildingTypeCounts.get(buildingType.getID()) == 0
-			)
-		{
-			buildManagerMinerals = buildingType.getMineralPrice();
-			buildManagerGas = buildingType.getGasPrice();
-			
-			minerals -= buildManagerMinerals;
-			gas -= buildManagerGas;
+		if (!buildQueue.isEmpty()){
+			UnitType buildingType = game.getUnitType(buildQueue.get(0));
+			//if its tech building we dont have yet its high prio
+			if (isTechBuilding(buildingType) 
+					&& buildingTypeCounts.get(buildingType.getID()) == null
+				)
+			{
+				buildManagerMinerals = buildingType.getMineralPrice();
+				buildManagerGas = buildingType.getGasPrice();
+				
+				minerals -= buildManagerMinerals;
+				gas -= buildManagerGas;
+			}
 		}
 		
 		boolean prodBuildingIdle = false;
@@ -499,6 +502,14 @@ public class Boss extends AbstractManager{
 					game.drawText(new Point(unit.getX()+4, unit.getY()+2), type.getName(), false);
 				}
 			}
+		}
+		
+		if (RESOURCE_DEBUG){
+			game.drawText(10, 100,"buildManagerMinerals: " + buildManagerMinerals, true);
+			game.drawText(10, 115,"buildManagerGas: " + buildManagerGas, true);
+			game.drawText(10, 130,"unitProductionMinerals: " + unitProductionMinerals, true);
+			game.drawText(10, 145,"unitProductionGas: " + unitProductionGas, true);
+			game.drawText(10, 160,"workerMinerals: " + workerMinerals, true);
 		}
 	}
 }

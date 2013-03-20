@@ -139,8 +139,8 @@ public class UnitProductionManager extends AbstractManager{
 //-----------------------------------------------------------------------------------------
 	private void setSettings(){
 		if(boss != null){
-			this.minerals = boss.unitProductionMinerals;  
-			this.gas = boss.unitProductionGas;
+			this.minerals = boss.getUnitProductionMinerals();  
+			this.gas = boss.getUnitProductionGas();
 			if(testing){ /*TODO*/
 				this.minerals = game.getSelf().getMinerals();
 				this.gas = game.getSelf().getGas();

@@ -61,15 +61,15 @@ public class Boss extends AbstractManager{
 	
 	private boolean scouting;
 	
-	public int minerals;
-	public int gas;
+	private int minerals;
+	private int gas;
 	
-	public int workerMinerals;
-	public int monteCarloMinerals;
-	public int buildManagerMinerals;
-	public int buildManagerGas;
-	public int unitProductionMinerals;
-	public int unitProductionGas;
+	private int workerMinerals;
+	private int monteCarloMinerals;
+	private int buildManagerMinerals;
+	private int buildManagerGas;
+	private int unitProductionMinerals;
+	private int unitProductionGas;
 	
 	public Boss (JNIBWAPI game){
 		this.game = game;
@@ -369,6 +369,30 @@ public class Boss extends AbstractManager{
 		return false;
 	}
 	
+	public int getWorkerMinerals() {
+		return workerMinerals;
+	}
+
+	public int getMonteCarloMinerals() {
+		return monteCarloMinerals;
+	}
+
+	public int getBuildManagerMinerals() {
+		return buildManagerMinerals;
+	}
+
+	public int getBuildManagerGas() {
+		return buildManagerGas;
+	}
+
+	public int getUnitProductionMinerals() {
+		return unitProductionMinerals;
+	}
+
+	public int getUnitProductionGas() {
+		return unitProductionGas;
+	}
+
 	public BuildManager getBuildManager() {
 		return buildManager;
 	}

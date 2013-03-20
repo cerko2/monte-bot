@@ -94,7 +94,7 @@ public class Boss extends AbstractManager{
 		//subordinate initialization
 		buildManager = new  BuildManager(this);
 		montePlanner = new MonteCarloPlanner();
-		openingManager = new OpeningManager(game);
+		openingManager = new OpeningManager(this);
 		opponentPositioning = new OpponentPositioning(game);
 		scoutManager = new ScoutingManager(game);
 		wallInModule = new WallInModule(game);

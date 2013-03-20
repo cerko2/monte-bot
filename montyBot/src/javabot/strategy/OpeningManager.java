@@ -1,21 +1,17 @@
 package javabot.strategy;
 
 import java.util.ArrayList;
-import java.util.Random;
-
-import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
+import javabot.macro.Boss;
 import javabot.model.Race;
 import javabot.types.UnitType.UnitTypes;
-import javabot.types.UpgradeType;
-import javabot.types.UpgradeType.UpgradeTypes;
-import javabot.util.UnitUtils;
 
 public class OpeningManager extends AbstractManager{
 	private boolean testing = false; //testovacie vypisy.
 	private JNIBWAPI game;
+	private Boss boss;
 	private boolean isActive;
 	private ArrayList<OpeningList> allOpeningLists;
 	private ArrayList<OpeningTask> openingList;
@@ -25,8 +21,9 @@ public class OpeningManager extends AbstractManager{
 	private boolean nextWorker;
 	private boolean sendScout;
 	
-	public OpeningManager(JNIBWAPI game){
-		this.game = game;
+	public OpeningManager(Boss boss){
+		this.boss = boss;
+		this.game = boss.game;
 		isActive = true;
 		openingList = new ArrayList<OpeningTask>();
 		taskIndex = 0;
@@ -198,8 +195,11 @@ public class OpeningManager extends AbstractManager{
 				}
 				else{
 					if (task.unitTypeID == UnitTypes.Protoss_Probe.ordinal()){
-						nextWorker = true;
+						//nextWorker = true;
 						sendText("trenuj workera");
+						boss.getWorkerManager().buildWorker();
+						openingList.get(taskIndex).done();
+						taskIndex++;
 					}
 					else{
 						nextUnit = task.unitTypeID;
@@ -209,6 +209,9 @@ public class OpeningManager extends AbstractManager{
 			break;
 			case OpeningTask.SCOUTING_ACTION:
 				sendScout = true;
+				boss.startScouting();
+				openingList.get(taskIndex).done();
+				taskIndex++;
 				//game.printText("posli scouta");
 			break;
 		}

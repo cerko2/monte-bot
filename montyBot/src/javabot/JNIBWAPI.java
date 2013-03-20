@@ -292,6 +292,8 @@ public class JNIBWAPI {
 
     private native boolean isReplay();
     
+    private native int[] getShortestPath(int tx1, int ty1, int tx2, int ty2);
+    
     // type data
     private HashMap<Integer, UnitType> unitTypes = new HashMap<Integer, UnitType>();
     private HashMap<Integer, TechType> techTypes = new HashMap<Integer, TechType>();

@@ -246,8 +246,8 @@ public class BuildManager extends AbstractManager{
 //-----------------------------------------------------------------------------------------	
 	private void setSettings(){
 		if(boss != null){
-			this.minerals = boss.BuildManagerMinerals;  
-			this.gas = boss.BuildManagerGas;
+			this.minerals = boss.getBuildManagerMinerals();  
+			this.gas = boss.getBuildManagerGas();
 			if(testing){ /*TODO*/
 				this.minerals = game.getSelf().getMinerals();
 				this.gas = game.getSelf().getGas();

@@ -32,7 +32,9 @@ public class Boss extends AbstractManager{
 	public static final boolean WALLIN_DEBUG = true;
 	public static final boolean OPPONENT_POSITIONING_DEBUG = true;
 	public static final boolean RESOURCE_DEBUG = true;
-	public static final boolean PATH_DEBUG = true;
+	
+	//REALLY SLOW
+	public static final boolean PATH_DEBUG = false;
 	
 	private Region home; // Needed only for DEBUGGING (miso certikcy)
 	
@@ -532,12 +534,15 @@ public class Boss extends AbstractManager{
 			BaseLocation base1 = game.getMap().getBaseLocations().get(0);
 			BaseLocation base2 = game.getMap().getBaseLocations().get(2);
 			
+			
 			ArrayList<Position> path = game.getGroundPath(base1.getTx(), base1.getTy(), base2.getTx(), base2.getTy());
 			game.drawLine(base1.getX(), base1.getY(), base2.getX(), base2.getY(), BWColor.YELLOW, false);
 			
 			for (int i = 0; i < path.size() - 1; i++){
 				game.drawLine((int) path.get(i).x * 32, (int) path.get(i).y * 32, (int) path.get(i+1).x * 32, (int) path.get(i+1).y * 32, BWColor.WHITE, false);
 			}
+			
+			System.out.println(game.getGroundDistance(base1.getTx(), base1.getTy(), base2.getTx(), base2.getTy()));
 		}
 	}
 }

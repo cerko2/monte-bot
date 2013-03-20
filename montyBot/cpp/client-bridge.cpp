@@ -2124,3 +2124,9 @@ JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getShortestPath
 	env->SetIntArrayRegion(result, 0, index, intBuf);
 	return result;
 }
+
+JNIEXPORT jdouble JNICALL Java_javabot_JNIBWAPI_getGroundDistance
+	(JNIEnv *env, jobject jObj, jint x1, jint y1, jint x2, jint y2)
+{
+	return BWTA::getGroundDistance(BWAPI::TilePosition(x1, y1), BWAPI::TilePosition(x2, y2));
+}

@@ -801,6 +801,14 @@ JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getShortestPath
 
 /*
  * Class:     javabot_JNIBWAPI
+ * Method:    getGroundDistance
+ * Signature: (IIII)D
+ */
+JNIEXPORT jdouble JNICALL Java_javabot_JNIBWAPI_getGroundDistance
+  (JNIEnv *, jobject, jint, jint, jint, jint);
+
+/*
+ * Class:     javabot_JNIBWAPI
  * Method:    isVisible
  * Signature: (II)Z
  */

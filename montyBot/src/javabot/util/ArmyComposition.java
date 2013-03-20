@@ -66,9 +66,9 @@ public class ArmyComposition {
 		String tmp4 = "";
 		for (int i : technologies) tmp4 += game.getTechType(i).getName()+" ";
 		return 
-				"["+tmp1+"] " +
+				"["+tmp1+"]\n" +
 				"RAT: "+String.valueOf(ratio)+" "+
-				"UPG: "+tmp3+" "+
+				"UPG: "+tmp3+"\n"+
 				"TECH: "+tmp4;
 	}
 	

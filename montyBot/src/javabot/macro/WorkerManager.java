@@ -40,7 +40,7 @@ public class WorkerManager extends AbstractManager {
 	// All workers that isn't assigned to any NexusBase
 	public ArrayList<Unit> unassignedWorkers = new ArrayList<Unit>();
 	
-	// Queued number of workerst to be built
+	// Queued number of workers to be built
 	int numWorkersToBuild = 0;
 	
 	/**

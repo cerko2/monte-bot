@@ -1,15 +1,20 @@
 package javabot.strategy;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
+import javabot.macro.Boss;
+import javabot.model.Race;
 import javabot.types.UnitType.UnitTypes;
 
 public class OpeningManager extends AbstractManager{
 	private boolean testing = false; //testovacie vypisy.
 	private JNIBWAPI game;
+	private Boss boss;
 	private boolean isActive;
+	private ArrayList<OpeningList> allOpeningLists;
 	private ArrayList<OpeningTask> openingList;
 	private int taskIndex;
 	private int nextBuilding;
@@ -17,14 +22,16 @@ public class OpeningManager extends AbstractManager{
 	private boolean nextWorker;
 	private boolean sendScout;
 	
-	public OpeningManager(JNIBWAPI game){
-		this.game = game;
+	public OpeningManager(Boss boss){
+		this.boss = boss;
+		this.game = boss.game;
 		isActive = true;
 		openingList = new ArrayList<OpeningTask>();
 		taskIndex = 0;
 		nextBuilding = nextUnit = -1;
 		nextWorker = false;
 		sendScout = false;
+		initializeOpenings();
 		setOpening();
 	}
 	
@@ -162,41 +169,6 @@ public class OpeningManager extends AbstractManager{
 		isActive = false;
 	}
 	
-	private void setOpening(){
-		//TODO depending on opponent race
-		//TODO next lines are only for testing
-	///	openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		// 9/9 Gateway
-/*
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
-		*/
-		
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.SCOUTING_ACTION, -1));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 15, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
-
-		/*
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
-		*/
-
-	}
-	
 	private void perform(OpeningTask task){
 		switch (task.constraintType){
 			case OpeningTask.SUPPLY_CONSTRAINT:
@@ -224,8 +196,11 @@ public class OpeningManager extends AbstractManager{
 				}
 				else{
 					if (task.unitTypeID == UnitTypes.Protoss_Probe.ordinal()){
-						nextWorker = true;
+						//nextWorker = true;
 						sendText("trenuj workera");
+						boss.getWorkerManager().buildWorker();
+						openingList.get(taskIndex).done();
+						taskIndex++;
 					}
 					else{
 						nextUnit = task.unitTypeID;
@@ -235,10 +210,212 @@ public class OpeningManager extends AbstractManager{
 			break;
 			case OpeningTask.SCOUTING_ACTION:
 				sendScout = true;
+				boss.startScouting();
+				openingList.get(taskIndex).done();
+				taskIndex++;
 				//game.printText("posli scouta");
 			break;
 		}
 	}
+	
+	private void setOpening(){
+		int enemyRace = game.getEnemies().get(0).getRaceID();
+		ArrayList<Integer> possibleOpeningListsIDs = getOpeningLists(enemyRace);
+		//TODO vyberat podla statistiky, opponent knowledge base managera atd..
+		int index;
+		
+		if (possibleOpeningListsIDs.size() - 1 == 0){
+			index = 0;
+		}
+		else{
+			Random r = new Random();
+			index = r.nextInt(possibleOpeningListsIDs.size() - 1);
+		}
+		
+		OpeningList ol = allOpeningLists.get(index); 
+		openingList = ol.getSelf();
+		game.printText("Bol zvolený opening: " + ol.getName());
+	}	
+	
+	/*
+	private void setOpening(){
+		//TODO depending on opponent race
+		//TODO next lines are only for testing
+	///	openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		// 9/9 Gateway
+		/ *
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		* /
+		
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.SCOUTING_ACTION, -1));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 15, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+
+		/ *
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		* /
+
+	}	 
+	*/
+	
+	private ArrayList<Integer> getOpeningLists(int raceID){
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		for (int i = 0; i < allOpeningLists.size(); i++) {
+			if (allOpeningLists.get(i).getAgainstRace() == raceID){
+				result.add(i);
+			}
+		}
+		return result;
+	}
+	
+	private void initializeOpenings(){
+		ArrayList<OpeningList> aol = new ArrayList<OpeningList>();
+		OpeningList ol;
+		
+		/////////////////////////////////////////////////////
+		//              OPENINGS AGAINST ZERG              //
+		/////////////////////////////////////////////////////
+		ol = new OpeningList("9/9 Proxy Gateway", Race.ZERG.ordinal());
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.SCOUTING_ACTION, -1));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.SCOUTING_ACTION, -1));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 15, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		aol.add(ol);
+		
+		/*
+		ol = new OpeningList("9/9 Gateway", Race.ZERG.ordinal());
+		//ol.add(new OpeningTask(OpeningTask., , OpeningTask., UnitTypes.Protoss_.ordinal()));
+		aol.add(ol);
+		
+		ol = new OpeningList("9/10 Gateway", Race.ZERG.ordinal());
+		aol.add(ol);
+		*/
+		
+		ol = new OpeningList("10/10 Gateway", Race.ZERG.ordinal());
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		//TODO mal by mat dve obmedzenia 10 supply a 200 minerals...
+		ol.add(new OpeningTask(OpeningTask.MINERALS_CONSTRAINT, 200, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.SCOUTING_ACTION, -1));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 12, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 14, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 16, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 17, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 18, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 20, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		aol.add(ol);
+		
+		/*
+		ol = new OpeningList("10/11 Gateway", Race.ZERG.ordinal());
+		aol.add(ol);
+		
+		ol = new OpeningList("10/12 Gateway", Race.ZERG.ordinal());
+		aol.add(ol);
+		*/
+		
+		/////////////////////////////////////////////////////
+		//             OPENINGS AGAINST TERRAN             //
+		/////////////////////////////////////////////////////
+		ol = new OpeningList("14 Nexus", Race.TERRAN.ordinal());
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 12, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Nexus.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.SCOUTING_ACTION, -1));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 14, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 14, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 15, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Assimilator.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 15, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 16, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 17, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Cybernetics_Core.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 17, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 17, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 19, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 20, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 21, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 21, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Dragoon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 21, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Dragoon.ordinal()));
+		//TODO!!! zakomponovat upgrady
+		//ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 25, OpeningTask.PRODUCING_ACTION, UpgradeTypes.Protoss_Ground_Weapons.ordinal()));
+		/*
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 27, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 27, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Dragoon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 27, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Dragoon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 33, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 35, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Dragoon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 35, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Dragoon.ordinal()));
+		*/
+		aol.add(ol);
+		
+		/////////////////////////////////////////////////////
+		//             OPENINGS AGAINST PROTOSS            //
+		/////////////////////////////////////////////////////
+		ol = new OpeningList("9/9 Gateway", Race.PROTOSS.ordinal());
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.SCOUTING_ACTION, -1));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 15, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
+		aol.add(ol);
+		
+		allOpeningLists = aol;
+	}
+	
 //------------------------------------ only testing ----------------------------------------
 private void sendText(String msg){
 	if(testing) game.sendText("OM: " + msg);
@@ -276,6 +453,33 @@ class OpeningTask {
 	public void done(){
 		isDone = true;
 	}
+}
+
+class OpeningList{
+	private ArrayList<OpeningTask> self;
+	private int againstRace;
+	private String name;
 	
+	public OpeningList(String name, int againstRace){
+		this.name = name;
+		this.againstRace = againstRace;
+		self = new ArrayList<OpeningTask>();
+	}
+	
+	public void add(OpeningTask o){
+		self.add(o);
+	}
+	
+	public int getAgainstRace(){
+		return againstRace;
+	}
+	
+	public String getName(){
+		return name;
+	}
+	
+	public ArrayList<OpeningTask> getSelf(){
+		return self;
+	}
 }
 

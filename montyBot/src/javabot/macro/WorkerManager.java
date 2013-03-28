@@ -54,7 +54,6 @@ public class WorkerManager extends AbstractManager {
 	double mineralsRatioForBuild = 0;
 	double gasRatioForBuild = 0;
 
-	
 	/**
 	 * WorkerManager constructor.
 	 *

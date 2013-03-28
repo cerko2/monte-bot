@@ -133,16 +133,20 @@ public class BuildManager extends AbstractManager{
 		drawDebugInfo();		
 	}
 	public void unitCreate(int unitID){
-		int typeID = getUnit(unitID).getTypeID();
-		if(!createStack.isEmpty())
-			if(typeID == createStack.get(0).typeID)
-				createStack.remove(0);
+		if(unitID != -1){
+			int typeID = getUnit(unitID).getTypeID();
+			if(!createStack.isEmpty())
+				if(typeID == createStack.get(0).typeID)
+					createStack.remove(0);
+		}
 	}
 	public void unitMorph(int unitID){
-		int typeID = getUnit(unitID).getTypeID(); 
-		if(!createStack.isEmpty())
-			if(typeID == createStack.get(0).typeID)
-				createStack.remove(0);
+		if(unitID != -1){
+			int typeID = getUnit(unitID).getTypeID(); 
+			if(!createStack.isEmpty())
+				if(typeID == createStack.get(0).typeID)
+					createStack.remove(0);
+		}
 	}
 	public Vector<Integer> getConstructionPlans(){
 		Vector<Integer> rad = new Vector<Integer>();

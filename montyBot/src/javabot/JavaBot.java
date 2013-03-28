@@ -1,27 +1,19 @@
 package javabot;
 
-import java.awt.Point;
-
 import javabot.macro.Boss;
-import javabot.macro.BuildManager;
-import javabot.macro.UnitProductionManager;
 import javabot.model.BaseLocation;
-import javabot.model.ChokePoint;
-import javabot.model.Region;
 import javabot.model.Unit;
-import javabot.strategy.OpeningManager;
-import javabot.strategy.WallInModule;
-import javabot.types.UnitType.UnitTypes;
 import javabot.util.BWColor;
-import javabot.util.Wall;
+import javabot.util.map.MapGrid;
 
 public class JavaBot extends AbstractManager {
 	
-	private static final boolean STATIC_UNIT_DEBUG = true;
-	private static final boolean BASELOC_RESOURCES_DEBUG = true;
+	private static final boolean STATIC_UNIT_DEBUG = false;
+	private static final boolean BASELOC_RESOURCES_DEBUG = false;
 
 	// Managers & Modules:
 	private Boss boss;
+	private MapGrid mapGrid;
 
 	private JNIBWAPI bwapi;
 	public static void main(String[] args) {
@@ -43,12 +35,13 @@ public class JavaBot extends AbstractManager {
 		bwapi.enableUserInput();
 		
 		// set game speed to 30 (0 is the fastest. Tournament speed is 20)
-		bwapi.setGameSpeed(30);
+		bwapi.setGameSpeed(10);
 		
 		// analyze the map
 		bwapi.loadMapData(true);
 		initialize();
 		
+		mapGrid.gameStarted();
 		super.gameStarted();
 	}
 	
@@ -58,12 +51,16 @@ public class JavaBot extends AbstractManager {
 		
 		// Add the managers
 		addManager(boss);
+		
+		mapGrid = MapGrid.getInstance();
+		mapGrid.setGame(bwapi);
 	}
 	
 	
 	// Method called on every frame (approximately 30x every second).
 	public void gameUpdate() {
 		
+		mapGrid.gameUpdate();
 		super.gameUpdate();
 		
 		// Draw debug information on screen
@@ -103,7 +100,7 @@ public class JavaBot extends AbstractManager {
 					bwapi.drawLine(base.getX(), base.getY(), unit.getX(), unit.getY(), BWColor.CYAN, false);
 				}
 				
-				for (Unit unit : base.getGeysers()) {
+				for (Unit unit : base.getGeysers()){
 					bwapi.drawText(unit.getX(), unit.getY(), unit.getResources() + "", false);
 					bwapi.drawLine(base.getX(), base.getY(), unit.getX(), unit.getY(), BWColor.GREEN, false);
 				}

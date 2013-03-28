@@ -17,6 +17,7 @@ import javabot.model.Region;
 import javabot.model.Unit;
 import javabot.strategy.ArmyCompositionManager;
 import javabot.strategy.OpeningManager;
+import javabot.strategy.OpponentKnowledgeBase;
 import javabot.strategy.OpponentModeling;
 import javabot.strategy.OpponentPositioning;
 import javabot.strategy.WallInModule;
@@ -48,6 +49,7 @@ public class Boss extends AbstractManager{
 	private BuildManager buildManager;
 	private MonteCarloPlanner montePlanner;
 	private OpeningManager openingManager;
+	private OpponentKnowledgeBase opponentKnowledgeBase;
 	private OpponentModeling opponentModeling;
 	private OpponentPositioning opponentPositioning;
 	private ScoutingManager scoutManager;
@@ -99,6 +101,7 @@ public class Boss extends AbstractManager{
 		//subordinate initialization
 		buildManager = new  BuildManager(this);
 		montePlanner = new MonteCarloPlanner();
+		opponentKnowledgeBase = new OpponentKnowledgeBase(this);
 		openingManager = new OpeningManager(this);
 		opponentPositioning = new OpponentPositioning(game);
 		scoutManager = new ScoutingManager(game);
@@ -109,6 +112,7 @@ public class Boss extends AbstractManager{
 		opponentModeling = new OpponentModeling(game, opponentPositioning);
 		armyCompositionManager = new ArmyCompositionManager(game, unitProductionManager, opponentPositioning, opponentModeling);
 		
+		addManager(opponentKnowledgeBase);
 		addManager(openingManager);
 		addManager(opponentPositioning);
 		addManager(wallInModule);			// miso certicky

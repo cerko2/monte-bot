@@ -43,6 +43,8 @@ public class WorkerManager extends AbstractManager {
 	// Queued number of workers to be built
 	int numWorkersToBuild = 0;
 	
+	int numWorkersUntilOpening = 4;
+
 	/**
 	 * WorkerManager constructor.
 	 *
@@ -170,9 +172,23 @@ public class WorkerManager extends AbstractManager {
 			nexusBase.handleWorkers();
 		}
 		
-		if (numWorkersToBuild > 0) {
-			if (nexusBases.get(0).buildWorkers()) {
-				numWorkersToBuild--;
+		if (boss.getOpeningManager().isActive() && nexusBases.size() > 0) {
+			if (numWorkersToBuild > 0) {
+				for (NexusBase nexusBase: nexusBases) {
+					if (nexusBase.buildWorkers()) {
+						numWorkersToBuild--;
+						break;
+					}
+				}
+			}
+			
+			if (numWorkersUntilOpening > getWorkersNumIsTraining() + allWorkers.size()) {
+				for (NexusBase nexusBase: nexusBases) {
+					if (nexusBase.buildWorkers()) {
+						numWorkersToBuild--;
+						break;
+					}
+				}
 			}
 		}
 		
@@ -193,9 +209,15 @@ public class WorkerManager extends AbstractManager {
 	 */
 	public void buildWorker() {
 		if (nexusBases.size() > 0) {
-			if (!nexusBases.get(0).buildWorkers()) {
-				numWorkersToBuild++;
+			numWorkersUntilOpening++;
+			
+			for (NexusBase nexusBase: nexusBases) {
+				if (nexusBase.buildWorkers()) {
+					return;
+				}
 			}
+			
+			numWorkersToBuild++;
 		}
 	}
 	
@@ -652,7 +674,7 @@ public class WorkerManager extends AbstractManager {
 		 * if other NexusBase has worker ratio smaller than 1.0
 		 */
 		public boolean buildWorkers() {
-			if (/*manager.minerals >= 50 &&*/ !nexus.isTraining() && game.getSelf().getMinerals() >= 50) {
+			if ((manager.minerals >= 50 || boss.getOpeningManager().isActive()) && !nexus.isTraining() && game.getSelf().getMinerals() >= 50) {
 				if (getWorkerRatio() < 1.0 && manager.getWorkersNumToBuild() > 0) {
 					game.train(nexus.getID(), UnitTypes.Protoss_Probe.ordinal());
 					return true;

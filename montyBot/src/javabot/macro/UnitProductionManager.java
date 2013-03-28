@@ -3,6 +3,7 @@ package javabot.macro;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 import java.util.Vector;
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
@@ -56,10 +57,9 @@ public class UnitProductionManager extends AbstractManager{
 		for(int i = 0 ; i < numArmy ; i++){
 			rateArmy.add(0.0);
 		}  
-		if(testing){ // testing  /*TODO*/
-			rateArmy.set(0, 75.0);
-			rateArmy.set(1, 25.0);
-		}
+		// testing  /*TODO*/
+		rateArmy.set(0, 50.0);
+		rateArmy.set(1, 50.0);
 	}
 	public void setAddResources(int minerals,int gas){
 		this.minerals += minerals;
@@ -74,8 +74,12 @@ public class UnitProductionManager extends AbstractManager{
 		drawDebugInfo();		
 	}
 	public Vector<Integer> getConstructionPlans(){
+		Vector<Integer> vect = new Vector<Integer>();
 		setCrateStack();
-		return createStack; /*TODO*/
+		
+		vect.addAll(createStackExternal);
+		vect.addAll(createStack);
+		return vect;
 	}
 	
 	/**
@@ -92,18 +96,10 @@ public class UnitProductionManager extends AbstractManager{
 	/**
 	 * 
 	 * @param typeID - ID of unit, that you want to train
-	 * @param minerals - minerals needed for unit of type typeID
-	 * @param gas - gas needed for unit of type typeID
-	 * @return true, if particular unit was added to the stack of unit production order list
 	 */
-	public boolean createUnit(int typeID,int minerals,int gas){	//true ak to akceptujem
-		if(minerals >= game.getUnitType(typeID).getMineralPrice() && gas >= game.getUnitType(typeID).getGasPrice()){
-			setAddResources(minerals, gas);
-			createStackExternal.add(typeID);
-			buildExternalStack();
-			return true;
-		}
-		return false;
+	public void createUnit(int typeID){	
+		createStackExternal.add(typeID);
+		buildExternalStack();
 	}
 	/**
 	 * 
@@ -111,7 +107,6 @@ public class UnitProductionManager extends AbstractManager{
 	 * @return
 	 */
 	public boolean setRateArmy( ArrayList<Double> rateArmy){ //true ak to akceptujem
-		//TODO  bud mi to nastavia alebo si to ja zistim 
 		if(this.rateArmy.size() == rateArmy.size()){ 
 			double sum = sumRate(rateArmy);
 			if(sum != 100){ // normalizujem to na 100
@@ -122,6 +117,9 @@ public class UnitProductionManager extends AbstractManager{
 			return true;
 		}
 		return false;
+	}
+	public ArrayList<Double> getRateArmy( ){ 
+		return rateArmy;
 	}
 //-----------------------------------------------------------------------------------------
 	private double sumRate(ArrayList<Double> rateArmy){
@@ -246,11 +244,14 @@ public class UnitProductionManager extends AbstractManager{
 		}
 		
 		for(int i =0 ; i < numArmy;i++){ // TODO dako rozumne
-			pomRate = rateArmy.get(i);
+			Random r = new Random();
+			int s = r.nextInt(numArmy);
+			pomRate = rateArmy.get(s);
 			if(pomRate > 0){
-				createStack.add(InternalID_To_UnitTypeID(i));
+				createStack.add(InternalID_To_UnitTypeID(s));
 			}	
 		}
+		
 		Vector<Integer> productBuild = new Vector<Integer>();
 		for(int i = 0; i < createStack.size();i++) {
 			int typeID = createStack.get(i);

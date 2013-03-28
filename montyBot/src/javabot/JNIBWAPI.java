@@ -608,6 +608,7 @@ public class JNIBWAPI {
             }
 
             // store the results to a local file (bwta directory)
+            /*
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(bwtaFile));
 
@@ -660,6 +661,7 @@ public class JNIBWAPI {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            */
         }
         // load from file
         else {

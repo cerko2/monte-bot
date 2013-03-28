@@ -10,7 +10,7 @@ import javabot.model.Race;
 import javabot.types.UnitType.UnitTypes;
 
 public class OpeningManager extends AbstractManager{
-	private boolean testing = false; //testovacie vypisy.
+	private boolean testing = true; //testovacie vypisy.
 	private JNIBWAPI game;
 	private Boss boss;
 	private boolean isActive;
@@ -37,6 +37,7 @@ public class OpeningManager extends AbstractManager{
 	
 	public void gameUpdate(){
 		if (isActive()){
+			
 			if (taskIndex < openingList.size()){
 				OpeningTask task = openingList.get(taskIndex); 
 				//if (!task.isDone()){ //TODO tato podmienka je asi zbytocna
@@ -232,47 +233,10 @@ public class OpeningManager extends AbstractManager{
 			index = r.nextInt(possibleOpeningListsIDs.size() - 1);
 		}
 		
-		OpeningList ol = allOpeningLists.get(index); 
+		OpeningList ol = allOpeningLists.get(possibleOpeningListsIDs.get(index)); 
 		openingList = ol.getSelf();
-		game.printText("Bol zvolený opening: " + ol.getName());
+		game.printText("Bol zvolenÃ½ opening: " + ol.getName());
 	}	
-	
-	/*
-	private void setOpening(){
-		//TODO depending on opponent race
-		//TODO next lines are only for testing
-	///	openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		// 9/9 Gateway
-		/ *
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
-		* /
-		
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.SCOUTING_ACTION, -1));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 15, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
-
-		/ *
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
-		openingList.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
-		* /
-
-	}	 
-	*/
 	
 	private ArrayList<Integer> getOpeningLists(int raceID){
 		ArrayList<Integer> result = new ArrayList<Integer>();

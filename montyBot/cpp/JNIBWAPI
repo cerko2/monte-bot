@@ -318,6 +318,9 @@ public class javabot.JNIBWAPI {
   public void loadMapData(boolean);
     Signature: (Z)V
 
+  public java.util.ArrayList<javabot.util.Position> getGroundPath(int, int, int, int);
+    Signature: (IIII)Ljava/util/ArrayList;
+
   public javabot.JNIBWAPI(javabot.BWAPIEventListener);
     Signature: (Ljavabot/BWAPIEventListener;)V
 

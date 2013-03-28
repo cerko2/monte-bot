@@ -22,7 +22,12 @@ public class ArmyCompositionManager extends AbstractManager {
 	private OpponentPositioning opponentPositioningManager;
 	private OpponentModeling opponentModellingManager;
 	private ArrayList<String> casesFromFile;	// tu je pole casov nacitanych zo suboru vo funkcii gameStarted()
+	
+	private ArmyComposition currentComposition = new ArmyComposition("100;Zealot");
 
+	public ArmyComposition getDesiredArmyComposition() {
+		return this.currentComposition;
+	}
 	
 	private boolean isRelevantType(int typeID) {
 		if (
@@ -86,7 +91,7 @@ public class ArmyCompositionManager extends AbstractManager {
 	
 	// GameUpdate event
 	public void gameUpdate() {
-		if (bwapi.getFrameCount() % 34 == 0) {
+		if (bwapi.getFrameCount() % 97 == 0) {
 			
 			// Create an object for enemy army composition 
 			
@@ -94,10 +99,10 @@ public class ArmyCompositionManager extends AbstractManager {
 			ArrayList<Integer> rel = getRelevantUnitsTypeIDs();
 			
 			// now, add units that he probably will have in a few minutes
-			//for (int i : opponentModellingManager.getPredictedUnits()){
-			//	bwapi.printText(String.valueOf(i));
-			//	rel.add(i);
-			//}
+			for (int i : opponentModellingManager.getPredictedUnits()){
+				bwapi.printText(String.valueOf(i));
+				rel.add(i);
+			}
 			
 			String enemyStr = "";
 			for (int i : rel) {
@@ -113,6 +118,9 @@ public class ArmyCompositionManager extends AbstractManager {
 			
 				ArmyComposition enemyArmy = new ArmyComposition(enemyStr);
 				ArmyComposition ourResponse = getArmyComposition(enemyArmy);
+				
+				// update our remembered composition
+				this.currentComposition = ourResponse;
 				
 				// order the composition from Unit Production Manager
 				ArrayList<Double> order = new ArrayList<>();
@@ -146,8 +154,16 @@ public class ArmyCompositionManager extends AbstractManager {
 				ID = 11 is Archon
 				ID = 12 is Dark Archon
 				 */
+			} else {
+				// order default composition (dragoons only) if we know nothing about the opponent
+				ArrayList<Double> order = new ArrayList<>();
+				order.add(0,0.0); order.add(1,100.0); order.add(2,0.0); order.add(3,0.0);
+				order.add(4,0.0); order.add(5,0.0); order.add(6,0.0); order.add(7,0.0);
+				order.add(8,0.0); order.add(9,0.0); order.add(10,0.0); order.add(11,0.0);
+				order.add(12,0.0);
+				this.unitProductionManager.setRateArmy(order);
 			}
-		}
+		} 
 	}
 	
 	// Konstruktor (vola sa ked sa vytvori armyCompositionManager objekt v JavaBot.java)
@@ -160,6 +176,7 @@ public class ArmyCompositionManager extends AbstractManager {
 	
 	// Eventy (volane napriklad na zaciatku hry alebo na kazdom frame):
 	public void gameStarted() {
+		
 		// Tu sa nacitaju zo suboru vsetky casy do premennej casesFromFile
 		this.casesFromFile = new ArrayList<String>();
 
@@ -180,7 +197,6 @@ public class ArmyCompositionManager extends AbstractManager {
 		}
 		
 	}
-	
 	
 	public ArmyComposition getArmyComposition (ArmyComposition a){
 		

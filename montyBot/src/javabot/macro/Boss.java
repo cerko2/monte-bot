@@ -10,6 +10,7 @@ import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.combat.MonteCarloPlanner;
 import javabot.combat.micro.ScoutingManager;
+import javabot.model.BaseLocation;
 import javabot.model.ChokePoint;
 import javabot.model.Player;
 import javabot.model.Region;
@@ -22,6 +23,7 @@ import javabot.strategy.WallInModule;
 import javabot.types.UnitType;
 import javabot.types.UnitType.UnitTypes;
 import javabot.util.BWColor;
+import javabot.util.Position;
 import javabot.util.Wall;
 
 public class Boss extends AbstractManager{
@@ -30,6 +32,9 @@ public class Boss extends AbstractManager{
 	public static final boolean WALLIN_DEBUG = true;
 	public static final boolean OPPONENT_POSITIONING_DEBUG = true;
 	public static final boolean RESOURCE_DEBUG = true;
+	
+	//REALLY SLOW
+	public static final boolean PATH_DEBUG = false;
 	
 	private Region home; // Needed only for DEBUGGING (miso certikcy)
 	
@@ -194,6 +199,7 @@ public class Boss extends AbstractManager{
 		for (Unit unit : scoutManager.getUnits()){
 			if (unit.isExists()){
 				scoutUnits.add(unit);
+				assignedUnits.add(unit);
 			}
 		}
 		
@@ -477,8 +483,8 @@ public class Boss extends AbstractManager{
 
 			// Draw our home position and chokes
 			if (home != null) {
-				game.drawText(new Point(5,0), "Our home position: "+String.valueOf(home.getCenterX())+","+String.valueOf(home.getCenterY()), true);
-				game.drawText(new Point(5,14), "Map: "+game.getMap().getName(), true);
+				game.drawText(new Point(5,0), "Army Composition: "+String.valueOf(armyCompositionManager.getDesiredArmyComposition().getString(game)), true);
+				game.drawText(new Point(5,287), game.getMap().getName(), true);
 
 				// chokepoints and center of the home Region
 				game.drawCircle(home.getCenterX(), home.getCenterY(), 15, BWColor.TEAL, true, false);
@@ -522,6 +528,22 @@ public class Boss extends AbstractManager{
 			game.drawText(10, 130,"unitProductionMinerals: " + unitProductionMinerals, true);
 			game.drawText(10, 145,"unitProductionGas: " + unitProductionGas, true);
 			game.drawText(10, 160,"workerMinerals: " + workerMinerals, true);
+		}
+		
+		if (PATH_DEBUG){
+			
+			BaseLocation base1 = game.getMap().getBaseLocations().get(0);
+			BaseLocation base2 = game.getMap().getBaseLocations().get(2);
+			
+			
+			ArrayList<Position> path = game.getGroundPath(base1.getTx(), base1.getTy(), base2.getTx(), base2.getTy());
+			game.drawLine(base1.getX(), base1.getY(), base2.getX(), base2.getY(), BWColor.YELLOW, false);
+			
+			for (int i = 0; i < path.size() - 1; i++){
+				game.drawLine((int) path.get(i).x * 32, (int) path.get(i).y * 32, (int) path.get(i+1).x * 32, (int) path.get(i+1).y * 32, BWColor.WHITE, false);
+			}
+			
+			System.out.println(game.getGroundDistance(base1.getTx(), base1.getTy(), base2.getTx(), base2.getTy()));
 		}
 	}
 }

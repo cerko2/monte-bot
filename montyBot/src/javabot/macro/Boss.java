@@ -199,6 +199,7 @@ public class Boss extends AbstractManager{
 		for (Unit unit : scoutManager.getUnits()){
 			if (unit.isExists()){
 				scoutUnits.add(unit);
+				assignedUnits.add(unit);
 			}
 		}
 		

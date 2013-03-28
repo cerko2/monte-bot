@@ -127,13 +127,31 @@ public class ScoutingManager extends AbstractManager{
 		
 		Region scoutRegion = null;
 		boolean scoutUnderAttack;
+		int lastAttacked = 0;
+		
 		for (Unit unit : myUnits){
-			scoutUnderAttack = false;
+			
 			scoutRegion = RegionUtils.getRegion(map, unit);
 			
 			if (isUnderAttack(unit) && (scoutRegion == enemyRegion)){
 				scoutUnderAttack = true;
 				scoutsLastAttacked.put(unit, game.getFrameCount());
+			}
+			
+			if (scoutsLastAttacked.containsKey(unit)){
+				lastAttacked = scoutsLastAttacked.get(unit);
+			}
+			
+			scoutUnderAttack = (game.getFrameCount() - lastAttacked <= 24 * 5) ? true : false;
+			
+			if (isUnderAttack(unit) && 
+					!enemyAttackCapableUnitInRadius(unit) &&
+					(game.getFrameCount() - lastAttacked > 24 * 5))
+			{
+				if (scoutUnderAttack){
+					System.out.println("scout no longer under attack");
+				}
+				scoutUnderAttack = false;
 			}
 			
 			if (enemyRegion != null){
@@ -218,9 +236,7 @@ public class ScoutingManager extends AbstractManager{
 		Position testFleeVector;
 		//fleeVector.rotate(30);
 		
-		
 		int r = 0;
-		int sign = 1;
 		int iterations = 0;
 		
 		Position fleePosition = new Position(homeBase.getX(),homeBase.getY());
@@ -244,8 +260,7 @@ public class ScoutingManager extends AbstractManager{
 				break;
 			}
 			
-			r = r + sign * (r + 10);
-			sign = sign * -1;
+			r += 10;
 			if (iterations > 36){
 				break;
 			}
@@ -335,6 +350,25 @@ public class ScoutingManager extends AbstractManager{
 		return false;
 	}
 	
+	private boolean enemyAttackCapableUnitInRadius(Unit unit){
+		
+		UnitType enemyType = null;
+		WeaponType enemyWeapon = null;
+		
+		for (Unit enemyUnit : game.getEnemyUnits()){
+			
+			enemyType = game.getUnitType(enemyUnit.getTypeID());
+			enemyWeapon = game.getWeaponType(enemyType.getGroundWeaponID());
+			
+			if (enemyType.isAttackCapable()
+					&& UnitUtils.getDistance(enemyUnit, unit) < enemyWeapon.getMaxRange() + 64)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void smartMove(Unit unit, Position position){
 		UnitCommandType currentCommand = game.getUnitCommandType(unit.getLastCommandID());
 		Position unitTargetPos = new Position(unit.getTargetX(), unit.getTargetY());
@@ -360,27 +394,27 @@ public class ScoutingManager extends AbstractManager{
 	private boolean isUnderAttack(Unit unit){
 		ArrayList<Unit> enemyUnits = game.getEnemyUnits();
 		
-		game.drawText(unit.getX(), unit.getY(), unit.getID() + "", false);
-		
+		UnitType enemyType = null;
+		WeaponType weapon = null;
 		for (Unit enemy : enemyUnits){
-			UnitType enemyType = game.getUnitType(enemy.getTypeID());
-			WeaponType weaponType = game.getWeaponType(enemyType.getGroundWeaponID());
+			enemyType = game.getUnitType(enemy.getTypeID());
+			weapon = game.getWeaponType(enemyType.getGroundWeaponID());
 			
 			int dist = UnitUtils.getDistance(enemy, unit);
-			game.drawText(enemy.getX(), enemy.getY(), UnitUtils.getDistance(enemy, unit) + " tID: " + enemy.getTargetUnitID(), false);
 			Unit target = game.getUnit(enemy.getOrderTargetID());
 			
-			if (enemyType.isWorker()){
-				int iii = 0;
+			game.drawText(enemy.getX(), enemy.getY(), dist + " tID: " + enemy.getOrderTargetID(), false);
+			
+			if (target != null) {
+				game.drawLine(enemy.getX(), enemy.getY(), target.getX(), target.getY(), BWColor.RED, false);
+				
+				if (target.getID() == unit.getID() )
+					//					&& UnitUtils.getDistance(enemy, unit) <= weapon.getMaxRange() + 96)
+				{
+					return true;
+				}
 			}
 			
-			if (target != null) 
-				game.drawLine(enemy.getX(), enemy.getY(), target.getX(), target.getY(), BWColor.RED, false);
-			if (enemy.getTargetUnitID() == unit.getID() 
-					&& UnitUtils.getDistance(enemy, unit) <= weaponType.getMaxRange() + 96)
-			{
-				return true;
-			}
 		}
 		return false;
 	}

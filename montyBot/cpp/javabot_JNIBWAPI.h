@@ -793,6 +793,22 @@ JNIEXPORT jboolean JNICALL Java_javabot_JNIBWAPI_isReplay
 
 /*
  * Class:     javabot_JNIBWAPI
+ * Method:    getShortestPath
+ * Signature: (IIII)[I
+ */
+JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getShortestPath
+  (JNIEnv *, jobject, jint, jint, jint, jint);
+
+/*
+ * Class:     javabot_JNIBWAPI
+ * Method:    getGroundDistance
+ * Signature: (IIII)D
+ */
+JNIEXPORT jdouble JNICALL Java_javabot_JNIBWAPI_getGroundDistance
+  (JNIEnv *, jobject, jint, jint, jint, jint);
+
+/*
+ * Class:     javabot_JNIBWAPI
  * Method:    isVisible
  * Signature: (II)Z
  */

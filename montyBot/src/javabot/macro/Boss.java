@@ -422,6 +422,10 @@ public class Boss extends AbstractManager{
 	public int getUnitProductionGas() {
 		return unitProductionGas;
 	}
+	
+	public ArmyCompositionManager getArmyCompositionManager() {
+		return armyCompositionManager;
+	}
 
 	public BuildManager getBuildManager() {
 		return buildManager;

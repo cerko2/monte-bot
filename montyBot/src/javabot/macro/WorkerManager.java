@@ -6,12 +6,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.model.Unit;
 import javabot.model.BaseLocation;
+import javabot.types.TechType;
+import javabot.types.UnitType;
 import javabot.types.UnitType.UnitTypes;
+import javabot.types.UpgradeType;
+import javabot.util.ArmyComposition;
 import javabot.util.BWColor;
 import javabot.util.Position;
 
@@ -27,9 +32,8 @@ public class WorkerManager extends AbstractManager {
 	private Boss boss;
 	private JNIBWAPI game;
 	
-	// Minerals and gas assigned to this manager by Boss
-	private int minerals = 0;
-	private int gas = 0;
+	// Minerals assigned to this manager by Boss
+	//private int minerals = 0;
 	
 	// All Nexus bases which bot have
 	public ArrayList<NexusBase> nexusBases = new ArrayList<NexusBase>();
@@ -43,6 +47,13 @@ public class WorkerManager extends AbstractManager {
 	// Queued number of workers to be built
 	int numWorkersToBuild = 0;
 	
+	// Num workers to be built until opening to now
+	int numWorkersUntilOpening = 4;
+	
+	// Count of resources that will be needed in near future
+	double mineralsRatioForBuild = 0;
+	double gasRatioForBuild = 0;
+
 	/**
 	 * WorkerManager constructor.
 	 *
@@ -170,9 +181,23 @@ public class WorkerManager extends AbstractManager {
 			nexusBase.handleWorkers();
 		}
 		
-		if (numWorkersToBuild > 0) {
-			if (nexusBases.get(0).buildWorkers()) {
-				numWorkersToBuild--;
+		// Build queued workers and build new workers that was destroyed until OpeningManager active
+		if (boss.getOpeningManager().isActive() && nexusBases.size() > 0) {
+			if (numWorkersToBuild > 0) {
+				for (NexusBase nexusBase: nexusBases) {
+					if (nexusBase.buildWorkers()) {
+						numWorkersToBuild--;
+						break;
+					}
+				}
+			}
+			
+			if (numWorkersUntilOpening > getWorkersNumIsTraining() + allWorkers.size()) {
+				for (NexusBase nexusBase: nexusBases) {
+					if (nexusBase.buildWorkers()) {
+						break;
+					}
+				}
 			}
 		}
 		
@@ -180,10 +205,78 @@ public class WorkerManager extends AbstractManager {
 		// worker ratio
 		transferWorker();
 		
+		// Update mineralsRatioForBuild and gasRatioForBuild
+		if (game.getFrameCount() % 100 == 0) {
+			updateDesiredResources();
+		}
+		
 		// Show manager debug info on the map
 		if (WORKER_MANAGER_DEBUG) {
 			drawDebugInfo();
 		}
+	}
+	
+	/**
+	 *  Store into variables mineralsRatioForBuild and gasRatioForBuild ratio of minerals and gas
+	 *  of buildings, units, techs and upgrades that will be built in near future.
+	 */
+	private void updateDesiredResources() {
+		ArmyComposition armyComposition = boss.getArmyCompositionManager().getDesiredArmyComposition();
+		
+		ArrayList<Integer> buildings = new ArrayList<Integer>(boss.getBuildManager().getConstructionPlans());
+		ArrayList<Integer> units = armyComposition.getUnitTypes();
+		ArrayList<Integer> upgrades = armyComposition.getUpgrades();
+		ArrayList<Integer> technologies = armyComposition.getTechnologies();
+		
+		int tempMinerals = 0;
+		int tempGas = 0;
+		
+		double mineralsRatio = 0;
+		double gasRatio = 0;
+		
+		for (Integer buildingID: buildings) {
+			UnitType unitType = game.getUnitType(buildingID);
+			
+			if (unitType != null) {
+				tempMinerals += unitType.getMineralPrice();
+				tempGas += unitType.getGasPrice();
+			}
+		}
+		
+		for (Integer upgradeID: upgrades) {
+			UpgradeType upgradeType = game.getUpgradeType(upgradeID);
+			
+			if (upgradeType != null) {
+				tempMinerals += upgradeType.getMineralPriceBase() + upgradeType.getMineralPriceFactor() * game.getSelf().upgradeLevel(upgradeID);
+				tempGas += upgradeType.getGasPriceBase() + upgradeType.getGasPriceFactor() * game.getSelf().upgradeLevel(upgradeID);
+			}
+		}
+		
+		for (Integer techID: technologies) {
+			TechType techType = game.getTechType(techID);
+			
+			if (techType != null) {
+				tempMinerals += techType.getMineralPrice();
+				tempGas += techType.getGasPrice();
+			}
+		}	
+		
+		mineralsRatio = (double)tempMinerals / (double)(tempMinerals + tempGas);
+		gasRatio = (double)tempGas / (double)(tempMinerals + tempGas);
+		
+		tempMinerals = 0;
+		tempGas = 0;
+		
+		for (Integer unitID: units) {
+			tempMinerals += (double)game.getUnitType(unitID).getMineralPrice() / 100.0 * armyComposition.getRatio(unitID);
+			tempGas += (double)game.getUnitType(unitID).getGasPrice() / 100.0 * armyComposition.getRatio(unitID);
+		}
+		
+		double unitsMineralRatio = (double)tempMinerals / (double)(tempMinerals + tempGas);
+		double unitsGasRatio = (double)tempGas / (double)(tempMinerals + tempGas);
+		
+		mineralsRatioForBuild = (mineralsRatio + unitsMineralRatio) / 2;
+		gasRatioForBuild = (gasRatio + unitsGasRatio) / 2;
 	}
 	
 	/**
@@ -193,9 +286,15 @@ public class WorkerManager extends AbstractManager {
 	 */
 	public void buildWorker() {
 		if (nexusBases.size() > 0) {
-			if (!nexusBases.get(0).buildWorkers()) {
-				numWorkersToBuild++;
+			numWorkersUntilOpening++;
+			
+			for (NexusBase nexusBase: nexusBases) {
+				if (nexusBase.buildWorkers()) {
+					return;
+				}
 			}
+			
+			numWorkersToBuild++;
 		}
 	}
 	
@@ -263,10 +362,10 @@ public class WorkerManager extends AbstractManager {
 	 * @param minerals - minerals that will be added to actual manager minerals
 	 * @param gas - gas that will be added to actual manager gas
 	 */
-	public void setAddResources(int minerals, int gas) {
+	/*public void setAddResources(int minerals, int gas) {
 		this.minerals += minerals;
 		this.gas += gas;
-	}
+	}*/
 
 	/**
 	 * Retrieves base with Nexus which have smallest worker ratio (count of mineral and gas workers 
@@ -412,6 +511,8 @@ public class WorkerManager extends AbstractManager {
 			i++;
 		}
 		
+		debug += "  minRat: " + df.format(mineralsRatioForBuild) +  " gasRat: " + df.format(gasRatioForBuild);
+		
 		game.drawText(6, 48, debug, true);
 	}
 	
@@ -423,7 +524,7 @@ public class WorkerManager extends AbstractManager {
 		
 		public Unit nexus;
 		
-		private BaseLocation base = null;
+		public BaseLocation base = null;
 		
 		// Each mineral field of minerals belonging to this BaseLocation and it's workers, 
 		// which will mine this mineral field
@@ -491,10 +592,12 @@ public class WorkerManager extends AbstractManager {
 			if (assimilators.size() > 0 && getCountGasWorkers() < getMaxGasWorkers()) {
 				gasWorkers.add(worker);
 				
+				boolean allAssimilatorsDepleted = isAllAssimilatorsDepleted();
+				
 				for (Map.Entry<Unit, ArrayList<Unit>> assimilator: assimilators.entrySet()) {
 					ArrayList<Unit> workers = assimilator.getValue();
 					
-					if (workers.size() < manager.maxWorkersPerGeyser) {
+					if (workers.size() < manager.maxWorkersPerGeyser && (assimilator.getKey().getResources() > 0 || allAssimilatorsDepleted)) {
 						workers.add(worker);
 						break;
 					}
@@ -588,6 +691,21 @@ public class WorkerManager extends AbstractManager {
 		}
 		
 		/**
+		 * Returns if all Assimilators assigned to this base is depleted or not.
+		 *
+		 * @return boolean value if all Assimilators is depleted
+		 */
+		public boolean isAllAssimilatorsDepleted() {
+			for (Map.Entry<Unit, ArrayList<Unit>> assimilator: assimilators.entrySet()) {
+				if (assimilator.getKey().getResources() > 0) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		
+		/**
 		 * Checks all minerals in this BaseLocation and deletes it from list and assigns all
 		 * mineral workers to unassignedWorkers list in WorkerManager
 		 */
@@ -652,7 +770,7 @@ public class WorkerManager extends AbstractManager {
 		 * if other NexusBase has worker ratio smaller than 1.0
 		 */
 		public boolean buildWorkers() {
-			if (/*manager.minerals >= 50 &&*/ !nexus.isTraining() && game.getSelf().getMinerals() >= 50) {
+			if ((boss.getWorkerMinerals() >= 50 || boss.getOpeningManager().isActive()) && !nexus.isTraining() && game.getSelf().getMinerals() >= 50) {
 				if (getWorkerRatio() < 1.0 && manager.getWorkersNumToBuild() > 0) {
 					game.train(nexus.getID(), UnitTypes.Protoss_Probe.ordinal());
 					return true;

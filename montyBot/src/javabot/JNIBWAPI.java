@@ -1,16 +1,34 @@
 package javabot;
 
-import javabot.model.*;
-import javabot.types.*;
-import javabot.types.UnitType.UnitTypes;
-import javabot.util.UnitUtils;
-
-import java.awt.*;
-import java.io.*;
+import java.awt.Point;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import javabot.model.BaseLocation;
+import javabot.model.ChokePoint;
+import javabot.model.Map;
+import javabot.model.Player;
+import javabot.model.Region;
+import javabot.model.Unit;
+import javabot.types.BulletType;
+import javabot.types.DamageType;
+import javabot.types.ExplosionType;
+import javabot.types.OrderType;
+import javabot.types.TechType;
+import javabot.types.UnitCommandType;
+import javabot.types.UnitSizeType;
+import javabot.types.UnitType;
+import javabot.types.UpgradeType;
+import javabot.types.WeaponType;
+import javabot.util.Position;
+import javabot.util.UnitUtils;
 
 /**
  * JNI interface for the Brood War API.
@@ -274,6 +292,10 @@ public class JNIBWAPI {
     public native void setCommandOptimizationLevel(int level);
 
     private native boolean isReplay();
+    
+    private native int[] getShortestPath(int tx1, int ty1, int tx2, int ty2);
+    
+    public native double getGroundDistance(int tx1, int ty1, int tx2, int ty2);
     
     // type data
     private HashMap<Integer, UnitType> unitTypes = new HashMap<Integer, UnitType>();
@@ -567,7 +589,8 @@ public class JNIBWAPI {
         // get region and choke point data
         // need to save bwta files to different folders depending on race since static unit data seems to change depending on player race
         File bwtaFile = new File("BWTA-DATA/" + map.getHash() + ".bwta");
-        boolean analyzed = bwtaFile.exists();
+        //boolean analyzed = bwtaFile.exists();
+        boolean analyzed = false;
         int[] regionData = null;
         int[] chokePointData = null;
         int[] baseLocationData = null;
@@ -585,6 +608,7 @@ public class JNIBWAPI {
             }
 
             // store the results to a local file (bwta directory)
+            /*
             try {
                 BufferedWriter writer = new BufferedWriter(new FileWriter(bwtaFile));
 
@@ -637,6 +661,7 @@ public class JNIBWAPI {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            */
         }
         // load from file
         else {
@@ -743,6 +768,18 @@ public class JNIBWAPI {
                 }
             }
         }
+    }
+    
+    public ArrayList<Position> getGroundPath(int x1, int y1, int x2, int y2){
+    	
+    	int[] pathData = getShortestPath(x1, y1, x2, y2);
+    	
+    	ArrayList<Position> resultPath = new ArrayList<Position>();
+    	for (int i = 0; i < pathData.length; i += 2){
+    		resultPath.add(new Position(pathData[i], pathData[i+1]));
+    	}
+    	
+    	return resultPath;
     }
 
     /**

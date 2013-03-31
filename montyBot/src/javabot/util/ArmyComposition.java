@@ -16,12 +16,22 @@ public class ArmyComposition {
 	public ArrayList<Integer> technologies;
 	public ArrayList<Integer> upgrades;
 	
+	public ArrayList<Integer> getUnitTypes() {
+		return this.unitTypes;
+	}
+	public ArrayList<Integer> getUpgrades() {
+		return this.upgrades;
+	}
+	public ArrayList<Integer> getTechnologies() {
+		return this.technologies;
+	}
+
+	
 	public ArmyComposition(String s) {
 		this.unitTypes = new ArrayList<Integer>();
 		this.ratio = new ArrayList<Integer>();
 		this.technologies = new ArrayList<Integer>();
 		this.upgrades = new ArrayList<Integer>();
-		
 		
 		String[] temp;
 		temp = s.split("@");
@@ -56,10 +66,10 @@ public class ArmyComposition {
 		String tmp4 = "";
 		for (int i : technologies) tmp4 += game.getTechType(i).getName()+" ";
 		return 
-				"UnitTypes: ["+tmp1+"] " +
-				"Ratio: "+String.valueOf(ratio)+"\n"+
-				"Upgrades: "+tmp3+" "+
-				"Techs: "+tmp4;
+				"["+tmp1+"]\n" +
+				"RAT: "+String.valueOf(ratio)+" "+
+				"UPG: "+tmp3+"\n"+
+				"TECH: "+tmp4;
 	}
 	
 	

@@ -2108,3 +2108,25 @@ JNIEXPORT jstring JNICALL Java_javabot_JNIBWAPI_getPlayerName(JNIEnv *env, jobje
 	Player* p = Broodwar->getPlayer(playerID);
 	return jEnv->NewStringUTF(p->getName().c_str());
 }
+
+JNIEXPORT jintArray JNICALL Java_javabot_JNIBWAPI_getShortestPath
+	(JNIEnv *env, jobject jObj, jint x1, jint y1, jint x2, jint y2)
+{
+	int index(0);
+
+	std::vector<BWAPI::TilePosition> path = BWTA::getShortestPath(BWAPI::TilePosition(x1, y1), BWAPI::TilePosition(x2, y2));
+	for(std::vector<BWAPI::TilePosition>::iterator i=path.begin();i!=path.end();i++){
+		intBuf[index++] = i->x();
+		intBuf[index++] = i->y();
+	}
+
+	jintArray result = env->NewIntArray(index);
+	env->SetIntArrayRegion(result, 0, index, intBuf);
+	return result;
+}
+
+JNIEXPORT jdouble JNICALL Java_javabot_JNIBWAPI_getGroundDistance
+	(JNIEnv *env, jobject jObj, jint x1, jint y1, jint x2, jint y2)
+{
+	return BWTA::getGroundDistance(BWAPI::TilePosition(x1, y1), BWAPI::TilePosition(x2, y2));
+}

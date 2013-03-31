@@ -1,7 +1,7 @@
 % Tieto zlozenia armad neobsahuju harass zlozku, ani shuttle! (shuttle asi treba mat vzdy ked mame reaverov)
 
 % TERRAN BIO
-15;Medic,20;Firebat,65;Marine---40;Zealot,40;Dragoon,10;HighTemplar,10;Reaver@LegEnhancements,PsionicStorm,SingularityCharge
+15;Medic,20;Firebat,65;Marine---43;Zealot,43;Dragoon,10;HighTemplar,4;Reaver@LegEnhancements,PsionicStorm,SingularityCharge
 % TERRAN MECH 
 60;SiegeTank,40;Vulture---55;Zealot,30;Dragoon,5;HighTemplar,10;Arbiter@LegEnhancements,SingularityCharge,PsionicStorm,StasisField,KhaydarinCore
 30;SiegeTank,70;Vulture---30;Zealot,55;Dragoon,5;HighTemplar,10;Arbiter@LegEnhancements,SingularityCharge,PsionicStorm,StasisField,KhaydarinCore
@@ -17,7 +17,7 @@
 % ZERG MUTA (Dark Archon alternative)
 55;Mutalisk,25;Zergling,20;Hydralisk---40;Corsair,10;DarkArchon,40;Dragoon,10;Zealot@SingularityCharge,LegEnhancements,Maelstrom,ArgusTalisman
 % ZERG ULTRA, LING, DEFILER
-20;Ultralisk,15;Defiler,65;Zergling---10;Archon,15;DarkArchon,30;Zealot,25;Dragoon,15;Reaver,5;HighTemplar@SingularityCharge,MindControl,PsionicStorm
+20;Ultralisk,15;Defiler,65;Zergling---10;Archon,15;DarkArchon,35;Zealot,30;Dragoon,5;Reaver,5;HighTemplar@SingularityCharge,MindControl,PsionicStorm
 
 % PROTOSS DEFAULT (mirror case)
-45;Dragoon,25;Zealot,15;Reaver,15;HighTemplar---45;Dragoon,25;Zealot,15;Reaver,15;HighTemplar@SingularityCharge,LegEnhancements,ScarabDamage,PsionicStorm
+45;Dragoon,25;Zealot,15;Reaver,15;HighTemplar---50;Dragoon,35;Zealot,5;Reaver,10;HighTemplar@SingularityCharge,LegEnhancements,ScarabDamage,PsionicStorm

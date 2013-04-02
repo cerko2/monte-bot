@@ -55,6 +55,10 @@ public class OpeningManager extends AbstractManager{
 	public boolean isActive(){
 		return isActive;
 	}
+	
+	public int getOpeningID(){
+		return openingList.getID();
+	}
 
 	private void setInactive(){
 		isActive = false;
@@ -143,7 +147,7 @@ public class OpeningManager extends AbstractManager{
 		/////////////////////////////////////////////////////
 		//              OPENINGS AGAINST ZERG              //
 		/////////////////////////////////////////////////////
-		ol = new OpeningList("9/9 Proxy Gateway", Race.ZERG.ordinal());
+		ol = new OpeningList(1, "9/9 Proxy Gateway", Race.ZERG.ordinal());
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
@@ -171,7 +175,7 @@ public class OpeningManager extends AbstractManager{
 		aol.add(ol);
 		*/
 		
-		ol = new OpeningList("10/10 Gateway", Race.ZERG.ordinal());
+		ol = new OpeningList(2, "10/10 Gateway", Race.ZERG.ordinal());
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
@@ -205,7 +209,7 @@ public class OpeningManager extends AbstractManager{
 		/////////////////////////////////////////////////////
 		//             OPENINGS AGAINST TERRAN             //
 		/////////////////////////////////////////////////////
-		ol = new OpeningList("14 Nexus", Race.TERRAN.ordinal());
+		ol = new OpeningList(3, "14 Nexus", Race.TERRAN.ordinal());
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
@@ -247,7 +251,7 @@ public class OpeningManager extends AbstractManager{
 		/////////////////////////////////////////////////////
 		//             OPENINGS AGAINST PROTOSS            //
 		/////////////////////////////////////////////////////
-		ol = new OpeningList("9/9 Gateway", Race.PROTOSS.ordinal());
+		ol = new OpeningList(4, "9/9 Gateway", Race.PROTOSS.ordinal());
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
@@ -299,9 +303,10 @@ class OpeningList{
 	private ArrayList<OpeningTask> self;
 	private int iterator;
 	private int againstRace;
+	private int ID;
 	private String name;
 	
-	public OpeningList(String name, int againstRace){
+	public OpeningList(int ID, String name, int againstRace){
 		this.name = name;
 		this.againstRace = againstRace;
 		self = new ArrayList<OpeningTask>();
@@ -314,6 +319,10 @@ class OpeningList{
 	
 	public int getAgainstRace(){
 		return againstRace;
+	}
+	
+	public int getID(){
+		return ID;
 	}
 	
 	public String getName(){

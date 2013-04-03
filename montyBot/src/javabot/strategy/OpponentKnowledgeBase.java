@@ -38,16 +38,12 @@ public class OpponentKnowledgeBase extends AbstractManager{
 		}
 	}
 	
-	public void setOpeningID(int ID){
-		openingID = ID;
-	}
-	
 	public void gameEnded(){
-		//TODO opening ID must be set by initialization
-		openingID = 1;
+		openingID = boss.getOpeningManager().getOpeningID();
 		if (openingID != -1){
 			
 			//TODO zistit cas!!! v C++ elapsedTime()... if (game.get)
+			//game.getFrameCount() / 24;
 			double time = new Random().nextDouble() * 20;
 			
 			//double points = 10 / time;
@@ -81,6 +77,10 @@ public class OpponentKnowledgeBase extends AbstractManager{
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public HashMap<Integer, double[]>> getEnemysKB(String name){
+		return knowledgeBase.get(name);
 	}
 	
 	private void readFile() throws IOException {

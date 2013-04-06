@@ -169,55 +169,50 @@ public class BuildManager extends AbstractManager{
 		}
 		return false;
 	}
-	public boolean needBuilding(int typeID){ /*TODO*/
+	public boolean needBuilding(int typeID){
 		if(!game.getUnitType(typeID).isBuilding()){
 			restetMyCount();
-			reControlBuilding(UnitTypes.Protoss_Nexus.ordinal());
+			//reControlBuilding(UnitTypes.Protoss_Nexus.ordinal());
 			if(typeID == UnitTypes.Protoss_Zealot.ordinal()) {
 				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
 			} else if(typeID == UnitTypes.Protoss_Dragoon.ordinal()) {
 				reControlBuilding(UnitTypes.Protoss_Assimilator.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
-			} else if(typeID == UnitTypes.Protoss_High_Templar.ordinal() || typeID == UnitTypes.Protoss_Dark_Templar.ordinal()) {
+			} else if(typeID == UnitTypes.Protoss_Dark_Archon.ordinal()|| typeID == UnitTypes.Protoss_Archon.ordinal() || typeID == UnitTypes.Protoss_High_Templar.ordinal() || typeID == UnitTypes.Protoss_Dark_Templar.ordinal()) {
 				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Citadel_of_Adun.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Templar_Archives.ordinal());
-			} 
-			else if(typeID == UnitTypes.Protoss_Shuttle.ordinal()) {
+			} else if(typeID == UnitTypes.Protoss_Shuttle.ordinal()) {
 				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Robotics_Facility.ordinal());
-			} 
-			else if(typeID == UnitTypes.Protoss_Reaver.ordinal()) {
+			} else if(typeID == UnitTypes.Protoss_Reaver.ordinal()) {
 				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Robotics_Facility.ordinal());
 				reControlBuilding(UnitTypes.Protoss_Robotics_Support_Bay.ordinal());
-			} 
-			else if(typeID == UnitTypes.Protoss_Observer.ordinal()) {
-				
-			} 
-			else if(typeID == UnitTypes.Protoss_Scout.ordinal()) {
-				
-			} 
-			else if(typeID == UnitTypes.Protoss_Corsair.ordinal()) {
-				
-			} 
-			else if(typeID == UnitTypes.Protoss_Carrier.ordinal()) {
-				
-			} 
-			else if(typeID == UnitTypes.Protoss_Arbiter.ordinal()){
-				
-			} 
-			else if(typeID == UnitTypes.Protoss_Archon.ordinal()) {
-				
-			} 
-			else if(typeID == UnitTypes.Protoss_Dark_Archon.ordinal()) {
-				
-			} 
-			else {return false;}
+			} else if(typeID == UnitTypes.Protoss_Observer.ordinal()) {
+				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Robotics_Facility.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Observatory.ordinal());
+			} else if(typeID == UnitTypes.Protoss_Corsair.ordinal() || typeID == UnitTypes.Protoss_Scout.ordinal()) {
+				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Stargate.ordinal());
+			} else if(typeID == UnitTypes.Protoss_Carrier.ordinal()) {
+				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Stargate.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Fleet_Beacon.ordinal());
+			} else if(typeID == UnitTypes.Protoss_Arbiter.ordinal()){
+				reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Stargate.ordinal());
+				reControlBuilding(UnitTypes.Protoss_Arbiter_Tribunal.ordinal());
+			} else {return false;}
 			return true;
 		}
 		return false;
@@ -294,13 +289,6 @@ public class BuildManager extends AbstractManager{
 				createStack.add(0,new MyStack(UnitTypes.Protoss_Pylon.ordinal()));
 			}
 		}
-		/*
-		 * TODO DELETE (edited by Johny)
-		 * 
-		int building = boss.getOpeningManager().nextBuilding();
-		if(building >= 0)
-			createStack.add(new MyStack(building));
-		*/
 		
 		myPlan();
 		buildStack();

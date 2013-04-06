@@ -57,9 +57,6 @@ public class UnitProductionManager extends AbstractManager{
 		for(int i = 0 ; i < numArmy ; i++){
 			rateArmy.add(0.0);
 		}  
-		// testing  /*TODO*/
-		rateArmy.set(0, 50.0);
-		rateArmy.set(1, 50.0);
 	}
 	public void setAddResources(int minerals,int gas){
 		this.minerals += minerals;
@@ -149,21 +146,6 @@ public class UnitProductionManager extends AbstractManager{
 		useBuilding = new ArrayList<Unit>();
 		if(!boss.getOpeningManager().isActive())
 			freeMode = true;
-		/*
-		 * TODO DELETE (edited by Johny)
-		 * 
-		if(!freeMode){
-			boolean unitID = boss.getOpeningManager().nextWorker();
-			if(unitID){
-				createStackExternal.add(UnitTypes.Protoss_Probe.ordinal());
-			}
-		}
-		if(!freeMode){
-			int unitID = boss.getOpeningManager().nextUnit();
-			if(unitID >= 0)
-				createStackExternal.add(unitID);
-		}
-		*/
 		
 		buildExternalStack();
 		if(freeMode){ // AK je modul aktivny

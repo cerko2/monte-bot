@@ -294,10 +294,13 @@ public class BuildManager extends AbstractManager{
 				createStack.add(0,new MyStack(UnitTypes.Protoss_Pylon.ordinal()));
 			}
 		}
+		/*
+		 * TODO DELETE (edited by Johny)
+		 * 
 		int building = boss.getOpeningManager().nextBuilding();
 		if(building >= 0)
 			createStack.add(new MyStack(building));
-		
+		*/
 		
 		myPlan();
 		buildStack();

@@ -149,6 +149,9 @@ public class UnitProductionManager extends AbstractManager{
 		useBuilding = new ArrayList<Unit>();
 		if(!boss.getOpeningManager().isActive())
 			freeMode = true;
+		/*
+		 * TODO DELETE (edited by Johny)
+		 * 
 		if(!freeMode){
 			boolean unitID = boss.getOpeningManager().nextWorker();
 			if(unitID){
@@ -160,6 +163,7 @@ public class UnitProductionManager extends AbstractManager{
 			if(unitID >= 0)
 				createStackExternal.add(unitID);
 		}
+		*/
 		
 		buildExternalStack();
 		if(freeMode){ // AK je modul aktivny

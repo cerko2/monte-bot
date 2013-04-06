@@ -2,10 +2,7 @@ package javabot.util;
 
 import java.util.ArrayList;
 
-import sun.management.counter.Units;
 import javabot.JNIBWAPI;
-import javabot.model.*;
-import javabot.types.*;
 import javabot.types.TechType.TechTypes;
 import javabot.types.UnitType.UnitTypes;
 import javabot.types.UpgradeType.UpgradeTypes;

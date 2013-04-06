@@ -8,20 +8,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.Scanner;
 
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.macro.Boss;
+import javabot.model.Unit;
+import javabot.types.UnitType;
 
 public class OpponentKnowledgeBase extends AbstractManager{
 	
 	private JNIBWAPI game;
 	private Boss boss;
-	
 	private String enemyName = "";
 	private int openingID = -1;
+	private boolean won = false;
 	
 	private HashMap<String, HashMap<Integer, double[]>> knowledgeBase;
 	
@@ -38,16 +39,25 @@ public class OpponentKnowledgeBase extends AbstractManager{
 		}
 	}
 	
+	public void gameUpdate(){
+		for (Unit u : game.getMyUnits()){
+			if (u != null && game.getUnitType(u.getTypeID()).isBuilding()){
+				won = true;
+				return;
+			}
+		}
+		won = false;
+	}
+	
 	public void gameEnded(){
+		System.out.println("ended " + won);
 		openingID = boss.getOpeningManager().getOpeningID();
 		if (openingID != -1){
 			
-			//TODO zistit cas!!! v C++ elapsedTime()... if (game.get)
-			//game.getFrameCount() / 24;
-			double time = new Random().nextDouble() * 20;
+			double time = game.getFrameCount() / 24;
 			
-			//double points = 10 / time;
-			double points = 10;
+			int c = (won) ? 1 : -1;
+			double points = 10 * c / time;
 			
 			HashMap<Integer, double[]> enemysKB = knowledgeBase.get(enemyName);
 			if (enemysKB == null){
@@ -79,7 +89,7 @@ public class OpponentKnowledgeBase extends AbstractManager{
 		}
 	}
 	
-	public HashMap<Integer, double[]>> getEnemysKB(String name){
+	public HashMap<Integer, double[]> getEnemysKB(String name){
 		return knowledgeBase.get(name);
 	}
 	

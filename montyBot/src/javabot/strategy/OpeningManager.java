@@ -21,7 +21,7 @@ public class OpeningManager extends AbstractManager{
 		this.boss = boss;
 		this.game = boss.game;
 		isActive = true;
-		openingList = new OpeningList("empty", game.getEnemies().get(0).getRaceID());
+		openingList = new OpeningList(-1, "empty", game.getEnemies().get(0).getRaceID());
 		initializeOpenings();
 		setOpening();
 	}

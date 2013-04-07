@@ -434,6 +434,10 @@ public class Boss extends AbstractManager{
 	public OpeningManager getOpeningManager() {
 		return openingManager;
 	}
+	
+	public OpponentKnowledgeBase getOpponentKnowledgeBase() {
+		return opponentKnowledgeBase;
+	}
 
 	public ScoutingManager getScoutManager() {
 		return scoutManager;

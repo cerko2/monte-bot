@@ -1,6 +1,8 @@
 package javabot.strategy;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import javabot.AbstractManager;
@@ -113,28 +115,131 @@ public class OpeningManager extends AbstractManager{
 	
 	private void setOpening(){
 		int enemyRace = game.getEnemies().get(0).getRaceID();
-		ArrayList<Integer> possibleOpeningListsIDs = getOpeningLists(enemyRace);
-		//TODO vyberat podla statistiky, opponent knowledge base managera atd..
-		int index;
-		
-		if (possibleOpeningListsIDs.size() - 1 == 0){
-			index = 0;
+		String enemyName = game.getEnemies().get(0).getName();
+		int openingID = -1;
+
+		HashMap<Integer, double[]> playersKB = boss.getOpponentKnowledgeBase().getEnemysKB(enemyName);
+		if (playersKB == null){
+			HashMap<Integer, double[]> racesKB = boss.getOpponentKnowledgeBase().getRacesKB(enemyRace);
+			if (racesKB == null){
+				//select random opening
+				ArrayList<Integer> allOpeningListsByRace = getOpeningListsByRace(enemyRace);
+				int index;
+				if (allOpeningListsByRace.size() - 1 == 0){
+					index = 0;
+				}
+				else{
+					Random r = new Random();
+					index = r.nextInt(allOpeningListsByRace.size() - 1);
+				}
+				openingID = allOpeningListsByRace.get(index);
+			}
+			else{
+				openingID = findSuitableOpeningID(racesKB);
+			}
 		}
 		else{
-			Random r = new Random();
-			index = r.nextInt(possibleOpeningListsIDs.size() - 1);
+			openingID = findSuitableOpeningID(playersKB);
 		}
 		
-		OpeningList ol = allOpeningLists.get(possibleOpeningListsIDs.get(index)); 
-		openingList = ol;
-		game.printText("Bol zvolený opening: " + openingList.getName());
+		openingList = getOpeningListByID(openingID);
+		game.printText("Bol zvoleny opening: " + openingList.getName());
 	}	
 	
-	private ArrayList<Integer> getOpeningLists(int raceID){
+	private int findSuitableOpeningID(HashMap<Integer, double[]> KB){
+		int result = -1;
+		double maxScore = Double.MIN_VALUE;
+		int maxScoreID = -1;
+		for (Entry<Integer, double[]> entry : KB.entrySet()) {
+			double[] stats = entry.getValue();
+			if (stats[1] > maxScore){
+				maxScore = stats[1];
+				maxScoreID = entry.getKey();
+			}
+		}
+		if (maxScore >= 1.0){
+			result = maxScoreID;
+		}
+		else if (maxScore < 1.0 && maxScore >= 0.75){
+			ArrayList<Integer> possibleOpenings = getOpeningListsByRate(KB, 0.75);
+			if (possibleOpenings.size() <= 1){
+				result = maxScoreID;
+			}
+			else{
+				Random r = new Random();
+				int index = r.nextInt(possibleOpenings.size() - 1);
+				result = possibleOpenings.get(index);
+			}
+		}
+		else{
+			ArrayList<Integer> unusedOpeningLists = getUnusedOpeningLists(KB);
+			if (unusedOpeningLists.size() > 0){
+				if (unusedOpeningLists.size() == 1){
+					result = unusedOpeningLists.get(0);
+				}
+				else{
+					Random r = new Random();
+					int index = r.nextInt(unusedOpeningLists.size() - 1);
+					result = unusedOpeningLists.get(index);
+				}
+			}
+			else{
+				ArrayList<Integer> allOpeningListsByRace = getOpeningListsByRace(game.getEnemies().get(0).getRaceID());
+				if (allOpeningListsByRace.size() - 1 == 0){
+					result = allOpeningListsByRace.get(0);
+				}
+				else{
+					Random r = new Random();
+					int index = r.nextInt(allOpeningListsByRace.size() - 1);
+					result = allOpeningListsByRace.get(index);
+				}
+			}
+		}
+		return result;
+	}
+	
+	private OpeningList getOpeningListByID(int ID){
+		OpeningList result = new OpeningList(-1, "empty", game.getEnemies().get(0).getRaceID());
+		for (int i = 0; i < allOpeningLists.size(); i++) {
+			OpeningList ol = allOpeningLists.get(i);
+			if (ol.getID() == ID){
+				return ol;
+			}
+		}
+		return result;
+	}
+	
+	private ArrayList<Integer> getOpeningListsByRace(int raceID){
 		ArrayList<Integer> result = new ArrayList<Integer>();
 		for (int i = 0; i < allOpeningLists.size(); i++) {
-			if (allOpeningLists.get(i).getAgainstRace() == raceID){
-				result.add(i);
+			OpeningList ol = allOpeningLists.get(i);
+			if (ol.getAgainstRace() == raceID){
+				result.add(ol.getID());
+			}
+		}
+		return result;
+	}
+	
+	private ArrayList<Integer> getOpeningListsByRate(HashMap<Integer, double[]> KB, double minRate){
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		
+		for (Entry<Integer, double[]> entry: KB.entrySet()) {
+			double[] stats = entry.getValue();
+			double rate = stats[1];
+			if (rate >= minRate){
+				result.add(entry.getKey());
+			}
+		}
+		
+		return result;
+	}
+	
+	private ArrayList<Integer> getUnusedOpeningLists(HashMap<Integer, double[]> KB){
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		for (int i = 0; i < allOpeningLists.size(); i++) {
+			OpeningList ol = allOpeningLists.get(i);
+			if (!KB.containsKey(ol.getID())){
+				result.add(ol.getID());
 			}
 		}
 		return result;
@@ -309,6 +414,7 @@ class OpeningList{
 	public OpeningList(int ID, String name, int againstRace){
 		this.name = name;
 		this.againstRace = againstRace;
+		this.ID = ID;
 		self = new ArrayList<OpeningTask>();
 		iterator = 0;
 	}

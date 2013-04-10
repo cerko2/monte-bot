@@ -2,6 +2,7 @@ package javabot.macro;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,10 +13,14 @@ import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.model.Unit;
 import javabot.model.BaseLocation;
+import javabot.strategy.OpponentPositioning;
+import javabot.types.OrderType;
 import javabot.types.TechType;
 import javabot.types.UnitType;
 import javabot.types.UnitType.UnitTypes;
 import javabot.types.UpgradeType;
+import javabot.types.WeaponType;
+import javabot.types.WeaponType.WeaponTypes;
 import javabot.util.ArmyComposition;
 import javabot.util.BWColor;
 import javabot.util.Position;
@@ -28,6 +33,7 @@ public class WorkerManager extends AbstractManager {
 	private final double maxWorkersPerMineralField = 2.3;
 	private final double maxWorkersPerGeyser = 3.0;
 	private final int maxWorkersCount = 70;
+	private final double probeTopSpeed = 4.92;
 	
 	private Boss boss;
 	private JNIBWAPI game;
@@ -50,9 +56,15 @@ public class WorkerManager extends AbstractManager {
 	// Num workers to be built until opening to now
 	int numWorkersUntilOpening = 4;
 	
-	// Count of resources that will be needed in near future
+	// Ratio of resources that will be needed in near future
 	double mineralsRatioForBuild = 0;
 	double gasRatioForBuild = 0;
+	
+	// Cached paths from one base location to another
+	HashMap<Pair<BaseLocation, BaseLocation>, ArrayList<Position>> groundPaths = new HashMap<Pair<BaseLocation, BaseLocation>, ArrayList<Position>>();
+	
+	//int mineralIncome = 0;
+	//int gasIncome = 0;
 
 	/**
 	 * WorkerManager constructor.
@@ -120,13 +132,15 @@ public class WorkerManager extends AbstractManager {
 		// to some NexusBase
 		for (Unit worker: units) {
 			if (!allWorkers.contains(worker)) {
-				allWorkers.add(worker);
+				allWorkers.add(worker); 
 				
 				NexusBase nexusBaseWithSmallestWorkerRatio = getNexusBaseWithSmallestWorkerRatio();
 				NexusBase nearestNexusBase = getNearestNexusBase(new Position(worker.getX(), worker.getY()));
 				
 				if (nexusBaseWithSmallestWorkerRatio != null && nearestNexusBase != null) {
-					if (Math.abs(nexusBaseWithSmallestWorkerRatio.getWorkerRatio() - nearestNexusBase.getWorkerRatio()) <= 0.15 && nearestNexusBase.getWorkerRatio() < 1.0) {
+					Position workerPosition = new Position(worker.getX(), worker.getY());
+					
+					if ((Math.abs(nexusBaseWithSmallestWorkerRatio.getWorkerRatio() - nearestNexusBase.getWorkerRatio()) <= 0.15 && nearestNexusBase.getWorkerRatio() < 1.0) || !isPathClear(getNearestBaseLocation(workerPosition), nexusBaseWithSmallestWorkerRatio.base)) {
 						nearestNexusBase.addWorker(worker);
 					}
 					else {
@@ -146,7 +160,9 @@ public class WorkerManager extends AbstractManager {
 			NexusBase nearestNexusBase = getNearestNexusBase(new Position(worker.getX(), worker.getY()));
 			
 			if (nexusBaseWithSmallestWorkerRatio != null && nearestNexusBase != null) {
-				if (Math.abs(nexusBaseWithSmallestWorkerRatio.getWorkerRatio() - nearestNexusBase.getWorkerRatio()) <= 0.15 && nearestNexusBase.getWorkerRatio() < 1.0) {
+				Position workerPosition = new Position(worker.getX(), worker.getY());
+				
+				if ((Math.abs(nexusBaseWithSmallestWorkerRatio.getWorkerRatio() - nearestNexusBase.getWorkerRatio()) <= 0.15 && nearestNexusBase.getWorkerRatio() < 1.0) || !isPathClear(getNearestBaseLocation(workerPosition), nexusBaseWithSmallestWorkerRatio.base)) {
 					nearestNexusBase.addWorker(worker);
 				}
 				else {
@@ -205,6 +221,11 @@ public class WorkerManager extends AbstractManager {
 		// worker ratio
 		transferWorker();
 		
+		// Updates frames in which workers started to mine minerals
+		for (NexusBase nexusBase: nexusBases) {
+			nexusBase.updateStartMiningFrames();
+		}
+		
 		// Update mineralsRatioForBuild and gasRatioForBuild
 		if (game.getFrameCount() % 100 == 0) {
 			updateDesiredResources();
@@ -214,6 +235,12 @@ public class WorkerManager extends AbstractManager {
 		if (WORKER_MANAGER_DEBUG) {
 			drawDebugInfo();
 		}
+		
+		/*if (game.getFrameCount() % 1000 == 0) {
+			game.printText("min: " + (mineralIncome - game.getSelf().getMinerals()) + "  gas: " + (gasIncome - game.getSelf().getGas()));
+			mineralIncome = game.getSelf().getMinerals() + getMineralIncome(1000);
+			gasIncome = game.getSelf().getGas() + getGasIncome(1000);
+		}*/
 	}
 	
 	/**
@@ -261,8 +288,9 @@ public class WorkerManager extends AbstractManager {
 			}
 		}	
 		
-		mineralsRatio = (double)tempMinerals / (double)(tempMinerals + tempGas);
-		gasRatio = (double)tempGas / (double)(tempMinerals + tempGas);
+		double div = (tempMinerals + tempGas <= 0) ? 1 : tempMinerals + tempGas;
+		mineralsRatio = (double)tempMinerals / div;
+		gasRatio = (double)tempGas / div;
 		
 		tempMinerals = 0;
 		tempGas = 0;
@@ -272,11 +300,50 @@ public class WorkerManager extends AbstractManager {
 			tempGas += (double)game.getUnitType(unitID).getGasPrice() / 100.0 * armyComposition.getRatio(unitID);
 		}
 		
-		double unitsMineralRatio = (double)tempMinerals / (double)(tempMinerals + tempGas);
-		double unitsGasRatio = (double)tempGas / (double)(tempMinerals + tempGas);
+		div = (tempMinerals + tempGas <= 0) ? 1 : tempMinerals + tempGas;
+		double unitsMineralRatio = (double)tempMinerals / div;
+		double unitsGasRatio = (double)tempGas / div;
 		
 		mineralsRatioForBuild = (mineralsRatio + unitsMineralRatio) / 2;
 		gasRatioForBuild = (gasRatio + unitsGasRatio) / 2;
+	}
+	
+	/**
+	 * Returns number of minerals that will be mined in desired time frame with current
+	 * number of mineral workers and mineral fields - this means that distant predictions 
+	 * to future may be very inaccurate.
+	 * 
+	 * @param frames - number of frames for which prediction will be computed
+     *
+	 * @return returns number of minerals that will be mined
+	 */
+	public int getMineralIncome(int frames) {
+		int mineralIncome = 0;
+		
+		for (NexusBase nexusBase: nexusBases) {
+			mineralIncome += nexusBase.getMineralIncome(frames);
+		}
+		
+		return mineralIncome;
+	}
+	
+	/**
+	 * Returns number of gas that will be harvested in desired time frame with current
+	 * number of gas workers and geysers - this means that distant predictions 
+	 * to future may be very inaccurate.
+	 * 
+	 * @param frames - number of frames for which prediction will be computed
+     *
+	 * @return returns number of gas that will be harvested
+	 */
+	public int getGasIncome(int frames) {
+		int gasIncome = 0;
+		
+		for (NexusBase nexusBase: nexusBases) {
+			gasIncome += nexusBase.getGasIncome(frames);
+		}
+		
+		return gasIncome;
 	}
 	
 	/**
@@ -392,7 +459,7 @@ public class WorkerManager extends AbstractManager {
 	/**
 	 * Retrieves base with Nexus which have largest worker ratio (count of mineral and gas workers 
 	 * to max mineral and gas workers that this base at most can have).
-
+     *
 	 * @return NexusBase instance with smallest worker ratio
 	 */
 	private NexusBase getNexusBaseWithLargestWorkerRatio() {
@@ -414,7 +481,7 @@ public class WorkerManager extends AbstractManager {
 	/**
 	 * Retrieves max number of workers that can be build in all bases to 
 	 * maximum effectiveness.
-
+     *
 	 * @return number of workers.
 	 */
 	private int getMaxAllWorkers() {
@@ -429,7 +496,7 @@ public class WorkerManager extends AbstractManager {
 	
 	/**
 	 * Retrieves number of workers that is currently building in all Nexuses.
-
+     *
 	 * @return number of workers.
 	 */
 	private int getWorkersNumIsTraining() {
@@ -444,11 +511,65 @@ public class WorkerManager extends AbstractManager {
 	
 	/**
 	 * Retrieves number of workers that can be build.
-
+     *
 	 * @return number of workers.
 	 */
 	public int getWorkersNumToBuild() {
 		return getMaxAllWorkers() - (getWorkersNumIsTraining() + allWorkers.size());
+	}
+
+	/**
+	 * Checks wether some enemy units is in path between baseFrom and baseTo locations.
+     *
+	 * @return true if between baseFrom and baseTo is not any enemy unit. 
+	 */
+	private boolean isPathClear(BaseLocation baseFrom, BaseLocation baseTo) {
+		ArrayList<Position> groundPath = null;
+
+		Iterator it = groundPaths.entrySet().iterator();
+			
+	    while (it.hasNext()) {
+	    	Map.Entry pair = (Map.Entry)it.next();
+		        
+		    if ((((Pair)pair.getKey()).left == baseFrom && ((Pair)pair.getKey()).right == baseTo) ||
+		        (((Pair)pair.getKey()).left == baseTo && ((Pair)pair.getKey()).right == baseFrom)) {
+		    	groundPath = (ArrayList<Position>)pair.getValue();
+		    }
+		}
+	    
+	    if (groundPath == null) {
+	    	groundPath = game.getGroundPath(baseFrom.getX() / 32, baseFrom.getY() / 32, baseTo.getX() / 32, baseTo.getY() / 32);
+			groundPaths.put(new Pair<BaseLocation, BaseLocation>(baseFrom, baseTo), groundPath);
+	    }
+		
+	    Collection<Unit> enemyUnits = boss.getOpponentPositioning().getEnemyUnits();
+	    it = enemyUnits.iterator();
+		
+	    while (it.hasNext()) {
+	    	Unit enemyUnit = (Unit)it.next();
+	    	WeaponType groundWeaponType = game.getWeaponType(game.getUnitType(enemyUnit.getTypeID()).getGroundWeaponID());
+	    	int enemyUnitGroundRange = 0;
+
+	    	if (groundWeaponType.getID() != WeaponTypes.None.ordinal()) {
+	    		enemyUnitGroundRange = groundWeaponType.getMaxRange();
+	    	}
+	    	
+	    	if (enemyUnitGroundRange > 0) {
+		    	Position enemyUnitPosition = new Position(enemyUnit.getX(), enemyUnit.getY());
+		    	
+		    	for (Position position: groundPath) {
+		    		game.printText("" + position.x + " " + position.y);
+		    		
+		    		Position currentPosition = new Position(position.x * 32 + 16, position.y * 32 + 16);
+		    		
+		    		if (currentPosition.distance(enemyUnitPosition) < enemyUnitGroundRange) {
+		    			return false;
+		    		}
+		    	}
+	    	}
+	    }
+	    
+	    return true;
 	}
 	
 	/**
@@ -464,7 +585,7 @@ public class WorkerManager extends AbstractManager {
 		if (smallest != null && largest != null && smallest != largest && largest.getWorkerRatio() - smallest.getWorkerRatio() >= 0.15) {
 			Unit worker = largest.getWorker();
 			
-			if (worker != null) {
+			if (worker != null && isPathClear(smallest.base, largest.base)) {
 				largest.deleteWorker(worker);
 				smallest.addWorker(worker);
 			}
@@ -494,6 +615,27 @@ public class WorkerManager extends AbstractManager {
 	}
 	
 	/**
+	 * Retrieves nearest BaseLocation to position pos.
+	 * 
+	 * @return BaseLocation nearest to position pos.
+	 */
+	private BaseLocation getNearestBaseLocation(Position pos) {
+		BaseLocation nearest = null;
+		Position nearestPosition = null;
+		
+		for (BaseLocation base: game.getMap().getBaseLocations()) {
+			Position currentPosition = new Position(base.getX(), base.getY());
+			
+			if (nearest == null || pos.distance(currentPosition) < pos.distance(nearestPosition)) {
+				nearest = base;
+				nearestPosition = new Position(base.getX(), base.getY());
+			}
+		}
+		
+		return nearest;
+	}
+	
+	/**
 	 * Draws on map manager debug information.
 	 */
 	private void drawDebugInfo() {
@@ -511,7 +653,7 @@ public class WorkerManager extends AbstractManager {
 			i++;
 		}
 		
-		debug += "  minRat: " + df.format(mineralsRatioForBuild) +  " gasRat: " + df.format(gasRatioForBuild);
+		debug += "  desMinRat: " + df.format(mineralsRatioForBuild) +  " desGasRat: " + df.format(gasRatioForBuild);
 		
 		game.drawText(6, 48, debug, true);
 	}
@@ -539,6 +681,9 @@ public class WorkerManager extends AbstractManager {
 		
 		// All workers that will harvest gas assigned to this Nexus
 		public ArrayList<Unit> gasWorkers = new ArrayList<Unit>();
+		
+		// Store frame in which worker started to mine mineral
+		private HashMap<Unit, Integer> startMiningFrame = new HashMap<Unit, Integer>();
 		
 		
 		/**
@@ -580,6 +725,20 @@ public class WorkerManager extends AbstractManager {
 		}
 		
 		/**
+		 * Updates frame in which workers started to mine mineral field
+		 */
+		public void updateStartMiningFrames()  {
+			for (Map.Entry<Unit, Integer> worker: startMiningFrame.entrySet()) {
+				if (worker.getValue() == -1 && (worker.getKey().getOrderID() == 87 || worker.getKey().getOrderID() == 83) /* order MiningMinerals, HarverstGas */) {
+					worker.setValue(game.getFrameCount());
+				}
+				else if (worker.getValue() != -1 && worker.getKey().getOrderID() != 87 && worker.getKey().getOrderID() != 83 /* order MiningMinerals, HarverstGas */) {
+					worker.setValue(-1);
+				}
+			}
+		}
+		
+		/**
 		 * Adds worker to this NexusBase
 		 *
 		 * @param worker - worker which will be added to this NexusBase
@@ -591,6 +750,7 @@ public class WorkerManager extends AbstractManager {
 			// workers number smaller to workersPerGeyser constant
 			if (assimilators.size() > 0 && getCountGasWorkers() < getMaxGasWorkers()) {
 				gasWorkers.add(worker);
+				startMiningFrame.put(worker, -1);
 				
 				boolean allAssimilatorsDepleted = isAllAssimilatorsDepleted();
 				
@@ -635,6 +795,7 @@ public class WorkerManager extends AbstractManager {
 					}
 					
 					mineralWorkers.add(worker);
+					startMiningFrame.put(worker, -1);
 				}
 				else {
 					manager.unassignedWorkers.add(worker);
@@ -653,6 +814,7 @@ public class WorkerManager extends AbstractManager {
 		public void deleteWorker(Unit worker) {
 			if (mineralWorkers.contains(worker)) {
 				mineralWorkers.remove(worker);
+				startMiningFrame.remove(worker);
 				
 				for (Map.Entry<Unit, ArrayList<Unit>> mineral: minerals.entrySet()) {
 					if (mineral.getValue().contains(worker)) {
@@ -663,6 +825,7 @@ public class WorkerManager extends AbstractManager {
 			}
 			else if (gasWorkers.contains(worker)) {
 				gasWorkers.remove(worker);
+				startMiningFrame.remove(worker);
 				
 				for (Map.Entry<Unit, ArrayList<Unit>> assimilator: assimilators.entrySet()) {
 					if (assimilator.getValue().contains(worker)) {
@@ -831,7 +994,129 @@ public class WorkerManager extends AbstractManager {
 			return getMaxMineralWorkers() + getMaxGasWorkers();
 		}
 		public double getWorkerRatio() {
-			return (double)(getCountMineralWorkers() + getCountGasWorkers()) / (double)(getMaxMineralWorkers() + getMaxGasWorkers());
+			double div = getMaxMineralWorkers() + getMaxGasWorkers();
+			if (div < 1) return 1;
+			
+			return (double)((getCountMineralWorkers() + getCountGasWorkers()) / div);
+		}
+		
+		public int getMineralIncome(int frames) {
+			if (nexus == null || !nexus.isExists()) {
+				return 0;
+			}
+			
+			int mineralIncome = 0;
+			
+			Position nexusPos = new Position(nexus.getX(), nexus.getY());
+			
+			for (Map.Entry<Unit, ArrayList<Unit>> mineral: minerals.entrySet()) {
+				Position mineralPos = new Position(mineral.getKey().getX(), mineral.getKey().getY());
+				int i = 0;
+				
+				for (Unit worker: mineral.getValue()) {
+					if (i >= 2) {
+						break;
+					}
+					
+					Position pos = new Position(worker.getX(), worker.getY());
+					int workerTime = frames;
+					
+					double time = frames+1;
+					double distToNexus = pos.distance(nexusPos);
+					double distToMineral = pos.distance(mineralPos);
+					
+					if (worker.isCarryingMinerals() && worker.getOrderID() == 90 /* order ReturnMinerals*/) {
+						time = distToNexus / probeTopSpeed;
+					}
+					else if (worker.isGatheringMinerals()) {
+						int workerStartMiningFrame = startMiningFrame.get(worker);
+						int remainingFrames = 114;
+						
+						if (workerStartMiningFrame != -1) {
+							remainingFrames -= game.getFrameCount() - workerStartMiningFrame;
+						}
+						
+						time = (distToMineral / probeTopSpeed) + remainingFrames;						
+						time += distToNexus / probeTopSpeed;
+					}
+					
+					if (workerTime - time >= 0) {
+						mineralIncome += 8;
+						workerTime -= time;
+					}
+					
+					int mineralsPerTime = (int)((distToNexus / probeTopSpeed) * 2.0 + 114);
+					int coef = (int)((double)workerTime / (double)mineralsPerTime);
+					
+					mineralIncome += (int)((double)(coef * 8.0));
+					
+					i++;
+				}
+			}
+			
+			return mineralIncome;
+		}
+		
+		public int getGasIncome(int frames) {
+			if (nexus == null || !nexus.isExists()) {
+				return 0;
+			}
+			
+			int gasIncome = 0;
+			
+			Position nexusPos = new Position(nexus.getX(), nexus.getY());
+			
+			for (Map.Entry<Unit, ArrayList<Unit>> assimilator: assimilators.entrySet()) {
+				Position assimilatorPos = new Position(assimilator.getKey().getX(), assimilator.getKey().getY());
+				int i = 0;
+				int income = 8;
+				
+				if (assimilator.getKey().getResources() <= 0) {
+					income = 2;
+				}
+				
+				for (Unit worker: assimilator.getValue()) {
+					if (i >= 3) {
+						break;
+					}
+					
+					Position pos = new Position(worker.getX(), worker.getY());
+					int workerTime = frames;
+					
+					double time = frames+1;
+					double distToNexus = pos.distance(nexusPos);
+					double distToGeyser = pos.distance(assimilatorPos);
+					
+					if (worker.isCarryingGas() && worker.getOrderID() == 84 /* order ReturnGas*/) {
+						time = distToNexus / probeTopSpeed;
+					}
+					else if (worker.isGatheringGas()) {
+						int workerStartMiningFrame = startMiningFrame.get(worker);
+						int remainingFrames = 60;
+						
+						if (workerStartMiningFrame != -1) {
+							remainingFrames -= game.getFrameCount() - workerStartMiningFrame;
+						}
+						
+						time = (distToGeyser / probeTopSpeed) + remainingFrames;						
+						time += distToNexus / probeTopSpeed;
+					}
+					
+					if (workerTime - time >= 0) {
+						gasIncome += income;
+						workerTime -= time;
+					}
+					
+					int gasPerTime = (int)((distToNexus / probeTopSpeed) * 2.0 + 60);
+					int coef = (int)((double)workerTime / (double)gasPerTime);
+					
+					gasIncome += (int)((double)(coef * income));
+					
+					i++;
+				}
+			}
+			
+			return gasIncome;
 		}
 
 		private void drawDebugInfo() {
@@ -859,5 +1144,16 @@ public class WorkerManager extends AbstractManager {
 			
 		}
 		
+	}
+	
+	
+	private class Pair<L, R> {
+	    private L left;
+	    private R right;
+	    
+	    public Pair(L left, R right) {
+	        this.left = left;
+	        this.right = right;
+	    }
 	}
 }

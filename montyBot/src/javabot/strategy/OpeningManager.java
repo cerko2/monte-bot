@@ -36,7 +36,7 @@ public class OpeningManager extends AbstractManager{
 	}
 	
 	public void gameUpdate(){
-		if (isActive()){
+		/*if (isActive()){
 			if (taskIndex < openingList.size()){
 				OpeningTask task = openingList.get(taskIndex); 
 				//if (!task.isDone()){ //TODO tato podmienka je asi zbytocna
@@ -48,7 +48,7 @@ public class OpeningManager extends AbstractManager{
 				setInactive();
 				game.printText("Open Manager has ended.");
 			}
-		}
+		}*/
 	}
 	
 	public void unitCreate(int unitID){

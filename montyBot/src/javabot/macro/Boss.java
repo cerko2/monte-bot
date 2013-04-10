@@ -115,6 +115,7 @@ public class Boss extends AbstractManager{
 		addManager(opponentKnowledgeBase);
 		addManager(openingManager);
 		addManager(opponentPositioning);
+		//addManager(opponentModeling);
 		addManager(wallInModule);			// miso certicky
 		addManager(buildManager);			// azder
 		addManager(unitProductionManager);	// azder

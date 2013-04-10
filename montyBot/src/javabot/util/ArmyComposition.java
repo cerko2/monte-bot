@@ -33,6 +33,9 @@ public class ArmyComposition {
 		this.technologies = new ArrayList<Integer>();
 		this.upgrades = new ArrayList<Integer>();
 		
+		// quick fix
+		if (s == "") return;
+		
 		String[] temp;
 		temp = s.split("@");
 		

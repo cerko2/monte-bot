@@ -24,7 +24,10 @@ public class OpponentKnowledgeBase extends AbstractManager{
 	private String enemyName = "";
 	private int enemyRace = 6; //RANDOM RACE = 6
 	private int openingID = -1;
-	private boolean won = false;
+	private static final int GAME_WON = 1;
+	private static final int GAME_LOST = 2;
+	private static final int GAME_INTERRUPTED = 3;
+	private int gameEndedStatus = GAME_INTERRUPTED;
 	
 	private HashMap<String, HashMap<Integer, double[]>> playersKnowledgeBase;
 	private HashMap<Integer, HashMap<Integer, double[]>> racesKnowledgeBase;
@@ -44,79 +47,81 @@ public class OpponentKnowledgeBase extends AbstractManager{
 		}
 	}
 	
-	public void gameUpdate(){
-		for (Unit u : game.getMyUnits()){
-			if (u != null && game.getUnitType(u.getTypeID()).isBuilding()){
-				won = true;
-				return;
-			}
+	public void matchEnded(boolean winner){
+		if (winner){
+			gameEndedStatus = GAME_WON;
 		}
-		won = false;
+		else{
+			for (Unit u : game.getMyUnits()){
+				if (u != null && game.getUnitType(u.getTypeID()).isBuilding()){
+					gameEndedStatus = GAME_INTERRUPTED;
+					return;
+				}
+			}
+			gameEndedStatus = GAME_LOST;
+		}
 	}
 	
 	public void gameEnded(){
-		System.out.println("ended " + won);
-		openingID = boss.getOpeningManager().getOpeningID();
-		if (openingID != -1){
-			
-			double time = game.getFrameCount() / 24 / 60;
-			int c = (won) ? 1 : -1;
-			double points = 10 * c / time;
-			points = (points > 10) ? 10 : points;
-			
-			HashMap<Integer, double[]> enemysKB = playersKnowledgeBase.get(enemyName);
-			if (enemysKB == null){
-				enemysKB = new HashMap<Integer, double[]>();
-				enemysKB.put(openingID, new double[]{1, points});
-				playersKnowledgeBase.put(enemyName, enemysKB);
-			}
-			else{
-				double[] openingStats = enemysKB.get(openingID);
-				if (openingStats == null){
-					openingStats = new double[]{1, points};
-					enemysKB.put(openingID, openingStats);
+		if (gameEndedStatus == GAME_LOST || gameEndedStatus == GAME_WON){
+			openingID = boss.getOpeningManager().getOpeningID();
+			if (openingID != -1){
+				
+				double time = game.getFrameCount() / 24 / 60;
+				int c = (gameEndedStatus == GAME_WON) ? 1 : -1;
+				double points = 10 * c / time;
+				points = (points > 10) ? 10 : points;
+				
+				HashMap<Integer, double[]> enemysKB = playersKnowledgeBase.get(enemyName);
+				if (enemysKB == null){
+					enemysKB = new HashMap<Integer, double[]>();
+					enemysKB.put(openingID, new double[]{1, points});
 					playersKnowledgeBase.put(enemyName, enemysKB);
 				}
 				else{
-					openingStats[0] += 1;
-					openingStats[1] = (openingStats[1] * (openingStats[0] - 1) + points) / openingStats[0];
-					enemysKB.put(openingID, openingStats);
-					playersKnowledgeBase.put(enemyName, enemysKB);
+					double[] openingStats = enemysKB.get(openingID);
+					if (openingStats == null){
+						openingStats = new double[]{1, points};
+						enemysKB.put(openingID, openingStats);
+						playersKnowledgeBase.put(enemyName, enemysKB);
+					}
+					else{
+						openingStats[0] += 1;
+						openingStats[1] = (openingStats[1] * (openingStats[0] - 1) + points) / openingStats[0];
+						enemysKB.put(openingID, openingStats);
+						playersKnowledgeBase.put(enemyName, enemysKB);
+					}
 				}
-			}
-			
-			HashMap<Integer, double[]> racesKB = racesKnowledgeBase.get(enemyRace);
-			if (racesKB == null){
-				racesKB = new HashMap<Integer, double[]>();
-				racesKB.put(openingID, new double[]{1, points});
-				racesKnowledgeBase.put(enemyRace, racesKB);
-			}
-			else{
-				double[] openingStats = racesKB.get(openingID);
-				if (openingStats == null){
-					openingStats = new double[]{1, points};
-					racesKB.put(openingID, openingStats);
+				
+				HashMap<Integer, double[]> racesKB = racesKnowledgeBase.get(enemyRace);
+				if (racesKB == null){
+					racesKB = new HashMap<Integer, double[]>();
+					racesKB.put(openingID, new double[]{1, points});
 					racesKnowledgeBase.put(enemyRace, racesKB);
 				}
 				else{
-					openingStats[0] += 1;
-					openingStats[1] = (openingStats[1] * (openingStats[0] - 1) + points) / openingStats[0];
-					racesKB.put(openingID, openingStats);
-					racesKnowledgeBase.put(enemyRace, racesKB);
+					double[] openingStats = racesKB.get(openingID);
+					if (openingStats == null){
+						openingStats = new double[]{1, points};
+						racesKB.put(openingID, openingStats);
+						racesKnowledgeBase.put(enemyRace, racesKB);
+					}
+					else{
+						openingStats[0] += 1;
+						openingStats[1] = (openingStats[1] * (openingStats[0] - 1) + points) / openingStats[0];
+						racesKB.put(openingID, openingStats);
+						racesKnowledgeBase.put(enemyRace, racesKB);
+					}
 				}
-			}
-			
-			try {
-				writeToFile();
-			} catch (IOException e) {
-				System.err.println("Error while writing to file 'opponentKnowledgeBase.txt'.");
-				e.printStackTrace();
+				
+				try {
+					writeToFile();
+				} catch (IOException e) {
+					System.err.println("Error while writing to file 'opponentKnowledgeBase.txt'.");
+					e.printStackTrace();
+				}
 			}
 		}
-	}
-	
-	public void playerLeft(int id){
-		System.out.println("leftol");
 	}
 	
 	public HashMap<Integer, double[]> getEnemysKB(String name){

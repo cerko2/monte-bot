@@ -1,0 +1,136 @@
+<html lang="en">
+<head>
+<title>Customizing the Prompt - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Command-Line-Editing.html#Command-Line-Editing" title="Command Line Editing">
+<link rel="prev" href="Customizing-readline.html#Customizing-readline" title="Customizing readline">
+<link rel="next" href="Diary-and-Echo-Commands.html#Diary-and-Echo-Commands" title="Diary and Echo Commands">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Customizing-the-Prompt"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Diary-and-Echo-Commands.html#Diary-and-Echo-Commands">Diary and Echo Commands</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Customizing-readline.html#Customizing-readline">Customizing readline</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Command-Line-Editing.html#Command-Line-Editing">Command Line Editing</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">2.4.7 Customizing the Prompt</h4>
+
+<p><a name="index-prompt-customization-134"></a><a name="index-customizing-the-prompt-135"></a>
+The following variables are available for customizing the appearance of
+the command-line prompts.  Octave allows the prompt to be customized by
+inserting a number of backslash-escaped special characters that are
+decoded as follows:
+
+     <dl>
+<dt><span class="samp">\t</span><dd>The time.
+
+     <br><dt><span class="samp">\d</span><dd>The date.
+
+     <br><dt><span class="samp">\n</span><dd>Begins a new line by printing the equivalent of a carriage return
+followed by a line feed.
+
+     <br><dt><span class="samp">\s</span><dd>The name of the program (usually just <span class="samp">octave</span>).
+
+     <br><dt><span class="samp">\w</span><dd>The current working directory.
+
+     <br><dt><span class="samp">\W</span><dd>The basename of the current working directory.
+
+     <br><dt><span class="samp">\u</span><dd>The username of the current user.
+
+     <br><dt><span class="samp">\h</span><dd>The hostname, up to the first `.'.
+
+     <br><dt><span class="samp">\H</span><dd>The hostname.
+
+     <br><dt><span class="samp">\#</span><dd>The command number of this command, counting from when Octave starts.
+
+     <br><dt><span class="samp">\!</span><dd>The history number of this command.  This differs from <span class="samp">\#</span> by the
+number of commands in the history list when Octave starts.
+
+     <br><dt><span class="samp">\$</span><dd>If the effective UID is 0, a <span class="samp">#</span>, otherwise a <span class="samp">$</span>.
+
+     <br><dt><span class="samp">\nnn</span><dd>The character whose character code in octal is <var>nnn</var>.
+
+     <br><dt><span class="samp">\\</span><dd>A backslash. 
+</dl>
+
+<!-- input.cc -->
+<p><a name="doc_002dPS1"></a>
+
+<div class="defun">
+&mdash; Built-in Function: <var>val</var> = <b>PS1</b> ()<var><a name="index-PS1-136"></a></var><br>
+&mdash; Built-in Function: <var>old_val</var> = <b>PS1</b> (<var>new_val</var>)<var><a name="index-PS1-137"></a></var><br>
+<blockquote><p>Query or set the primary prompt string.  When executing interactively,
+Octave displays the primary prompt when it is ready to read a command.
+
+        <p>The default value of the primary prompt string is <code>"\s:\#&gt; "</code>. 
+To change it, use a command like
+
+     <pre class="example">          octave:13&gt; PS1 ("\\u@\\H&gt; ")
+     </pre>
+        <p class="noindent">which will result in the prompt <span class="samp">boris@kremvax&gt; </span> for the user
+<span class="samp">boris</span> logged in on the host <span class="samp">kremvax.kgb.su</span>.  Note that two
+backslashes are required to enter a backslash into a double-quoted
+character string. 
+See <a href="Strings.html#Strings">Strings</a>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dPS2.html#doc_002dPS2">PS2</a>, <a href="doc_002dPS4.html#doc_002dPS4">PS4</a>. 
+</p></blockquote></div>
+
+<!-- input.cc -->
+<p><a name="doc_002dPS2"></a>
+
+<div class="defun">
+&mdash; Built-in Function: <var>val</var> = <b>PS2</b> ()<var><a name="index-PS2-138"></a></var><br>
+&mdash; Built-in Function: <var>old_val</var> = <b>PS2</b> (<var>new_val</var>)<var><a name="index-PS2-139"></a></var><br>
+<blockquote><p>Query or set the secondary prompt string.  The secondary prompt is
+printed when Octave is expecting additional input to complete a
+command.  For example, if you are typing a <code>for</code> loop that spans several
+lines, Octave will print the secondary prompt at the beginning of
+each line after the first.  The default value of the secondary prompt
+string is <code>"&gt; "</code>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dPS1.html#doc_002dPS1">PS1</a>, <a href="doc_002dPS4.html#doc_002dPS4">PS4</a>. 
+</p></blockquote></div>
+
+<!-- input.cc -->
+<p><a name="doc_002dPS4"></a>
+
+<div class="defun">
+&mdash; Built-in Function: <var>val</var> = <b>PS4</b> ()<var><a name="index-PS4-140"></a></var><br>
+&mdash; Built-in Function: <var>old_val</var> = <b>PS4</b> (<var>new_val</var>)<var><a name="index-PS4-141"></a></var><br>
+<blockquote><p>Query or set the character string used to prefix output produced
+when echoing commands is enabled. 
+The default value is <code>"+ "</code>. 
+See <a href="Diary-and-Echo-Commands.html#Diary-and-Echo-Commands">Diary and Echo Commands</a>, for a description of echoing commands. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002decho.html#doc_002decho">echo</a>, <a href="doc_002decho_005fexecuting_005fcommands.html#doc_002decho_005fexecuting_005fcommands">echo_executing_commands</a>, <a href="doc_002dPS1.html#doc_002dPS1">PS1</a>, <a href="doc_002dPS2.html#doc_002dPS2">PS2</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

@@ -1,0 +1,631 @@
+<html lang="en">
+<head>
+<title>Rearranging Matrices - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Matrix-Manipulation.html#Matrix-Manipulation" title="Matrix Manipulation">
+<link rel="prev" href="Finding-Elements-and-Checking-Conditions.html#Finding-Elements-and-Checking-Conditions" title="Finding Elements and Checking Conditions">
+<link rel="next" href="Applying-a-Function-to-an-Array.html#Applying-a-Function-to-an-Array" title="Applying a Function to an Array">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Rearranging-Matrices"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Applying-a-Function-to-an-Array.html#Applying-a-Function-to-an-Array">Applying a Function to an Array</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Finding-Elements-and-Checking-Conditions.html#Finding-Elements-and-Checking-Conditions">Finding Elements and Checking Conditions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Matrix-Manipulation.html#Matrix-Manipulation">Matrix Manipulation</a>
+<hr><br>
+</div>
+
+<h3 class="section">16.2 Rearranging Matrices</h3>
+
+<!-- ./general/fliplr.m -->
+<p><a name="doc_002dfliplr"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>fliplr</b> (<var>x</var>)<var><a name="index-fliplr-1272"></a></var><br>
+<blockquote><p>Return a copy of <var>x</var> with the order of the columns reversed.  For
+example,
+
+     <pre class="example">          fliplr ([1, 2; 3, 4])
+               =&gt;  2  1
+                   4  3
+     </pre>
+        <p>Note that <code>fliplr</code> only work with 2-D arrays.  To flip N-d arrays
+use <code>flipdim</code> instead. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dflipud.html#doc_002dflipud">flipud</a>, <a href="doc_002dflipdim.html#doc_002dflipdim">flipdim</a>, <a href="doc_002drot90.html#doc_002drot90">rot90</a>, <a href="doc_002drotdim.html#doc_002drotdim">rotdim</a>. 
+</p></blockquote></div>
+
+<!-- ./general/flipud.m -->
+<p><a name="doc_002dflipud"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>flipud</b> (<var>x</var>)<var><a name="index-flipud-1273"></a></var><br>
+<blockquote><p>Return a copy of <var>x</var> with the order of the rows reversed.  For
+example,
+
+     <pre class="example">          flipud ([1, 2; 3, 4])
+               =&gt;  3  4
+                   1  2
+     </pre>
+        <p>Due to the difficulty of defining which axis about which to flip the
+matrix <code>flipud</code> only work with 2-d arrays.  To flip N-d arrays
+use <code>flipdim</code> instead. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dfliplr.html#doc_002dfliplr">fliplr</a>, <a href="doc_002dflipdim.html#doc_002dflipdim">flipdim</a>, <a href="doc_002drot90.html#doc_002drot90">rot90</a>, <a href="doc_002drotdim.html#doc_002drotdim">rotdim</a>. 
+</p></blockquote></div>
+
+<!-- ./general/flipdim.m -->
+<p><a name="doc_002dflipdim"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>flipdim</b> (<var>x, dim</var>)<var><a name="index-flipdim-1274"></a></var><br>
+<blockquote><p>Return a copy of <var>x</var> flipped about the dimension <var>dim</var>. 
+For example
+
+     <pre class="example">          flipdim ([1, 2; 3, 4], 2)
+               =&gt;  2  1
+                   4  3
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dfliplr.html#doc_002dfliplr">fliplr</a>, <a href="doc_002dflipud.html#doc_002dflipud">flipud</a>, <a href="doc_002drot90.html#doc_002drot90">rot90</a>, <a href="doc_002drotdim.html#doc_002drotdim">rotdim</a>. 
+</p></blockquote></div>
+
+<!-- ./general/rot90.m -->
+<p><a name="doc_002drot90"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>rot90</b> (<var>x, n</var>)<var><a name="index-rot90-1275"></a></var><br>
+<blockquote><p>Return a copy of <var>x</var> with the elements rotated counterclockwise in
+90-degree increments.  The second argument is optional, and specifies
+how many 90-degree rotations are to be applied (the default value is 1). 
+Negative values of <var>n</var> rotate the matrix in a clockwise direction. 
+For example,
+
+     <pre class="example">          rot90 ([1, 2; 3, 4], -1)
+               =&gt;  3  1
+                   4  2
+     </pre>
+        <p class="noindent">rotates the given matrix clockwise by 90 degrees.  The following are all
+equivalent statements:
+
+     <pre class="example">          rot90 ([1, 2; 3, 4], -1)
+          rot90 ([1, 2; 3, 4], 3)
+          rot90 ([1, 2; 3, 4], 7)
+     </pre>
+        <p>Due to the difficulty of defining an axis about which to rotate the
+matrix <code>rot90</code> only work with 2-D arrays.  To rotate N-d arrays
+use <code>rotdim</code> instead. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002drotdim.html#doc_002drotdim">rotdim</a>, <a href="doc_002dflipud.html#doc_002dflipud">flipud</a>, <a href="doc_002dfliplr.html#doc_002dfliplr">fliplr</a>, <a href="doc_002dflipdim.html#doc_002dflipdim">flipdim</a>. 
+</p></blockquote></div>
+
+<!-- ./general/rotdim.m -->
+<p><a name="doc_002drotdim"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>rotdim</b> (<var>x, n, plane</var>)<var><a name="index-rotdim-1276"></a></var><br>
+<blockquote><p>Return a copy of <var>x</var> with the elements rotated counterclockwise in
+90-degree increments.  The second argument is optional, and specifies
+how many 90-degree rotations are to be applied (the default value is 1). 
+The third argument is also optional and defines the plane of the
+rotation.  As such <var>plane</var> is a two element vector containing two
+different valid dimensions of the matrix.  If <var>plane</var> is not given
+Then the first two non-singleton dimensions are used.
+
+        <p>Negative values of <var>n</var> rotate the matrix in a clockwise direction. 
+For example,
+
+     <pre class="example">          rotdim ([1, 2; 3, 4], -1, [1, 2])
+               =&gt;  3  1
+                   4  2
+     </pre>
+        <p class="noindent">rotates the given matrix clockwise by 90 degrees.  The following are all
+equivalent statements:
+
+     <pre class="example">          rotdim ([1, 2; 3, 4], -1, [1, 2])
+          rotdim ([1, 2; 3, 4], 3, [1, 2])
+          rotdim ([1, 2; 3, 4], 7, [1, 2])
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002drot90.html#doc_002drot90">rot90</a>, <a href="doc_002dflipud.html#doc_002dflipud">flipud</a>, <a href="doc_002dfliplr.html#doc_002dfliplr">fliplr</a>, <a href="doc_002dflipdim.html#doc_002dflipdim">flipdim</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dcat"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>cat</b> (<var>dim, array1, array2, <small class="dots">...</small>, arrayN</var>)<var><a name="index-cat-1277"></a></var><br>
+<blockquote><p>Return the concatenation of N-d array objects, <var>array1</var>,
+<var>array2</var>, <small class="dots">...</small>, <var>arrayN</var> along dimension <var>dim</var>.
+
+     <pre class="example">          A = ones (2, 2);
+          B = zeros (2, 2);
+          cat (2, A, B)
+          =&gt; ans =
+          
+               1 1 0 0
+               1 1 0 0
+     </pre>
+        <p>Alternatively, we can concatenate <var>A</var> and <var>B</var> along the
+second dimension the following way:
+
+     <pre class="example">          [A, B].
+     </pre>
+        <p><var>dim</var> can be larger than the dimensions of the N-d array objects
+and the result will thus have <var>dim</var> dimensions as the
+following example shows:
+     <pre class="example">          cat (4, ones(2, 2), zeros (2, 2))
+          =&gt; ans =
+          
+             ans(:,:,1,1) =
+          
+               1 1
+               1 1
+          
+             ans(:,:,1,2) =
+               0 0
+               0 0
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dhorzcat.html#doc_002dhorzcat">horzcat</a>, <a href="doc_002dvertcat.html#doc_002dvertcat">vertcat</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dhorzcat"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>horzcat</b> (<var>array1, array2, <small class="dots">...</small>, arrayN</var>)<var><a name="index-horzcat-1278"></a></var><br>
+<blockquote><p>Return the horizontal concatenation of N-d array objects, <var>array1</var>,
+<var>array2</var>, <small class="dots">...</small>, <var>arrayN</var> along dimension 2. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dcat.html#doc_002dcat">cat</a>, <a href="doc_002dvertcat.html#doc_002dvertcat">vertcat</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dvertcat"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>vertcat</b> (<var>array1, array2, <small class="dots">...</small>, arrayN</var>)<var><a name="index-vertcat-1279"></a></var><br>
+<blockquote><p>Return the vertical concatenation of N-d array objects, <var>array1</var>,
+<var>array2</var>, <small class="dots">...</small>, <var>arrayN</var> along dimension 1. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dcat.html#doc_002dcat">cat</a>, <a href="doc_002dhorzcat.html#doc_002dhorzcat">horzcat</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dpermute"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>permute</b> (<var>a, perm</var>)<var><a name="index-permute-1280"></a></var><br>
+<blockquote><p>Return the generalized transpose for an N-d array object <var>a</var>. 
+The permutation vector <var>perm</var> must contain the elements
+<code>1:ndims(a)</code> (in any order, but each element must appear just once). 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dipermute.html#doc_002dipermute">ipermute</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dipermute"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>ipermute</b> (<var>a, iperm</var>)<var><a name="index-ipermute-1281"></a></var><br>
+<blockquote><p>The inverse of the <code>permute</code> function.  The expression
+
+     <pre class="example">          ipermute (permute (a, perm), perm)
+     </pre>
+        <p>returns the original array <var>a</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dpermute.html#doc_002dpermute">permute</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dreshape"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>reshape</b> (<var>a, m, n, <small class="dots">...</small></var>)<var><a name="index-reshape-1282"></a></var><br>
+&mdash; Built-in Function:  <b>reshape</b> (<var>a, size</var>)<var><a name="index-reshape-1283"></a></var><br>
+<blockquote><p>Return a matrix with the given dimensions whose elements are taken
+from the matrix <var>a</var>.  The elements of the matrix are accessed in
+column-major order (like Fortran arrays are stored).
+
+        <p>For example,
+
+     <pre class="example">          reshape ([1, 2, 3, 4], 2, 2)
+               =&gt;  1  3
+                   2  4
+     </pre>
+        <p class="noindent">Note that the total number of elements in the original
+matrix must match the total number of elements in the new matrix.
+
+        <p>A single dimension of the return matrix can be unknown and is flagged
+by an empty argument. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dresize"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>resize</b> (<var>x, m</var>)<var><a name="index-resize-1284"></a></var><br>
+&mdash; Built-in Function:  <b>resize</b> (<var>x, m, n</var>)<var><a name="index-resize-1285"></a></var><br>
+&mdash; Built-in Function:  <b>resize</b> (<var>x, m, n, <small class="dots">...</small></var>)<var><a name="index-resize-1286"></a></var><br>
+<blockquote><p>Resize <var>x</var> cutting off elements as necessary.
+
+        <p>In the result, element with certain indices is equal to the corresponding
+element of <var>x</var> if the indices are within the bounds of <var>x</var>;
+otherwise, the element is set to zero.
+
+        <p>In other words, the statement
+
+     <pre class="example">            y = resize (x, dv);
+     </pre>
+        <p class="noindent">is equivalent to the following code:
+
+     <pre class="example">            y = zeros (dv, class (x));
+            sz = min (dv, size (x));
+            for i = 1:length (sz), idx{i} = 1:sz(i); endfor
+            y(idx{:}) = x(idx{:});
+     </pre>
+        <p class="noindent">but is performed more efficiently.
+
+        <p>If only <var>m</var> is supplied and it is a scalar, the dimension of the
+result is <var>m</var>-by-<var>m</var>.  If <var>m</var> is a vector, then the
+dimensions of the result are given by the elements of <var>m</var>. 
+If both <var>m</var> and <var>n</var> are scalars, then the dimensions of
+the result are <var>m</var>-by-<var>n</var>.
+
+        <p>An object can be resized to more dimensions than it has;
+in such case the missing dimensions are assumed to be 1. 
+Resizing an object to fewer dimensions is not possible. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dreshape.html#doc_002dreshape">reshape</a>, <a href="doc_002dpostpad.html#doc_002dpostpad">postpad</a>. 
+</p></blockquote></div>
+
+<!-- ./general/circshift.m -->
+<p><a name="doc_002dcircshift"></a>
+
+<div class="defun">
+&mdash; Function File: <var>y</var> = <b>circshift</b> (<var>x, n</var>)<var><a name="index-circshift-1287"></a></var><br>
+<blockquote><p>Circularly shifts the values of the array <var>x</var>.  <var>n</var> must be
+a vector of integers no longer than the number of dimensions in
+<var>x</var>.  The values of <var>n</var> can be either positive or negative,
+which determines the direction in which the values or <var>x</var> are
+shifted.  If an element of <var>n</var> is zero, then the corresponding
+dimension of <var>x</var> will not be shifted.  For example
+
+     <pre class="example">          x = [1, 2, 3; 4, 5, 6; 7, 8, 9];
+          circshift (x, 1)
+          =&gt;  7, 8, 9
+              1, 2, 3
+              4, 5, 6
+          circshift (x, -2)
+          =&gt;  7, 8, 9
+              1, 2, 3
+              4, 5, 6
+          circshift (x, [0,1])
+          =&gt;  3, 1, 2
+              6, 4, 5
+              9, 7, 8
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> permute, ipermute, shiftdim. 
+</p></blockquote></div>
+
+<!-- ./general/shiftdim.m -->
+<p><a name="doc_002dshiftdim"></a>
+
+<div class="defun">
+&mdash; Function File: <var>y</var> = <b>shiftdim</b> (<var>x, n</var>)<var><a name="index-shiftdim-1288"></a></var><br>
+&mdash; Function File: [<var>y</var>, <var>ns</var>] = <b>shiftdim</b> (<var>x</var>)<var><a name="index-shiftdim-1289"></a></var><br>
+<blockquote><p>Shifts the dimension of <var>x</var> by <var>n</var>, where <var>n</var> must be
+an integer scalar.  When <var>n</var> is positive, the dimensions of
+<var>x</var> are shifted to the left, with the leading dimensions
+circulated to the end.  If <var>n</var> is negative, then the dimensions
+of <var>x</var> are shifted to the right, with <var>n</var> leading singleton
+dimensions added.
+
+        <p>Called with a single argument, <code>shiftdim</code>, removes the leading
+singleton dimensions, returning the number of dimensions removed
+in the second output argument <var>ns</var>.
+
+        <p>For example
+
+     <pre class="example">          x = ones (1, 2, 3);
+          size (shiftdim (x, -1))
+               =&gt; [1, 1, 2, 3]
+          size (shiftdim (x, 1))
+               =&gt; [2, 3]
+          [b, ns] = shiftdim (x);
+               =&gt; b =  [1, 1, 1; 1, 1, 1]
+               =&gt; ns = 1
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> reshape, permute, ipermute, circshift, squeeze. 
+</p></blockquote></div>
+
+<!-- ./general/shift.m -->
+<p><a name="doc_002dshift"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>shift</b> (<var>x, b</var>)<var><a name="index-shift-1290"></a></var><br>
+&mdash; Function File:  <b>shift</b> (<var>x, b, dim</var>)<var><a name="index-shift-1291"></a></var><br>
+<blockquote><p>If <var>x</var> is a vector, perform a circular shift of length <var>b</var> of
+the elements of <var>x</var>.
+
+        <p>If <var>x</var> is a matrix, do the same for each column of <var>x</var>. 
+If the optional <var>dim</var> argument is given, operate along this
+dimension
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dsort"></a>
+
+<div class="defun">
+&mdash; Loadable Function: [<var>s</var>, <var>i</var>] = <b>sort</b> (<var>x</var>)<var><a name="index-sort-1292"></a></var><br>
+&mdash; Loadable Function: [<var>s</var>, <var>i</var>] = <b>sort</b> (<var>x, dim</var>)<var><a name="index-sort-1293"></a></var><br>
+&mdash; Loadable Function: [<var>s</var>, <var>i</var>] = <b>sort</b> (<var>x, mode</var>)<var><a name="index-sort-1294"></a></var><br>
+&mdash; Loadable Function: [<var>s</var>, <var>i</var>] = <b>sort</b> (<var>x, dim, mode</var>)<var><a name="index-sort-1295"></a></var><br>
+<blockquote><p>Return a copy of <var>x</var> with the elements arranged in increasing
+order.  For matrices, <code>sort</code> orders the elements in each column.
+
+        <p>For example,
+
+     <pre class="example">          sort ([1, 2; 2, 3; 3, 1])
+               =&gt;  1  1
+                   2  2
+                   3  3
+     </pre>
+        <p>The <code>sort</code> function may also be used to produce a matrix
+containing the original row indices of the elements in the sorted
+matrix.  For example,
+
+     <pre class="example">          [s, i] = sort ([1, 2; 2, 3; 3, 1])
+               =&gt; s = 1  1
+                      2  2
+                      3  3
+               =&gt; i = 1  3
+                      2  1
+                      3  2
+     </pre>
+        <p>If the optional argument <var>dim</var> is given, then the matrix is sorted
+along the dimension defined by <var>dim</var>.  The optional argument <code>mode</code>
+defines the order in which the values will be sorted.  Valid values of
+<code>mode</code> are `ascend' or `descend'.
+
+        <p>For equal elements, the indices are such that the equal elements are listed
+in the order that appeared in the original list.
+
+        <p>The <code>sort</code> function may also be used to sort strings and cell arrays
+of strings, in which case the dictionary order of the strings is used.
+
+        <p>The algorithm used in <code>sort</code> is optimized for the sorting of partially
+ordered lists. 
+</p></blockquote></div>
+
+<!-- ./general/sortrows.m -->
+<p><a name="doc_002dsortrows"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>sortrows</b> (<var>a, c</var>)<var><a name="index-sortrows-1296"></a></var><br>
+<blockquote><p>Sort the rows of the matrix <var>a</var> according to the order of the
+columns specified in <var>c</var>.  If <var>c</var> is omitted, a
+lexicographical sort is used.  By default ascending order is used
+however if elements of <var>c</var> are negative then the corresponding
+column is sorted in descending order. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dissorted"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>issorted</b> (<var>a, rows</var>)<var><a name="index-issorted-1297"></a></var><br>
+<blockquote><p>Returns true if the array is sorted, ascending or descending. 
+NaNs are treated as by <code>sort</code>.  If <var>rows</var> is supplied and
+has the value "rows", checks whether the array is sorted by rows
+as if output by <code>sortrows</code> (with no options).
+
+        <p>This function does not yet support sparse matrices. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsortrows.html#doc_002dsortrows">sortrows</a>, <a href="doc_002dsort.html#doc_002dsort">sort</a>. 
+</p></blockquote></div>
+
+   <p>Since the <code>sort</code> function does not allow sort keys to be specified,
+it can't be used to order the rows of a matrix according to the values
+of the elements in various columns<a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</sup></a>
+in a single call.  Using the second output, however, it is possible to
+sort all rows based on the values in a given column.  Here's an example
+that sorts the rows of a matrix based on the values in the second
+column.
+
+<pre class="example">     a = [1, 2; 2, 3; 3, 1];
+     [s, i] = sort (a (:, 2));
+     a (i, :)
+          =&gt;  3  1
+              1  2
+              2  3
+</pre>
+   <p><a name="doc_002dtriu"></a>
+<!-- ./general/tril.m -->
+<a name="doc_002dtril"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>tril</b> (<var>a, k</var>)<var><a name="index-tril-1298"></a></var><br>
+&mdash; Function File:  <b>triu</b> (<var>a, k</var>)<var><a name="index-triu-1299"></a></var><br>
+<blockquote><p>Return a new matrix formed by extracting the lower (<code>tril</code>)
+or upper (<code>triu</code>) triangular part of the matrix <var>a</var>, and
+setting all other elements to zero.  The second argument is optional,
+and specifies how many diagonals above or below the main diagonal should
+also be set to zero.
+
+        <p>The default value of <var>k</var> is zero, so that <code>triu</code> and
+<code>tril</code> normally include the main diagonal as part of the result
+matrix.
+
+        <p>If the value of <var>k</var> is negative, additional elements above (for
+<code>tril</code>) or below (for <code>triu</code>) the main diagonal are also
+selected.
+
+        <p>The absolute value of <var>k</var> must not be greater than the number of
+sub- or super-diagonals.
+
+        <p>For example,
+
+     <pre class="example">          tril (ones (3), -1)
+               =&gt;  0  0  0
+                   1  0  0
+                   1  1  0
+     </pre>
+        <p class="noindent">and
+
+     <pre class="example">          tril (ones (3), 1)
+               =&gt;  1  1  0
+                   1  1  1
+                   1  1  1
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dtriu.html#doc_002dtriu">triu</a>, <a href="doc_002ddiag.html#doc_002ddiag">diag</a>. 
+</p></blockquote></div>
+
+<!-- ./linear-algebra/vec.m -->
+<p><a name="doc_002dvec"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>vec</b> (<var>x</var>)<var><a name="index-vec-1300"></a></var><br>
+<blockquote><p>Return the vector obtained by stacking the columns of the matrix <var>x</var>
+one above the other. 
+</p></blockquote></div>
+
+<!-- ./linear-algebra/vech.m -->
+<p><a name="doc_002dvech"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>vech</b> (<var>x</var>)<var><a name="index-vech-1301"></a></var><br>
+<blockquote><p>Return the vector obtained by eliminating all supradiagonal elements of
+the square matrix <var>x</var> and stacking the result one column above the
+other. 
+</p></blockquote></div>
+
+   <p><a name="doc_002dpostpad"></a>
+<!-- ./general/prepad.m -->
+<a name="doc_002dprepad"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>prepad</b> (<var>x, l, c</var>)<var><a name="index-prepad-1302"></a></var><br>
+&mdash; Function File:  <b>prepad</b> (<var>x, l, c, dim</var>)<var><a name="index-prepad-1303"></a></var><br>
+<blockquote><p>Prepend (append) the scalar value <var>c</var> to the vector <var>x</var>
+until it is of length <var>l</var>.  If the third argument is not
+supplied, a value of 0 is used.
+
+        <p>If <code>length (</code><var>x</var><code>) &gt; </code><var>l</var>, elements from the beginning (end) of
+<var>x</var> are removed until a vector of length <var>l</var> is obtained.
+
+        <p>If <var>x</var> is a matrix, elements are prepended or removed from each row.
+
+        <p>If the optional <var>dim</var> argument is given, then operate along this
+dimension. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dpostpad.html#doc_002dpostpad">postpad</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002ddiag"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>diag</b> (<var>v, k</var>)<var><a name="index-diag-1304"></a></var><br>
+<blockquote><p>Return a diagonal matrix with vector <var>v</var> on diagonal <var>k</var>.  The
+second argument is optional.  If it is positive, the vector is placed on
+the <var>k</var>-th super-diagonal.  If it is negative, it is placed on the
+<var>-k</var>-th sub-diagonal.  The default value of <var>k</var> is 0, and the
+vector is placed on the main diagonal.  For example,
+
+     <pre class="example">          diag ([1, 2, 3], 1)
+               =&gt;  0  1  0  0
+                   0  0  2  0
+                   0  0  0  3
+                   0  0  0  0
+     </pre>
+        <p class="noindent">Given a matrix argument, instead of a vector, <code>diag</code> extracts the
+<var>k</var>-th diagonal of the matrix. 
+</p></blockquote></div>
+
+<!-- ./general/blkdiag.m -->
+<p><a name="doc_002dblkdiag"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>blkdiag</b> (<var>a, b, c, <small class="dots">...</small></var>)<var><a name="index-blkdiag-1305"></a></var><br>
+<blockquote><p>Build a block diagonal matrix from <var>a</var>, <var>b</var>, <var>c</var>, <small class="dots">...</small>. 
+All the arguments must be numeric and are two-dimensional matrices or
+scalars. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002ddiag.html#doc_002ddiag">diag</a>, <a href="doc_002dhorzcat.html#doc_002dhorzcat">horzcat</a>, <a href="doc_002dvertcat.html#doc_002dvertcat">vertcat</a>. 
+</p></blockquote></div>
+
+   <div class="footnote">
+<hr>
+<h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> For example, to first sort
+based on the values in column 1, and then, for any values that are
+repeated in column 1, sort based on the values found in column 2, etc.</p>
+
+   <p><hr></div>
+
+   </body></html>
+

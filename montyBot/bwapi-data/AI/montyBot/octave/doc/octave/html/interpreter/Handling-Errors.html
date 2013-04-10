@@ -1,0 +1,50 @@
+<html lang="en">
+<head>
+<title>Handling Errors - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Errors-and-Warnings.html#Errors-and-Warnings" title="Errors and Warnings">
+<link rel="next" href="Handling-Warnings.html#Handling-Warnings" title="Handling Warnings">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Handling-Errors"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Handling-Warnings.html#Handling-Warnings">Handling Warnings</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Errors-and-Warnings.html#Errors-and-Warnings">Errors and Warnings</a>
+<hr><br>
+</div>
+
+<h3 class="section">12.1 Handling Errors</h3>
+
+<p>An error is something that occurs when a program is in a state where
+it doesn't make sense to continue.  An example is when a function is
+called with too few input arguments.  In this situation the function
+should abort with an error message informing the user of the lacking
+input arguments.
+
+   <p>Since an error can occur during the evaluation of a program, it is
+very convenient to be able to detect that an error occurred, so that
+the error can be fixed.  This is possible with the <code>try</code> statement
+described in <a href="The-_003ccode_003etry_003c_002fcode_003e-Statement.html#The-_003ccode_003etry_003c_002fcode_003e-Statement">The <code>try</code> Statement</a>.
+
+<ul class="menu">
+<li><a accesskey="1" href="Raising-Errors.html#Raising-Errors">Raising Errors</a>
+<li><a accesskey="2" href="Catching-Errors.html#Catching-Errors">Catching Errors</a>
+</ul>
+
+   </body></html>
+

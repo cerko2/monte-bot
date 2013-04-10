@@ -1,0 +1,66 @@
+<html lang="en">
+<head>
+<title>Graphics backends - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Advanced-Plotting.html#Advanced-Plotting" title="Advanced Plotting">
+<link rel="prev" href="Object-Groups.html#Object-Groups" title="Object Groups">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Graphics-backends"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="Object-Groups.html#Object-Groups">Object Groups</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Advanced-Plotting.html#Advanced-Plotting">Advanced Plotting</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">15.2.9 Graphics backends</h4>
+
+<p><a name="index-graphics-backends-1252"></a><a name="index-backends_002c-graphics-1253"></a>
+<!-- ./plot/backend.m -->
+<a name="doc_002dbackend"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>backend</b> (<var>name</var>)<var><a name="index-backend-1254"></a></var><br>
+&mdash; Function File:  <b>backend</b> (<var>hlist, name</var>)<var><a name="index-backend-1255"></a></var><br>
+<blockquote><p>Change the default graphics backend to <var>name</var>.  If the backend is
+not already loaded, it is first initialized (initialization is done
+through the execution of <code>__init_</code><var>name</var><code>__</code>).
+
+        <p>When called with a list of figure handles, <var>hlist</var>, the backend is
+changed only for the listed figures. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002davailable_005fbackends.html#doc_002davailable_005fbackends">available_backends</a>. 
+</p></blockquote></div>
+
+<!-- graphics.cc -->
+<p><a name="doc_002davailable_005fbackends"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>available_backends</b> ()<var><a name="index-available_005fbackends-1256"></a></var><br>
+<blockquote><p>Return a cell array of registered graphics backends. 
+</p></blockquote></div>
+
+<ul class="menu">
+<li><a accesskey="1" href="Interaction-with-gnuplot.html#Interaction-with-gnuplot">Interaction with gnuplot</a>
+</ul>
+
+   </body></html>
+

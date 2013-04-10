@@ -1,0 +1,110 @@
+<html lang="en">
+<head>
+<title>Miscellaneous Functions - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Polynomial-Manipulations.html#Polynomial-Manipulations" title="Polynomial Manipulations">
+<link rel="prev" href="Polynomial-Interpolation.html#Polynomial-Interpolation" title="Polynomial Interpolation">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Miscellaneous-Functions"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="Polynomial-Interpolation.html#Polynomial-Interpolation">Polynomial Interpolation</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Polynomial-Manipulations.html#Polynomial-Manipulations">Polynomial Manipulations</a>
+<hr><br>
+</div>
+
+<h3 class="section">27.6 Miscellaneous Functions</h3>
+
+<!-- ./polynomial/poly.m -->
+<p><a name="doc_002dpoly"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>poly</b> (<var>a</var>)<var><a name="index-poly-2053"></a></var><br>
+<blockquote><p>If <var>a</var> is a square N-by-N matrix, <code>poly (</code><var>a</var><code>)</code>
+is the row vector of the coefficients of <code>det (z * eye (N) - a)</code>,
+the characteristic polynomial of <var>a</var>.  As an example we can use
+this to find the eigenvalues of <var>a</var> as the roots of <code>poly (</code><var>a</var><code>)</code>.
+     <pre class="example">          roots(poly(eye(3)))
+          =&gt; 1.00000 + 0.00000i
+          =&gt; 1.00000 - 0.00000i
+          =&gt; 1.00000 + 0.00000i
+     </pre>
+        <p>In real-life examples you should, however, use the <code>eig</code> function
+for computing eigenvalues.
+
+        <p>If <var>x</var> is a vector, <code>poly (</code><var>x</var><code>)</code> is a vector of coefficients
+of the polynomial whose roots are the elements of <var>x</var>.  That is,
+of <var>c</var> is a polynomial, then the elements of
+<var>d</var><code> = roots (poly (</code><var>c</var><code>))</code> are contained in <var>c</var>. 
+The vectors <var>c</var> and <var>d</var> are, however, not equal due to sorting
+and numerical errors. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002deig.html#doc_002deig">eig</a>, <a href="doc_002droots.html#doc_002droots">roots</a>. 
+</p></blockquote></div>
+
+<!-- ./polynomial/polyout.m -->
+<p><a name="doc_002dpolyout"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>polyout</b> (<var>c, x</var>)<var><a name="index-polyout-2054"></a></var><br>
+<blockquote><p>Write formatted polynomial
+     <pre class="example">             c(x) = c(1) * x^n + ... + c(n) x + c(n+1)
+     </pre>
+        <p>and return it as a string or write it to the screen (if
+<var>nargout</var> is zero). 
+<var>x</var> defaults to the string <code>"s"</code>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dpolyval.html#doc_002dpolyval">polyval</a>, <a href="doc_002dpolyvalm.html#doc_002dpolyvalm">polyvalm</a>, <a href="doc_002dpoly.html#doc_002dpoly">poly</a>, <a href="doc_002droots.html#doc_002droots">roots</a>, <a href="doc_002dconv.html#doc_002dconv">conv</a>, <a href="doc_002ddeconv.html#doc_002ddeconv">deconv</a>, <a href="doc_002dresidue.html#doc_002dresidue">residue</a>, <a href="doc_002dfilter.html#doc_002dfilter">filter</a>, <a href="doc_002dpolyderiv.html#doc_002dpolyderiv">polyderiv</a>, <a href="doc_002dpolyinteg.html#doc_002dpolyinteg">polyinteg</a>. 
+</p></blockquote></div>
+
+<!-- ./polynomial/polyreduce.m -->
+<p><a name="doc_002dpolyreduce"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>polyreduce</b> (<var>c</var>)<var><a name="index-polyreduce-2055"></a></var><br>
+<blockquote><p>Reduces a polynomial coefficient vector to a minimum number of terms by
+stripping off any leading zeros. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dpoly.html#doc_002dpoly">poly</a>, <a href="doc_002droots.html#doc_002droots">roots</a>, <a href="doc_002dconv.html#doc_002dconv">conv</a>, <a href="doc_002ddeconv.html#doc_002ddeconv">deconv</a>, <a href="doc_002dresidue.html#doc_002dresidue">residue</a>, <a href="doc_002dfilter.html#doc_002dfilter">filter</a>, <a href="doc_002dpolyval.html#doc_002dpolyval">polyval</a>, <a href="doc_002dpolyvalm.html#doc_002dpolyvalm">polyvalm</a>, <a href="doc_002dpolyderiv.html#doc_002dpolyderiv">polyderiv</a>, <a href="doc_002dpolyinteg.html#doc_002dpolyinteg">polyinteg</a>. 
+</p></blockquote></div>
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 2007, 2008, 2009 John W. Eaton -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

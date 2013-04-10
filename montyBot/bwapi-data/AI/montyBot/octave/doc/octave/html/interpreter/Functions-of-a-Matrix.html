@@ -1,0 +1,130 @@
+<html lang="en">
+<head>
+<title>Functions of a Matrix - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Linear-Algebra.html#Linear-Algebra" title="Linear Algebra">
+<link rel="prev" href="Matrix-Factorizations.html#Matrix-Factorizations" title="Matrix Factorizations">
+<link rel="next" href="Specialized-Solvers.html#Specialized-Solvers" title="Specialized Solvers">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Functions-of-a-Matrix"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Specialized-Solvers.html#Specialized-Solvers">Specialized Solvers</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Matrix-Factorizations.html#Matrix-Factorizations">Matrix Factorizations</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Linear-Algebra.html#Linear-Algebra">Linear Algebra</a>
+<hr><br>
+</div>
+
+<h3 class="section">18.4 Functions of a Matrix</h3>
+
+<!-- ./linear-algebra/expm.m -->
+<p><a name="doc_002dexpm"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>expm</b> (<var>a</var>)<var><a name="index-expm-1622"></a></var><br>
+<blockquote><p>Return the exponential of a matrix, defined as the infinite Taylor
+series
+
+     <pre class="example">          expm(a) = I + a + a^2/2! + a^3/3! + ...
+     </pre>
+        <p>The Taylor series is <em>not</em> the way to compute the matrix
+exponential; see Moler and Van Loan, <cite>Nineteen Dubious Ways to
+Compute the Exponential of a Matrix</cite>, SIAM Review, 1978.  This routine
+uses Ward's diagonal
+Pade'
+approximation method with three step preconditioning (SIAM Journal on
+Numerical Analysis, 1977).  Diagonal
+Pade'
+ approximations are rational polynomials of matrices
+
+     <pre class="example">               -1
+          D (a)   N (a)
+     </pre>
+        <p>whose Taylor series matches the first
+<code>2q+1</code>
+terms of the Taylor series above; direct evaluation of the Taylor series
+(with the same preconditioning steps) may be desirable in lieu of the
+Pade'
+approximation when
+<code>Dq(a)</code>
+is ill-conditioned. 
+</p></blockquote></div>
+
+<!-- ./linear-algebra/logm.m -->
+<p><a name="doc_002dlogm"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>logm</b> (<var>a</var>)<var><a name="index-logm-1623"></a></var><br>
+<blockquote><p>Compute the matrix logarithm of the square matrix <var>a</var>.  Note that
+this is currently implemented in terms of an eigenvalue expansion and
+needs to be improved to be more robust. 
+</p></blockquote></div>
+
+<!-- ./DLD-FUNCTIONS/sqrtm.cc -->
+<p><a name="doc_002dsqrtm"></a>
+
+<div class="defun">
+&mdash; Loadable Function: [<var>result</var>, <var>error_estimate</var>] = <b>sqrtm</b> (<var>a</var>)<var><a name="index-sqrtm-1624"></a></var><br>
+<blockquote><p>Compute the matrix square root of the square matrix <var>a</var>.
+
+        <p>Ref: Nicholas J. Higham.  A new sqrtm for <span class="sc">matlab</span>.  Numerical Analysis
+Report No. 336, Manchester Centre for Computational Mathematics,
+Manchester, England, January 1999. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dexpm.html#doc_002dexpm">expm</a>, <a href="doc_002dlogm.html#doc_002dlogm">logm</a>. 
+</p></blockquote></div>
+
+<!-- ./DLD-FUNCTIONS/kron.cc -->
+<p><a name="doc_002dkron"></a>
+
+<div class="defun">
+&mdash; Loadable Function:  <b>kron</b> (<var>a, b</var>)<var><a name="index-kron-1625"></a></var><br>
+<blockquote><p>Form the kronecker product of two matrices, defined block by block as
+
+     <pre class="example">          x = [a(i, j) b]
+     </pre>
+        <p>For example,
+
+     <pre class="example">          kron (1:4, ones (3, 1))
+                =&gt;  1  2  3  4
+                    1  2  3  4
+                    1  2  3  4
+     </pre>
+        </blockquote></div>
+
+<!-- ./DLD-FUNCTIONS/syl.cc -->
+<p><a name="doc_002dsyl"></a>
+
+<div class="defun">
+&mdash; Loadable Function: <var>x</var> = <b>syl</b> (<var>a, b, c</var>)<var><a name="index-syl-1626"></a></var><br>
+<blockquote><p>Solve the Sylvester equation
+
+     <pre class="example">          A X + X B + C = 0
+     </pre>
+        <p>using standard <span class="sc">lapack</span> subroutines.  For example,
+
+     <pre class="example">          syl ([1, 2; 3, 4], [5, 6; 7, 8], [9, 10; 11, 12])
+               =&gt; [ -0.50000, -0.66667; -0.66667, -0.50000 ]
+     </pre>
+        </blockquote></div>
+
+   </body></html>
+

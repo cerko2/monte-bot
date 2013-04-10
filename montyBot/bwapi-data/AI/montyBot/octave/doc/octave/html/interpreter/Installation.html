@@ -1,0 +1,226 @@
+<html lang="en">
+<head>
+<title>Installation - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="Trouble.html#Trouble" title="Trouble">
+<link rel="next" href="Emacs-Octave-Support.html#Emacs-Octave-Support" title="Emacs Octave Support">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Installation"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Emacs-Octave-Support.html#Emacs-Octave-Support">Emacs Octave Support</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Trouble.html#Trouble">Trouble</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr><br>
+</div>
+
+<h2 class="appendix">Appendix F Installing Octave</h2>
+
+   <p><a name="index-installing-Octave-2556"></a>
+Here is the procedure for installing Octave from scratch on a Unix
+system.
+
+     <ul>
+<li>Run the shell script <span class="file">configure</span>.  This will determine the features
+your system has (or doesn't have) and create a file named
+<span class="file">Makefile</span> from each of the files named <span class="file">Makefile.in</span>.
+
+     <p>Here is a summary of the configure options that are most frequently used
+when building Octave:
+
+          <dl>
+<dt><code>--prefix=</code><var>prefix</var><dd>Install Octave in subdirectories below <var>prefix</var>.  The default value
+of <var>prefix</var> is <span class="file">/usr/local</span>.
+
+          <br><dt><code>--srcdir=</code><var>dir</var><dd>Look for Octave sources in the directory <var>dir</var>.
+
+          <br><dt><code>--enable-bounds-check</code><dd>Enable bounds checking for indexing operators in the internal array
+classes.  This option is primarily used for debugging Octave.  Building
+Octave with this option has a negative impact on performance and is not
+recommended for general use.
+
+          <br><dt><code>--enable-64</code><dd>This is an <strong>experimental</strong> option to enable Octave to use 64-bit
+integers for array dimensions and indexing on 64-bit platforms.  You
+probably don't want to use this option unless you know what you are
+doing.
+
+          <p>If you use <code>--enable-64</code>, you must ensure that your Fortran
+compiler generates code with 8 byte signed <code>INTEGER</code> values, and
+that your <span class="sc">blas</span> and <span class="sc">lapack</span> libraries are compiled to use 8 byte
+signed integers for array dimensions and indexing.
+
+          <br><dt><code>--enable-shared</code><dd>Create shared libraries (this is the default).  If you are planning to
+use the dynamic loading features, you will probably want to use this
+option.  It will make your <span class="file">.oct</span> files much smaller and on some
+systems it may be necessary to build shared libraries in order to use
+dynamically linked functions.
+
+          <p>You may also want to build a shared version of <code>libstdc++</code>, if your
+system doesn't already have one.
+
+          <br><dt><code>--enable-dl</code><dd>Use <code>dlopen</code> and friends to make Octave capable of dynamically
+linking externally compiled functions (this is the default if
+<code>--enable-shared</code> is specified).  This option only works on systems
+that actually have these functions.  If you plan on using this feature, you
+should probably also use <code>--enable-shared</code> to reduce the size of
+your <span class="file">.oct</span> files.
+
+          <br><dt><code>--without-blas</code><dd>Compile and use the generic <span class="sc">blas</span> and <span class="sc">lapack</span> versions included with
+Octave.  By default, configure first looks for <span class="sc">blas</span> and <span class="sc">lapack</span> matrix
+libraries on your system, including optimized <span class="sc">blas</span> implementations such
+as the free ATLAS 3.0, as well as vendor-tuned libraries.  (The use of
+an optimized <span class="sc">blas</span> will generally result in several-times faster matrix
+operations.)  Only use this option if your system has <span class="sc">blas</span>/<span class="sc">lapack</span>
+libraries that cause problems for some reason.  You can also use
+<code>--with-blas=lib</code> to specify a particular <span class="sc">blas</span> library
+ that configure doesn't check for automatically.
+
+          <br><dt><code>--without-ccolamd</code><dd>Don't use CCOLAMD, disable some sparse matrix functionality.
+
+          <br><dt><code>--without-colamd</code><dd>Don't use COLAMD, disable some sparse matrix functionality.
+
+          <br><dt><code>--without-curl</code><dd>Don't use the cURL, disable the <code>urlread</code> and <code>urlwrite</code>
+functions.
+
+          <br><dt><code>--without-cxsparse</code><dd>Don't use CXSPARSE, disable some sparse matrix functionality.
+
+          <br><dt><code>--without-umfpack</code><dd>Don't use UMFPACK, disable some sparse matrix functionality.
+
+          <br><dt><code>--without-fftw</code><dd>Use the included <span class="sc">fftpack</span> library instead of the <span class="sc">fftw</span> library.
+
+          <br><dt><code>--without-glpk</code><dd>Don't use the GLPK library for linear programming.
+
+          <br><dt><code>--without-hdf5</code><dd>Don't use the HDF5 library for reading and writing HDF5 files.
+
+          <br><dt><code>--without-zlib</code><dd>Don't use the zlib library, disable data file compression and support
+for recent MAT file formats.
+
+          <br><dt><code>--without-lapack</code><dd>Compile and use the generic <span class="sc">blas</span> and <span class="sc">lapack</span> versions included with
+Octave.  By default, configure first looks for <span class="sc">blas</span> and <span class="sc">lapack</span> matrix
+libraries on your system, including optimized <span class="sc">blas</span> implementations such
+as the free ATLAS 3.0, as well as vendor-tuned libraries.  (The use of
+an optimized <span class="sc">blas</span> will generally result in several-times faster matrix
+operations.)  Only use this option if your system has <span class="sc">blas</span>/<span class="sc">lapack</span>
+libraries that cause problems for some reason.  You can also use
+<code>--with-blas=lib</code> to specify a particular <span class="sc">blas</span> library
+ that configure doesn't check for automatically.
+
+          <br><dt><code>--without-framework-carbon</code><dd>Don't use framework Carbon headers, libraries and specific source code
+for compilation even if the configure test succeeds (the default value
+is <code>--with-framework-carbon</code>).  This is a platform specific configure
+option for Mac systems.
+
+          <br><dt><code>--without-framework-opengl</code><dd>Don't use framework OpenGL headers, libraries and specific source code
+for compilation even if the configure test succeeds.  If this option is
+given then OpenGL headers and libraries in standard system locations are
+tested (the default value is <code>--with-framework-opengl</code>).  This is a
+platform specific configure option for Mac systems.
+
+          <br><dt><code>--help</code><dd>Print a summary of the options recognized by the configure script. 
+</dl>
+
+     <p>See the file <span class="file">INSTALL</span> for more general information about the
+command line options used by configure.  That file also contains
+instructions for compiling in a directory other than where the source
+is located.
+
+     <li>Run make.
+
+     <p>You will need a recent version of GNU Make.  Modifying Octave's
+makefiles to work with other make programs is probably not worth
+your time.  We recommend you get and compile GNU Make instead.
+
+     <p>For plotting, you will need to have gnuplot installed on your system. 
+Gnuplot is a command-driven interactive function plotting program. 
+Gnuplot is copyrighted, but freely distributable.  The `gnu' in gnuplot
+is a coincidence&mdash;it is not related to the GNU project or the FSF in
+any but the most peripheral sense.
+
+     <p>To compile Octave, you will need a recent version of GNU Make.  You will
+also need a recent version of <code>g++</code> or other ANSI C++ compiler.  You
+will also need a Fortran 77 compiler or <code>f2c</code>.  If you use
+<code>f2c</code>, you will need a script like <code>fort77</code> that works like a
+normal Fortran compiler by combining <code>f2c</code> with your C compiler in
+a single script.
+
+     <p>If you plan to modify the parser you will also need GNU <code>bison</code> and
+<code>flex</code>.  If you modify the documentation, you will need GNU
+Texinfo, along with the patch for the <code>makeinfo</code> program that is
+distributed with Octave.
+
+     <p>GNU Make, <code>gcc</code>, and <code>libstdc++</code>, <code>gnuplot</code>,
+<code>bison</code>, <code>flex</code>, and Texinfo are all available from many
+anonymous ftp archives.  The primary site is <a href="ftp.gnu.org">ftp.gnu.org</a>, but it
+is often very busy.  A list of sites that mirror the software on
+<a href="ftp.gnu.org">ftp.gnu.org</a> is available by anonymous ftp from
+<a href="ftp://ftp.gnu.org/pub/gnu/GNUinfo/FTP">ftp://ftp.gnu.org/pub/gnu/GNUinfo/FTP</a>.
+
+     <p>You will need about 1 gigabyte of disk storage to work with when
+building Octave from source (considerably less if you don't compile with
+debugging symbols).  To do that, use the command
+
+     <pre class="example">          make CFLAGS=-O CXXFLAGS=-O LDFLAGS=
+     </pre>
+     <p class="noindent">instead of just <span class="samp">make</span>.
+
+     <li>If you encounter errors while compiling Octave, first check the list of
+known problems below to see if there is a workaround or solution for
+your problem.  If not,
+see <a href="Trouble.html#Trouble">Trouble</a>,
+for information about how to report bugs.
+
+     <li>Once you have successfully compiled Octave, run <span class="samp">make install</span>.
+
+     <p>This will install a copy of Octave, its libraries, and its documentation
+in the destination directory.  As distributed, Octave is installed in
+the following directories.  In the table below, <var>prefix</var> defaults to
+<span class="file">/usr/local</span>, <var>version</var> stands for the current version number
+of the interpreter, and <var>arch</var> is the type of computer on which
+Octave is installed (for example, <span class="samp">i586-unknown-gnu</span>).
+
+          <dl>
+<dt><var>prefix</var><span class="file">/bin</span><dd>Octave and other binaries that people will want to run directly.
+
+          <br><dt><var>prefix</var><span class="file">/lib</span><dd>Libraries like libcruft.a and liboctave.a.
+
+          <br><dt><var>prefix</var><span class="file">/share</span><dd>Architecture-independent data files.
+
+          <br><dt><var>prefix</var><span class="file">/include/octave</span><dd>Include files distributed with Octave.
+
+          <br><dt><var>prefix</var><span class="file">/man/man1</span><dd>Unix-style man pages describing Octave.
+
+          <br><dt><var>prefix</var><span class="file">/info</span><dd>Info files describing Octave.
+
+          <br><dt><var>prefix</var><span class="file">/share/octave/</span><var>version</var><span class="file">/m</span><dd>Function files distributed with Octave.  This includes the Octave
+version, so that multiple versions of Octave may be installed at the
+same time.
+
+          <br><dt><var>prefix</var><span class="file">/lib/octave/</span><var>version</var><span class="file">/exec/</span><var>arch</var><dd>Executables to be run by Octave rather than the user.
+
+          <br><dt><var>prefix</var><span class="file">/lib/octave/</span><var>version</var><span class="file">/oct/</span><var>arch</var><dd>Object files that will be dynamically loaded.
+
+          <br><dt><var>prefix</var><span class="file">/share/octave/</span><var>version</var><span class="file">/imagelib</span><dd>Image files that are distributed with Octave. 
+</dl>
+     </ul>
+
+<ul class="menu">
+<li><a accesskey="1" href="Installation-Problems.html#Installation-Problems">Installation Problems</a>
+</ul>
+
+   </body></html>
+

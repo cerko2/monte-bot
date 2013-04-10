@@ -1,0 +1,155 @@
+<html lang="en">
+<head>
+<title>Applying a Function to an Array - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Matrix-Manipulation.html#Matrix-Manipulation" title="Matrix Manipulation">
+<link rel="prev" href="Rearranging-Matrices.html#Rearranging-Matrices" title="Rearranging Matrices">
+<link rel="next" href="Special-Utility-Matrices.html#Special-Utility-Matrices" title="Special Utility Matrices">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Applying-a-Function-to-an-Array"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Special-Utility-Matrices.html#Special-Utility-Matrices">Special Utility Matrices</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Rearranging-Matrices.html#Rearranging-Matrices">Rearranging Matrices</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Matrix-Manipulation.html#Matrix-Manipulation">Matrix Manipulation</a>
+<hr><br>
+</div>
+
+<h3 class="section">16.3 Applying a Function to an Array</h3>
+
+<!-- ./general/arrayfun.m -->
+<p><a name="doc_002darrayfun"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>arrayfun</b> (<var>func, a</var>)<var><a name="index-arrayfun-1306"></a></var><br>
+&mdash; Function File: <var>x</var> = <b>arrayfun</b> (<var>func, a</var>)<var><a name="index-arrayfun-1307"></a></var><br>
+&mdash; Function File: <var>x</var> = <b>arrayfun</b> (<var>func, a, b, <small class="dots">...</small></var>)<var><a name="index-arrayfun-1308"></a></var><br>
+&mdash; Function File: [<var>x</var>, <var>y</var>, <small class="dots">...</small>] = <b>arrayfun</b> (<var>func, a, <small class="dots">...</small></var>)<var><a name="index-arrayfun-1309"></a></var><br>
+&mdash; Function File:  <b>arrayfun</b> (<var><small class="dots">...</small>, "UniformOutput", val</var>)<var><a name="index-arrayfun-1310"></a></var><br>
+&mdash; Function File:  <b>arrayfun</b> (<var><small class="dots">...</small>, "ErrorHandler", errfunc</var>)<var><a name="index-arrayfun-1311"></a></var><br>
+<blockquote>
+<p>Execute a function on each element of an array.  This is useful for
+functions that do not accept array arguments.  If the function does
+accept array arguments it is better to call the function directly.
+
+        <p>The first input argument <var>func</var> can be a string, a function
+handle, an inline function or an anonymous function.  The input
+argument <var>a</var> can be a logic array, a numeric array, a string
+array, a structure array or a cell array.  By a call of the function
+<span class="command">arrayfun</span> all elements of <var>a</var> are passed on to the named
+function <var>func</var> individually.
+
+        <p>The named function can also take more than two input arguments, with
+the input arguments given as third input argument <var>b</var>, fourth
+input argument <var>c</var>, <small class="dots">...</small>  If given more than one array input
+argument then all input arguments must have the same sizes, for
+example
+
+     <pre class="example">          arrayfun (@atan2, [1, 0], [0, 1])
+          =&gt; ans = [1.5708   0.0000]
+     </pre>
+        <p>If the parameter <var>val</var> after a further string input argument
+"UniformOutput" is set <code>true</code> (the default), then the named
+function <var>func</var> must return a single element which then will be
+concatenated into the return value and is of type matrix.  Otherwise,
+if that parameter is set to <code>false</code>, then the outputs are
+concatenated in a cell array.  For example
+
+     <pre class="example">          arrayfun (@(x,y) x:y, "abc", "def", "UniformOutput", false)
+          =&gt; ans =
+          {
+            [1,1] = abcd
+            [1,2] = bcde
+            [1,3] = cdef
+          }
+     </pre>
+        <p>If more than one output arguments are given then the named function
+must return the number of return values that also are expected, for
+example
+
+     <pre class="example">          [A, B, C] = arrayfun (@find, [10; 0], "UniformOutput", false)
+          =&gt;
+          A =
+          {
+            [1,1] =  1
+            [2,1] = [](0x0)
+          }
+          B =
+          {
+            [1,1] =  1
+            [2,1] = [](0x0)
+          }
+          C =
+          {
+            [1,1] =  10
+            [2,1] = [](0x0)
+          }
+     </pre>
+        <p>If the parameter <var>errfunc</var> after a further string input argument
+"ErrorHandler" is another string, a function handle, an inline
+function or an anonymous function, then <var>errfunc</var> defines a
+function to call in the case that <var>func</var> generates an error. 
+The definition of the function must be of the form
+
+     <pre class="example">          function [...] = errfunc (<var>s</var>, ...)
+     </pre>
+        <p>where there is an additional input argument to <var>errfunc</var>
+relative to <var>func</var>, given by <var>s</var>.  This is a structure with
+the elements "identifier", "message" and "index", giving
+respectively the error identifier, the error message and the index of
+the array elements that caused the error.  The size of the output
+argument of <var>errfunc</var> must have the same size as the output
+argument of <var>func</var>, otherwise a real error is thrown.  For
+example
+
+     <pre class="example">          function y = ferr (s, x), y = "MyString"; endfunction
+          arrayfun (@str2num, [1234], \
+                    "UniformOutput", false, "ErrorHandler", @ferr)
+          =&gt; ans =
+          {
+           [1,1] = MyString
+          }
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dcellfun.html#doc_002dcellfun">cellfun</a>, <a href="doc_002dspfun.html#doc_002dspfun">spfun</a>, <a href="doc_002dstructfun.html#doc_002dstructfun">structfun</a>. 
+</p></blockquote></div>
+
+<!-- ./DLD-FUNCTIONS/bsxfun.cc -->
+<p><a name="doc_002dbsxfun"></a>
+
+<div class="defun">
+&mdash; Loadable Function:  <b>bsxfun</b> (<var>f, a, b</var>)<var><a name="index-bsxfun-1312"></a></var><br>
+<blockquote><p>Applies a binary function <var>f</var> element-wise to two matrix arguments
+<var>a</var> and <var>b</var>.  The function <var>f</var> must be capable of accepting
+two column vector arguments of equal length, or one column vector
+argument and a scalar.
+
+        <p>The dimensions of <var>a</var> and <var>b</var> must be equal or singleton.  The
+singleton dimensions of the matrices will be expanded to the same
+dimensionality as the other matrix.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002darrayfun.html#doc_002darrayfun">arrayfun</a>, <a href="doc_002dcellfun.html#doc_002dcellfun">cellfun</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

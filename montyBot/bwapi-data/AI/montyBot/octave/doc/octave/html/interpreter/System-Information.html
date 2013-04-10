@@ -1,0 +1,289 @@
+<html lang="en">
+<head>
+<title>System Information - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="System-Utilities.html#System-Utilities" title="System Utilities">
+<link rel="prev" href="Group-Database-Functions.html#Group-Database-Functions" title="Group Database Functions">
+<link rel="next" href="Hashing-Functions.html#Hashing-Functions" title="Hashing Functions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="System-Information"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Hashing-Functions.html#Hashing-Functions">Hashing Functions</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Group-Database-Functions.html#Group-Database-Functions">Group Database Functions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="System-Utilities.html#System-Utilities">System Utilities</a>
+<hr><br>
+</div>
+
+<h3 class="section">34.11 System Information</h3>
+
+<!-- ./miscellaneous/computer.m -->
+<p><a name="doc_002dcomputer"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>c</var>, <var>maxsize</var>, <var>endian</var>] = <b>computer</b> ()<var><a name="index-computer-2442"></a></var><br>
+<blockquote><p>Print or return a string of the form <var>cpu</var>-<var>vendor</var>-<var>os</var>
+that identifies the kind of computer Octave is running on.  If invoked
+with an output argument, the value is returned instead of printed.  For
+example,
+
+     <pre class="example">          computer ()
+               -| i586-pc-linux-gnu
+          
+          x = computer ()
+               =&gt; x = "i586-pc-linux-gnu"
+     </pre>
+        <p>If two output arguments are requested, also return the maximum number
+of elements for an array.
+
+        <p>If three output arguments are requested, also return the byte order
+of the current system as a character (<code>"B"</code> for big-endian or
+<code>"L"</code> for little-endian). 
+</p></blockquote></div>
+
+<!-- syscalls.cc -->
+<p><a name="doc_002duname"></a>
+
+<div class="defun">
+&mdash; Built-in Function: [<var>uts</var>, <var>err</var>, <var>msg</var>] = <b>uname</b> ()<var><a name="index-uname-2443"></a></var><br>
+<blockquote><p>Return system information in the structure.  For example,
+
+     <pre class="example">          uname ()
+               =&gt; {
+                     sysname = x86_64
+                     nodename = segfault
+                     release = 2.6.15-1-amd64-k8-smp
+                     version = Linux
+                     machine = #2 SMP Thu Feb 23 04:57:49 UTC 2006
+                   }
+     </pre>
+        <p>If successful, <var>err</var> is 0 and <var>msg</var> is an empty string. 
+Otherwise, <var>err</var> is nonzero and <var>msg</var> contains a
+system-dependent error message. 
+</p></blockquote></div>
+
+<!-- ./miscellaneous/ispc.m -->
+<p><a name="doc_002dispc"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>ispc</b> ()<var><a name="index-ispc-2444"></a></var><br>
+<blockquote><p>Return 1 if Octave is running on a Windows system and 0 otherwise. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dismac.html#doc_002dismac">ismac</a>, <a href="doc_002disunix.html#doc_002disunix">isunix</a>. 
+</p></blockquote></div>
+
+<!-- ./miscellaneous/isunix.m -->
+<p><a name="doc_002disunix"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>isunix</b> ()<var><a name="index-isunix-2445"></a></var><br>
+<blockquote><p>Return 1 if Octave is running on a Unix-like system and 0 otherwise. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dismac.html#doc_002dismac">ismac</a>, <a href="doc_002dispc.html#doc_002dispc">ispc</a>. 
+</p></blockquote></div>
+
+<!-- ./miscellaneous/ismac.m -->
+<p><a name="doc_002dismac"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>ismac</b> ()<var><a name="index-ismac-2446"></a></var><br>
+<blockquote><p>Return 1 if Octave is running on a Mac OS X system and 0 otherwise. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dispc.html#doc_002dispc">ispc</a>, <a href="doc_002disunix.html#doc_002disunix">isunix</a>. 
+</p></blockquote></div>
+
+<!-- sysdep.cc -->
+<p><a name="doc_002disieee"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>isieee</b> ()<var><a name="index-isieee-2447"></a></var><br>
+<blockquote><p>Return 1 if your computer claims to conform to the IEEE standard for
+floating point calculations. 
+</p></blockquote></div>
+
+<!-- defaults.cc -->
+<p><a name="doc_002dOCTAVE_005fHOME"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>OCTAVE_HOME</b> ()<var><a name="index-OCTAVE_005fHOME-2448"></a></var><br>
+<blockquote><p>Return the name of the top-level Octave installation directory. 
+</p></blockquote></div>
+
+<!-- defaults.cc -->
+<p><a name="doc_002dOCTAVE_005fVERSION"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>OCTAVE_VERSION</b> ()<var><a name="index-OCTAVE_005fVERSION-2449"></a></var><br>
+<blockquote><p>Return the version number of Octave, as a string. 
+</p></blockquote></div>
+
+<!-- ./miscellaneous/license.m -->
+<p><a name="doc_002dlicense"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>license</b><var><a name="index-license-2450"></a></var><br>
+<blockquote><p>Display the license of Octave.
+
+   &mdash; Function File:  <b>license</b> (<var>"inuse"</var>)<var><a name="index-license-2451"></a></var><br>
+<blockquote><p>Display a list of packages currently being used.
+
+   &mdash; Function File: <var>retval</var> = <b>license</b> (<var>"inuse"</var>)<var><a name="index-license-2452"></a></var><br>
+<blockquote><p>Return a structure containing the fields <code>feature</code> and <code>user</code>.
+
+   &mdash; Function File: <var>retval</var> = <b>license</b> (<var>"test", feature</var>)<var><a name="index-license-2453"></a></var><br>
+<blockquote><p>Return 1 if a license exists for the product identified by the string
+<var>feature</var> and 0 otherwise.  The argument <var>feature</var> is case
+insensitive and only the first 27 characters are checked.
+
+   &mdash; Function File:  <b>license</b> (<var>"test", feature, toggle</var>)<var><a name="index-license-2454"></a></var><br>
+<blockquote><p>Enable or disable license testing for <var>feature</var>, depending on
+<var>toggle</var>, which may be one of:
+
+          <dl>
+<dt><span class="samp">"enable"</span><dd>Future tests for the specified license of <var>feature</var> are conducted
+as usual. 
+<br><dt><span class="samp">"disable"</span><dd>Future tests for the specified license of <var>feature</var> return 0. 
+</dl>
+
+   &mdash; Function File: <var>retval</var> = <b>license</b> (<var>"checkout", feature</var>)<var><a name="index-license-2455"></a></var><br>
+<blockquote><p>Check out a license for <var>feature</var>, returning 1 on success and 0
+on failure.
+
+        <p>This function is provided for compatibility with <span class="sc">matlab</span>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dver.html#doc_002dver">ver</a>, <a href="doc_002dversion.html#doc_002dversion">version</a>. 
+</p></blockquote></div>
+
+<!-- ./miscellaneous/version.m -->
+<p><a name="doc_002dversion"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>version</b> ()<var><a name="index-version-2456"></a></var><br>
+<blockquote><p>Return Octave's version number as a string.  This is also the value of
+the built-in variable <code>OCTAVE_VERSION</code><!-- /@w -->. 
+</p></blockquote></div>
+
+<!-- ./miscellaneous/ver.m -->
+<p><a name="doc_002dver"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>ver</b> ()<var><a name="index-ver-2457"></a></var><br>
+<blockquote><p>Display a header containing the current Octave version
+number, license string and operating system, followed by
+the installed package names, versions, and installation
+directories.
+
+   &mdash; Function File: v = <b>ver</b> ()<var><a name="index-ver-2458"></a></var><br>
+<blockquote><p>Return a vector of structures, respecting Octave and each installed package. 
+The structure includes the following fields.
+
+          <dl>
+<dt><code>Name</code><dd>  Package name. 
+<br><dt><code>Version</code><dd>  Version of the package. 
+<br><dt><code>Revision</code><dd>  Revision of the package. 
+<br><dt><code>Date</code><dd>  Date respecting the version/revision. 
+</dl>
+
+   &mdash; Function File: v = <b>ver</b> (<code>"Octave"</code>)<var><a name="index-ver-2459"></a></var><br>
+<blockquote><p>Return version information for Octave only..
+
+   &mdash; Function File: v = <b>ver</b> (<var>pkg</var>)<var><a name="index-ver-2460"></a></var><br>
+<blockquote><p>Return version information for the specified package <var>pkg</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dlicense.html#doc_002dlicense">license</a>, <a href="doc_002dversion.html#doc_002dversion">version</a>. 
+</p></blockquote></div>
+
+<!-- toplev.cc -->
+<p><a name="doc_002doctave_005fconfig_005finfo"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>octave_config_info</b> (<var>option</var>)<var><a name="index-octave_005fconfig_005finfo-2461"></a></var><br>
+<blockquote><p>Return a structure containing configuration and installation
+information for Octave.
+
+        <p>if <var>option</var> is a string, return the configuration information for the
+specified option.
+
+        </blockquote></div>
+
+<!-- ./DLD-FUNCTIONS/getrusage.cc -->
+<p><a name="doc_002dgetrusage"></a>
+
+<div class="defun">
+&mdash; Loadable Function:  <b>getrusage</b> ()<var><a name="index-getrusage-2462"></a></var><br>
+<blockquote><p>Return a structure containing a number of statistics about the current
+Octave process.  Not all fields are available on all systems.  If it is
+not possible to get CPU time statistics, the CPU time slots are set to
+zero.  Other missing data are replaced by NaN.  Here is a list of all
+the possible fields that can be present in the structure returned by
+<code>getrusage</code>:
+
+          <dl>
+<dt><code>idrss</code><dd>Unshared data size.
+
+          <br><dt><code>inblock</code><dd>Number of block input operations.
+
+          <br><dt><code>isrss</code><dd>Unshared stack size.
+
+          <br><dt><code>ixrss</code><dd>Shared memory size.
+
+          <br><dt><code>majflt</code><dd>Number of major page faults.
+
+          <br><dt><code>maxrss</code><dd>Maximum data size.
+
+          <br><dt><code>minflt</code><dd>Number of minor page faults.
+
+          <br><dt><code>msgrcv</code><dd>Number of messages received.
+
+          <br><dt><code>msgsnd</code><dd>Number of messages sent.
+
+          <br><dt><code>nivcsw</code><dd>Number of involuntary context switches.
+
+          <br><dt><code>nsignals</code><dd>Number of signals received.
+
+          <br><dt><code>nswap</code><dd>Number of swaps.
+
+          <br><dt><code>nvcsw</code><dd>Number of voluntary context switches.
+
+          <br><dt><code>oublock</code><dd>Number of block output operations.
+
+          <br><dt><code>stime</code><dd>A structure containing the system CPU time used.  The structure has the
+elements <code>sec</code> (seconds) <code>usec</code> (microseconds).
+
+          <br><dt><code>utime</code><dd>A structure containing the user CPU time used.  The structure has the
+elements <code>sec</code> (seconds) <code>usec</code> (microseconds). 
+</dl>
+        </p></blockquote></div>
+
+   </body></html>
+

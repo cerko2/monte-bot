@@ -1,0 +1,89 @@
+<html lang="en">
+<head>
+<title>Specialized Solvers - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Linear-Algebra.html#Linear-Algebra" title="Linear Algebra">
+<link rel="prev" href="Functions-of-a-Matrix.html#Functions-of-a-Matrix" title="Functions of a Matrix">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Specialized-Solvers"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="Functions-of-a-Matrix.html#Functions-of-a-Matrix">Functions of a Matrix</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Linear-Algebra.html#Linear-Algebra">Linear Algebra</a>
+<hr><br>
+</div>
+
+<h3 class="section">18.5 Specialized Solvers</h3>
+
+<!-- ./sparse/bicgstab.m -->
+<p><a name="doc_002dbicgstab"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>bicgstab</b> (<var>A, b</var>)<var><a name="index-bicgstab-1627"></a></var><br>
+&mdash; Function File:  <b>bicgstab</b> (<var>A, b, tol, maxit, M1, M2, x0</var>)<var><a name="index-bicgstab-1628"></a></var><br>
+<blockquote><p>This procedure attempts to solve a system of linear equations A*x = b for x. 
+The <var>A</var> must be square, symmetric and positive definite real matrix N*N. 
+The <var>b</var> must be a one column vector with a length of N. 
+The <var>tol</var> specifies the tolerance of the method, the default value is 1e-6. 
+The <var>maxit</var> specifies the maximum number of iterations, the default value is min(20,N). 
+The <var>M1</var> specifies a preconditioner, can also be a function handler which returns M\X. 
+The <var>M2</var> combined with <var>M1</var> defines preconditioner as preconditioner=M1*M2. 
+The <var>x0</var> is the initial guess, the default value is zeros(N,1).
+
+        <p>The value <var>x</var> is a computed result of this procedure. 
+The value <var>flag</var> can be 0 when we reach tolerance in <var>maxit</var> iterations, 1 when
+we don't reach tolerance in <var>maxit</var> iterations and 3 when the procedure stagnates. 
+The value <var>relres</var> is a relative residual - norm(b-A*x)/norm(b). 
+The value <var>iter</var> is an iteration number in which x was computed. 
+The value <var>resvec</var> is a vector of <var>relres</var> for each iteration.
+
+        </blockquote></div>
+
+<!-- ./sparse/cgs.m -->
+<p><a name="doc_002dcgs"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>cgs</b> (<var>A, b</var>)<var><a name="index-cgs-1629"></a></var><br>
+&mdash; Function File:  <b>cgs</b> (<var>A, b, tol, maxit, M1, M2, x0</var>)<var><a name="index-cgs-1630"></a></var><br>
+<blockquote><p>This procedure attempts to solve a system of linear equations A*x = b for x. 
+The <var>A</var> must be square, symmetric and positive definite real matrix N*N. 
+The <var>b</var> must be a one column vector with a length of N. 
+The <var>tol</var> specifies the tolerance of the method, default value is 1e-6. 
+The <var>maxit</var> specifies the maximum number of iteration, default value is MIN(20,N). 
+The <var>M1</var> specifies a preconditioner, can also be a function handler which returns M\X. 
+The <var>M2</var> combined with <var>M1</var> defines preconditioner as preconditioner=M1*M2. 
+The <var>x0</var> is initial guess, default value is zeros(N,1).
+
+        </blockquote></div>
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 1996, 1997, 2007, 2008, 2009 John W. Eaton -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

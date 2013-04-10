@@ -1,0 +1,77 @@
+<html lang="en">
+<head>
+<title>Rational Approximations - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Basic-Input-and-Output.html#Basic-Input-and-Output" title="Basic Input and Output">
+<link rel="prev" href="Simple-File-I_002fO.html#Simple-File-I_002fO" title="Simple File I/O">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Rational-Approximations"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="Simple-File-I_002fO.html#Simple-File-I_002fO">Simple File I/O</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Basic-Input-and-Output.html#Basic-Input-and-Output">Basic Input and Output</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">14.1.4 Rational Approximations</h4>
+
+<!-- ./general/rat.m -->
+<p><a name="doc_002drat"></a>
+
+<div class="defun">
+&mdash; Function File: <var>s</var> = <b>rat</b> (<var>x, tol</var>)<var><a name="index-rat-767"></a></var><br>
+&mdash; Function File: [<var>n</var>, <var>d</var>] = <b>rat</b> (<var>x, tol</var>)<var><a name="index-rat-768"></a></var><br>
+<blockquote>
+<p>Find a rational approximation to <var>x</var> within the tolerance defined
+by <var>tol</var> using a continued fraction expansion.  For example,
+
+     <pre class="example">          rat(pi) = 3 + 1/(7 + 1/16) = 355/113
+          rat(e) = 3 + 1/(-4 + 1/(2 + 1/(5 + 1/(-2 + 1/(-7)))))
+                 = 1457/536
+     </pre>
+        <p>Called with two arguments returns the numerator and denominator separately
+as two matrices. 
+</p></blockquote></div>
+   <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+<p class="noindent"><strong>See also:</strong> <a href="doc_002drats.html#doc_002drats">rats</a>.
+
+<!-- pr-output.cc -->
+<p><a name="doc_002drats"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>rats</b> (<var>x, len</var>)<var><a name="index-rats-769"></a></var><br>
+<blockquote><p>Convert <var>x</var> into a rational approximation represented as a string. 
+You can convert the string back into a matrix as follows:
+
+     <pre class="example">             r = rats(hilb(4));
+             x = str2num(r)
+     </pre>
+        <p>The optional second argument defines the maximum length of the string
+representing the elements of <var>x</var>.  By default <var>len</var> is 9. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dformat.html#doc_002dformat">format</a>, <a href="doc_002drat.html#doc_002drat">rat</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

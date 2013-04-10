@@ -1,0 +1,139 @@
+<html lang="en">
+<head>
+<title>Indexing Cell Arrays - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Cell-Arrays.html#Cell-Arrays" title="Cell Arrays">
+<link rel="prev" href="Creating-Cell-Arrays.html#Creating-Cell-Arrays" title="Creating Cell Arrays">
+<link rel="next" href="Cell-Arrays-of-Strings.html#Cell-Arrays-of-Strings" title="Cell Arrays of Strings">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Indexing-Cell-Arrays"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Cell-Arrays-of-Strings.html#Cell-Arrays-of-Strings">Cell Arrays of Strings</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Creating-Cell-Arrays.html#Creating-Cell-Arrays">Creating Cell Arrays</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Cell-Arrays.html#Cell-Arrays">Cell Arrays</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">6.2.3 Indexing Cell Arrays</h4>
+
+<p>As shown in see <a href="Basic-Usage-of-Cell-Arrays.html#Basic-Usage-of-Cell-Arrays">Basic Usage of Cell Arrays</a> elements can be
+extracted from cell arrays using the <span class="samp">{</span> and <span class="samp">}</span>
+operators.  If you want to extract or access subarrays which are still
+cell arrays, you need to use the <span class="samp">(</span> and <span class="samp">)</span> operators. The
+following example illustrates the difference:
+
+<pre class="example">     c = {"1", "2", "3"; "a", "b", "c"; "4", "5", "6"};
+     c{2,3}
+          =&gt; ans = c
+     
+     c(2,3)
+          =&gt; ans =
+             {
+               [1,1] = c
+             }
+</pre>
+   <p class="noindent">So with <span class="samp">{}</span> you access elements of a cell
+array, while with <span class="samp">()</span> you access a sub array of a cell
+array.
+
+   <p>Using the <span class="samp">(</span> and <span class="samp">)</span> operators, indexing works for cell
+arrays like for multidimensional arrays.  As an example, all the rows
+of the first and third column of a cell array can be set to <code>0</code>
+with the following command:
+
+<pre class="example">     c(:, [1, 3]) = {0}
+          =&gt;  =
+             {
+               [1,1] = 0
+               [2,1] = 0
+               [3,1] = 0
+               [1,2] = 2
+               [2,2] =  10
+               [3,2] =  20
+               [1,3] = 0
+               [2,3] = 0
+               [3,3] = 0
+             }
+</pre>
+   <p>Note, that the above can also be achieved like this:
+
+<pre class="example">     c(:, [1, 3]) = 0;
+</pre>
+   <p class="noindent">Here, the scalar <span class="samp">0</span> is automatically promoted to
+cell array <span class="samp">{0}</span> and then assigned to the subarray of <code>c</code>.
+
+   <p>To give another example for indexing cell arrays with <span class="samp">()</span>, you
+can exchange the first and the second row of a cell array as in the
+following command:
+
+<pre class="example">     c = {1, 2, 3; 4, 5, 6};
+     c([1, 2], :) = c([2, 1], :)
+          =&gt; =
+             {
+               [1,1] =  4
+               [2,1] =  1
+               [1,2] =  5
+               [2,2] =  2
+               [1,3] =  6
+               [2,3] =  3
+             }
+</pre>
+   <p>Accessing multiple elements of a cell array with the <span class="samp">{</span> and
+<span class="samp">}</span> operators will result in a comma-separated list of all the
+requested elements (see <a href="Comma-Separated-Lists.html#Comma-Separated-Lists">Comma Separated Lists</a>). Using the
+<span class="samp">{</span> and <span class="samp">}</span> operators the first two rows in the above
+example can be swapped back like this:
+
+<pre class="example">     [c{[1,2], :}] = deal(c{[2, 1], :})
+          =&gt; =
+             {
+               [1,1] =  1
+               [2,1] =  4
+               [1,2] =  2
+               [2,2] =  5
+               [1,3] =  3
+               [2,3] =  6
+             }
+</pre>
+   <p>As for struct arrays and numerical arrays, the empty matrix <span class="samp">[]</span>
+can be used to delete elements from a cell array:
+
+<pre class="example">     x = {"1", "2"; "3", "4"};
+     x(1, :) = []
+          =&gt; x =
+             {
+               [1,1] = 3
+               [1,2] = 4
+             }
+</pre>
+   <p>The following example shows how to just remove the contents of cell
+array elements but not delete the space for them:
+
+<pre class="example">     x = {"1", "2"; "3", "4"};
+     x{1, :} = []
+     =&gt; x =
+           {
+             [1,1] = [](0x0)
+             [2,1] = 3
+             [1,2] = [](0x0)
+             [2,2] = 4
+           }
+</pre>
+   </body></html>
+

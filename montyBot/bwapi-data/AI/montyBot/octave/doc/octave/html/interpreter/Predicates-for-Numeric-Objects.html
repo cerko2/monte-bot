@@ -1,0 +1,210 @@
+<html lang="en">
+<head>
+<title>Predicates for Numeric Objects - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Numeric-Data-Types.html#Numeric-Data-Types" title="Numeric Data Types">
+<link rel="prev" href="Promotion-and-Demotion-of-Data-Types.html#Promotion-and-Demotion-of-Data-Types" title="Promotion and Demotion of Data Types">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Predicates-for-Numeric-Objects"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="Promotion-and-Demotion-of-Data-Types.html#Promotion-and-Demotion-of-Data-Types">Promotion and Demotion of Data Types</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Numeric-Data-Types.html#Numeric-Data-Types">Numeric Data Types</a>
+<hr><br>
+</div>
+
+<h3 class="section">4.8 Predicates for Numeric Objects</h3>
+
+<p>Since the type of a variable may change during the execution of a
+program, it can be necessary to do type checking at run-time.  Doing this
+also allows you to change the behavior of a function depending on the
+type of the input.  As an example, this naive implementation of <code>abs</code>
+returns the absolute value of the input if it is a real number, and the
+length of the input if it is a complex number.
+
+<pre class="example">     function a = abs (x)
+       if (isreal (x))
+         a = sign (x) .* x;
+       elseif (iscomplex (x))
+         a = sqrt (real(x).^2 + imag(x).^2);
+       endif
+     endfunction
+</pre>
+   <p>The following functions are available for determining the type of a
+variable.
+
+<!-- data.cc -->
+<p><a name="doc_002disnumeric"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>isnumeric</b> (<var>x</var>)<var><a name="index-isnumeric-267"></a></var><br>
+<blockquote><p>Return nonzero if <var>x</var> is a numeric object. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002disreal"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>isreal</b> (<var>x</var>)<var><a name="index-isreal-268"></a></var><br>
+<blockquote><p>Return true if <var>x</var> is a real-valued numeric object. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002disfloat"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>isfloat</b> (<var>x</var>)<var><a name="index-isfloat-269"></a></var><br>
+<blockquote><p>Return true if <var>x</var> is a floating-point numeric object. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002discomplex"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>iscomplex</b> (<var>x</var>)<var><a name="index-iscomplex-270"></a></var><br>
+<blockquote><p>Return true if <var>x</var> is a complex-valued numeric object. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dismatrix"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>ismatrix</b> (<var>a</var>)<var><a name="index-ismatrix-271"></a></var><br>
+<blockquote><p>Return 1 if <var>a</var> is a matrix.  Otherwise, return 0. 
+</p></blockquote></div>
+
+<!-- ./general/isvector.m -->
+<p><a name="doc_002disvector"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>isvector</b> (<var>a</var>)<var><a name="index-isvector-272"></a></var><br>
+<blockquote><p>Return 1 if <var>a</var> is a vector.  Otherwise, return 0. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsize.html#doc_002dsize">size</a>, <a href="doc_002drows.html#doc_002drows">rows</a>, <a href="doc_002dcolumns.html#doc_002dcolumns">columns</a>, <a href="doc_002dlength.html#doc_002dlength">length</a>, <a href="doc_002disscalar.html#doc_002disscalar">isscalar</a>, <a href="doc_002dismatrix.html#doc_002dismatrix">ismatrix</a>. 
+</p></blockquote></div>
+
+<!-- ./general/isscalar.m -->
+<p><a name="doc_002disscalar"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>isscalar</b> (<var>a</var>)<var><a name="index-isscalar-273"></a></var><br>
+<blockquote><p>Return 1 if <var>a</var> is a scalar.  Otherwise, return 0. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsize.html#doc_002dsize">size</a>, <a href="doc_002drows.html#doc_002drows">rows</a>, <a href="doc_002dcolumns.html#doc_002dcolumns">columns</a>, <a href="doc_002dlength.html#doc_002dlength">length</a>, <a href="doc_002disscalar.html#doc_002disscalar">isscalar</a>, <a href="doc_002dismatrix.html#doc_002dismatrix">ismatrix</a>. 
+</p></blockquote></div>
+
+<!-- ./general/issquare.m -->
+<p><a name="doc_002dissquare"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>issquare</b> (<var>x</var>)<var><a name="index-issquare-274"></a></var><br>
+<blockquote><p>If <var>x</var> is a square matrix, then return the dimension of <var>x</var>. 
+Otherwise, return 0. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsize.html#doc_002dsize">size</a>, <a href="doc_002drows.html#doc_002drows">rows</a>, <a href="doc_002dcolumns.html#doc_002dcolumns">columns</a>, <a href="doc_002dlength.html#doc_002dlength">length</a>, <a href="doc_002dismatrix.html#doc_002dismatrix">ismatrix</a>, <a href="doc_002disscalar.html#doc_002disscalar">isscalar</a>, <a href="doc_002disvector.html#doc_002disvector">isvector</a>. 
+</p></blockquote></div>
+
+<!-- ./general/issymmetric.m -->
+<p><a name="doc_002dissymmetric"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>issymmetric</b> (<var>x, tol</var>)<var><a name="index-issymmetric-275"></a></var><br>
+<blockquote><p>If <var>x</var> is symmetric within the tolerance specified by <var>tol</var>,
+then return the dimension of <var>x</var>.  Otherwise, return 0.  If
+<var>tol</var> is omitted, use a tolerance equal to the machine precision. 
+Matrix <var>x</var> is considered symmetric if
+<code>norm (</code><var>x</var><code> - </code><var>x</var><code>.', inf) / norm (</code><var>x</var><code>, inf) &lt; </code><var>tol</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsize.html#doc_002dsize">size</a>, <a href="doc_002drows.html#doc_002drows">rows</a>, <a href="doc_002dcolumns.html#doc_002dcolumns">columns</a>, <a href="doc_002dlength.html#doc_002dlength">length</a>, <a href="doc_002dismatrix.html#doc_002dismatrix">ismatrix</a>, <a href="doc_002disscalar.html#doc_002disscalar">isscalar</a>, <a href="doc_002dissquare.html#doc_002dissquare">issquare</a>, <a href="doc_002disvector.html#doc_002disvector">isvector</a>. 
+</p></blockquote></div>
+
+<!-- ./general/isdefinite.m -->
+<p><a name="doc_002disdefinite"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>isdefinite</b> (<var>x, tol</var>)<var><a name="index-isdefinite-276"></a></var><br>
+<blockquote><p>Return 1 if <var>x</var> is symmetric positive definite within the
+tolerance specified by <var>tol</var> or 0 if <var>x</var> is symmetric
+positive semidefinite.  Otherwise, return -1.  If <var>tol</var>
+is omitted, use a tolerance equal to 100 times the machine precision. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dissymmetric.html#doc_002dissymmetric">issymmetric</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dislogical"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>islogical</b> (<var>x</var>)<var><a name="index-islogical-277"></a></var><br>
+<blockquote><p>Return true if <var>x</var> is a logical object. 
+</p></blockquote></div>
+
+<!-- ./specfun/isprime.m -->
+<p><a name="doc_002disprime"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>isprime</b> (<var>n</var>)<var><a name="index-isprime-278"></a></var><br>
+<blockquote>
+<p>Return true if <var>n</var> is a prime number, false otherwise.
+
+        <p>Something like the following is much faster if you need to test a lot
+of small numbers:
+
+     <pre class="example">             <var>t</var> = ismember (<var>n</var>, primes (max (<var>n</var> (:))));
+     </pre>
+        <p>If max(n) is very large, then you should be using special purpose
+factorization code.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dprimes.html#doc_002dprimes">primes</a>, <a href="doc_002dfactor.html#doc_002dfactor">factor</a>, <a href="doc_002dgcd.html#doc_002dgcd">gcd</a>, <a href="doc_002dlcm.html#doc_002dlcm">lcm</a>. 
+</p></blockquote></div>
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 1996, 1997, 1999, 2000, 2002, 2003, 2004, 2005, -->
+<!-- 2006, 2007, 2008, 2009 John W. Eaton -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

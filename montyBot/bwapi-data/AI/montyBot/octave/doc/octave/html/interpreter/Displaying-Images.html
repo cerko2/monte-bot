@@ -1,0 +1,180 @@
+<html lang="en">
+<head>
+<title>Displaying Images - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Image-Processing.html#Image-Processing" title="Image Processing">
+<link rel="prev" href="Loading-and-Saving-Images.html#Loading-and-Saving-Images" title="Loading and Saving Images">
+<link rel="next" href="Representing-Images.html#Representing-Images" title="Representing Images">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Displaying-Images"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Representing-Images.html#Representing-Images">Representing Images</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Loading-and-Saving-Images.html#Loading-and-Saving-Images">Loading and Saving Images</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Image-Processing.html#Image-Processing">Image Processing</a>
+<hr><br>
+</div>
+
+<h3 class="section">31.2 Displaying Images</h3>
+
+<p>A natural part of image processing is visualization of an image. 
+The most basic function for this is the <code>imshow</code> function that
+shows the image given in the first input argument.  This function uses
+an external program to show the image.  If gnuplot 4.2 or later is
+available it will be used to display the image, otherwise the
+<code>display</code>, <code>xv</code>, or <code>xloadimage</code> program is used.  The
+actual program can be selected with the <code>image_viewer</code> function.
+
+<!-- ./image/imshow.m -->
+<p><a name="doc_002dimshow"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>imshow</b> (<var>im</var>)<var><a name="index-imshow-2189"></a></var><br>
+&mdash; Function File:  <b>imshow</b> (<var>im, limits</var>)<var><a name="index-imshow-2190"></a></var><br>
+&mdash; Function File:  <b>imshow</b> (<var>im, map</var>)<var><a name="index-imshow-2191"></a></var><br>
+&mdash; Function File:  <b>imshow</b> (<var>rgb, <small class="dots">...</small></var>)<var><a name="index-imshow-2192"></a></var><br>
+&mdash; Function File:  <b>imshow</b> (<var>filename</var>)<var><a name="index-imshow-2193"></a></var><br>
+&mdash; Function File:  <b>imshow</b> (<var><small class="dots">...</small>, string_param1, value1, <small class="dots">...</small></var>)<var><a name="index-imshow-2194"></a></var><br>
+<blockquote><p>Display the image <var>im</var>, where <var>im</var> can be a 2-dimensional
+(gray-scale image) or a 3-dimensional (RGB image) matrix.
+
+        <p>If <var>limits</var> is a 2-element vector <code>[</code><var>low</var><code>, </code><var>high</var><code>]</code>,
+the image is shown using a display range between <var>low</var> and
+<var>high</var>.  If an empty matrix is passed for <var>limits</var>, the
+display range is computed as the range between the minimal and the
+maximal value in the image.
+
+        <p>If <var>map</var> is a valid color map, the image will be shown as an indexed
+image using the supplied color map.
+
+        <p>If a file name is given instead of an image, the file will be read and
+shown.
+
+        <p>If given, the parameter <var>string_param1</var> has value
+<var>value1</var>.  <var>string_param1</var> can be any of the following:
+          <dl>
+<dt><span class="samp">"displayrange"</span><dd><var>value1</var> is the display range as described above. 
+</dl>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dimage.html#doc_002dimage">image</a>, <a href="doc_002dimagesc.html#doc_002dimagesc">imagesc</a>, <a href="doc_002dcolormap.html#doc_002dcolormap">colormap</a>, <a href="doc_002dgray2ind.html#doc_002dgray2ind">gray2ind</a>, <a href="doc_002drgb2ind.html#doc_002drgb2ind">rgb2ind</a>. 
+</p></blockquote></div>
+
+<!-- ./image/image.m -->
+<p><a name="doc_002dimage"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>image</b> (<var>img</var>)<var><a name="index-image-2195"></a></var><br>
+&mdash; Function File:  <b>image</b> (<var>x, y, img</var>)<var><a name="index-image-2196"></a></var><br>
+<blockquote><p>Display a matrix as a color image.  The elements of <var>x</var> are indices
+into the current colormap, and the colormap will be scaled so that the
+extremes of <var>x</var> are mapped to the extremes of the colormap.
+
+        <p>It first tries to use <code>gnuplot</code>, then <code>display</code> from
+<code>ImageMagick</code>, then <code>xv</code>, and then <code>xloadimage</code>. 
+The actual program used can be changed using the <code>image_viewer</code>
+function.
+
+        <p>The axis values corresponding to the matrix elements are specified in
+<var>x</var> and <var>y</var>.  If you're not using gnuplot 4.2 or later, these
+variables are ignored. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dimshow.html#doc_002dimshow">imshow</a>, <a href="doc_002dimagesc.html#doc_002dimagesc">imagesc</a>, <a href="doc_002dcolormap.html#doc_002dcolormap">colormap</a>, <a href="doc_002dimage_005fviewer.html#doc_002dimage_005fviewer">image_viewer</a>. 
+</p></blockquote></div>
+
+<!-- ./image/imagesc.m -->
+<p><a name="doc_002dimagesc"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>imagesc</b> (<var>a</var>)<var><a name="index-imagesc-2197"></a></var><br>
+&mdash; Function File:  <b>imagesc</b> (<var>x, y, a</var>)<var><a name="index-imagesc-2198"></a></var><br>
+&mdash; Function File:  <b>imagesc</b> (<var><small class="dots">...</small>, limits</var>)<var><a name="index-imagesc-2199"></a></var><br>
+&mdash; Function File:  <b>imagesc</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-imagesc-2200"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>imagesc</b> (<var><small class="dots">...</small></var>)<var><a name="index-imagesc-2201"></a></var><br>
+<blockquote><p>Display a scaled version of the matrix <var>a</var> as a color image.  The
+colormap is scaled so that the entries of the matrix occupy the entire
+colormap.  If <var>limits</var> = [<var>lo</var>, <var>hi</var>] are given, then that
+range is set to the 'clim' of the current axes.
+
+        <p>The axis values corresponding to the matrix elements are specified in
+<var>x</var> and <var>y</var>, either as pairs giving the minimum and maximum
+values for the respective axes, or as values for each row and column
+of the matrix <var>a</var>.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dimage.html#doc_002dimage">image</a>, <a href="doc_002dimshow.html#doc_002dimshow">imshow</a>, <a href="doc_002dcaxis.html#doc_002dcaxis">caxis</a>. 
+</p></blockquote></div>
+
+<!-- ./image/image_viewer.m -->
+<p><a name="doc_002dimage_005fviewer"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>fcn</var>, <var>default_zoom</var>] = <b>image_viewer</b> (<var>fcn, default_zoom</var>)<var><a name="index-image_005fviewer-2202"></a></var><br>
+<blockquote><p>Change the program or function used for viewing images and return the
+previous values.
+
+        <p>When the <code>image</code> or <code>imshow</code> function is called it will
+launch an external program to display the image.  The default behavior
+is to use gnuplot if the installed version supports image viewing,
+and otherwise try the programs <code>display</code>, <code>xv</code>, and
+<code>xloadimage</code>.  Using this function it is possible to change that
+behavior.
+
+        <p>When called with one input argument images will be displayed by saving
+the image to a file and the system command <var>command</var> will be called
+to view the image.  The <var>command</var> must be a string containing
+<code>%s</code> and possibly <code>%f</code>.  The <code>%s</code> will be replaced by
+the filename of the image, and the <code>%f</code> will (if present) be
+replaced by the zoom factor given to the <code>image</code> function. 
+For example,
+     <pre class="example">          image_viewer ("eog %s");
+     </pre>
+        <p>changes the image viewer to the <code>eog</code> program.
+
+        <p>With two input arguments, images will be displayed by calling
+the function <var>function_handle</var>.  For example,
+     <pre class="example">          image_viewer (data, @my_image_viewer);
+     </pre>
+        <p>sets the image viewer function to <code>my_image_viewer</code>.  The image
+viewer function is called with
+     <pre class="example">          my_image_viewer (<var>x</var>, <var>y</var>, <var>im</var>, <var>zoom</var>, <var>data</var>)
+     </pre>
+        <p>where <var>x</var> and <var>y</var> are the axis of the image, <var>im</var> is the image
+variable, and <var>data</var> is extra user-supplied data to be passed to
+the viewer function.
+
+        <p>With three input arguments it is possible to change the zooming. 
+Some programs (like <code>xloadimage</code>) require the zoom factor to be
+between 0 and 100, and not 0 and 1 like Octave assumes.  This is
+solved by setting the third argument to 100.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dimage.html#doc_002dimage">image</a>, <a href="doc_002dimshow.html#doc_002dimshow">imshow</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

@@ -1,0 +1,221 @@
+<html lang="en">
+<head>
+<title>Installing and Removing Packages - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Packages.html#Packages" title="Packages">
+<link rel="next" href="Using-Packages.html#Using-Packages" title="Using Packages">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Installing-and-Removing-Packages"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Using-Packages.html#Using-Packages">Using Packages</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Packages.html#Packages">Packages</a>
+<hr><br>
+</div>
+
+<h3 class="section">35.1 Installing and Removing Packages</h3>
+
+<p>Assuming a package is available in the file <span class="file">image-1.0.0.tar.gz</span>
+it can be installed from the Octave prompt with the command
+
+<pre class="example">     pkg install image-1.0.0.tar.gz
+</pre>
+   <p class="noindent">If the package is installed successfully nothing will be printed on
+the prompt, but if an error occurred during installation it will be
+reported.  It is possible to install several packages at once by
+writing several package files after the <code>pkg install</code> command. 
+If a different version of the package is already installed it will
+be removed prior to installing the new package.  This makes it easy to
+upgrade and downgrade the version of a package, but makes it
+impossible to have several versions of the same package installed at
+once.
+
+   <p>To see which packages are installed type
+
+<pre class="example">     pkg list
+     -| Package Name  | Version | Installation directory
+     -| --------------+---------+-----------------------
+     -|        image *|   1.0.0 | /home/jwe/octave/image-1.0.0
+</pre>
+   <p class="noindent">In this case only version 1.0.0 of the <code>image</code> package is
+installed.  The '*' character next to the package name shows that the
+image package is loaded and ready for use.
+
+   <p>It is possible to remove a package from the system using the
+<code>pkg uninstall</code> command like this
+
+<pre class="example">     pkg uninstall image
+</pre>
+   <p class="noindent">If the package is removed successfully nothing will be printed in the
+prompt, but if an error occurred it will be reported.  It should be
+noted that the package file used for installation is not needed for
+removal, and that only the package name as reported by <code>pkg list</code>
+should be used when removing a package.  It is possible to remove
+several packages at once by writing several package names after the
+<code>pkg uninstall</code> command.
+
+   <p>To minimize the amount of code duplication between packages it is
+possible that one package depends on another one.  If a package
+depends on another, it will check if that package is installed
+during installation.  If it is not, an error will be reported and
+the package will not be installed.  This behavior can be disabled
+by passing the <code>-nodeps</code> flag to the <code>pkg install</code>
+command
+
+<pre class="example">     pkg install -nodeps my_package_with_dependencies.tar.gz
+</pre>
+   <p class="noindent">Since the installed package expects its dependencies to be installed
+it may not function correctly.  Because of this it is not recommended
+to disable dependency checking.
+
+<!-- ./pkg/pkg.m -->
+<p><a name="doc_002dpkg"></a>
+
+<div class="defun">
+&mdash; Command: pkg <var>command</var><var> pkg_name<a name="index-_0040var_007bcommand_007d-2466"></a></var><br>
+&mdash; Command: pkg <var>command</var><var> option pkg_name<a name="index-_0040var_007bcommand_007d-2467"></a></var><br>
+<blockquote><p>This command interacts with the package manager.  Different actions will
+be taken depending on the value of <var>command</var>.
+
+          <dl>
+<dt><span class="samp">install</span><dd>Install named packages.  For example,
+          <pre class="example">               pkg install image-1.0.0.tar.gz
+          </pre>
+          <p class="noindent">installs the package found in the file <span class="file">image-1.0.0.tar.gz</span>.
+
+          <p>The <var>option</var> variable can contain options that affect the manner
+in which a package is installed.  These options can be one or more of
+
+               <dl>
+<dt><code>-nodeps</code><dd>The package manager will disable the dependency checking.  That way it
+is possible to install a package even if it depends on another package
+that's not installed on the system.  <strong>Use this option with care.</strong>
+
+               <br><dt><code>-noauto</code><dd>The package manager will not automatically load the installed package
+when starting Octave, even if the package requests that it is.
+
+               <br><dt><code>-auto</code><dd>The package manager will automatically load the installed package when
+starting Octave, even if the package requests that it isn't.
+
+               <br><dt><code>-local</code><dd>A local installation is forced, even if the user has system privileges.
+
+               <br><dt><code>-global</code><dd>A global installation is forced, even if the user doesn't normally have
+system privileges
+
+               <br><dt><code>-verbose</code><dd>The package manager will print the output of all of the commands that are
+performed. 
+</dl>
+
+          <br><dt><span class="samp">uninstall</span><dd>Uninstall named packages.  For example,
+          <pre class="example">               pkg uninstall image
+          </pre>
+          <p class="noindent">removes the <code>image</code> package from the system.  If another installed
+package depends on the <code>image</code> package an error will be issued. 
+The package can be uninstalled anyway by using the <code>-nodeps</code> option. 
+<br><dt><span class="samp">load</span><dd>Add named packages to the path.  After loading a package it is
+possible to use the functions provided by the package.  For example,
+          <pre class="example">               pkg load image
+          </pre>
+          <p class="noindent">adds the <code>image</code> package to the path.  It is possible to load all
+installed packages at once with the command
+          <pre class="example">               pkg load all
+          </pre>
+          <br><dt><span class="samp">unload</span><dd>Removes named packages from the path.  After unloading a package it is
+no longer possible to use the functions provided by the package. 
+This command behaves like the <code>load</code> command. 
+<br><dt><span class="samp">list</span><dd>Show a list of the currently installed packages.  By requesting one or two
+output argument it is possible to get a list of the currently installed
+packages.  For example,
+          <pre class="example">               installed_packages = pkg list;
+          </pre>
+          <p class="noindent">returns a cell array containing a structure for each installed package. 
+The command
+          <pre class="example">               [<var>user_packages</var>, <var>system_packages</var>] = pkg list
+          </pre>
+          <p class="noindent">splits the list of installed packages into those who are installed by
+the current user, and those installed by the system administrator. 
+<br><dt><span class="samp">describe</span><dd>Show a short description of the named installed packages, with the option
+'-verbose' also list functions provided by the package, e.g.:
+          <pre class="example">                pkg describe -verbose all
+          </pre>
+          <p class="noindent">will describe all installed packages and the functions they provide. 
+If one output is requested a cell of structure containing the
+description and list of functions of each package is returned as
+output rather than printed on screen:
+          <pre class="example">                desc = pkg ("describe", "secs1d", "image")
+          </pre>
+          <p class="noindent">If any of the requested packages is not installed, pkg returns an
+error, unless a second output is requested:
+          <pre class="example">                [ desc, flag] = pkg ("describe", "secs1d", "image")
+          </pre>
+          <p class="noindent"><var>flag</var> will take one of the values "Not installed", "Loaded" or
+"Not loaded" for each of the named packages. 
+<br><dt><span class="samp">prefix</span><dd>Set the installation prefix directory.  For example,
+          <pre class="example">               pkg prefix ~/my_octave_packages
+          </pre>
+          <p class="noindent">sets the installation prefix to <span class="file">~/my_octave_packages</span>. 
+Packages will be installed in this directory.
+
+          <p>It is possible to get the current installation prefix by requesting an
+output argument.  For example,
+          <pre class="example">               p = pkg prefix
+          </pre>
+          <p>The location in which to install the architecture dependent files can be
+independent specified with an addition argument.  For example
+
+          <pre class="example">               pkg prefix ~/my_octave_packages ~/my_arch_dep_pkgs
+          </pre>
+          <br><dt><span class="samp">local_list</span><dd>Set the file in which to look for information on the locally
+installed packages.  Locally installed packages are those that are
+typically available only to the current user.  For example
+          <pre class="example">               pkg local_list ~/.octave_packages
+          </pre>
+          <p>It is possible to get the current value of local_list with the following
+          <pre class="example">               pkg local_list
+          </pre>
+          <br><dt><span class="samp">global_list</span><dd>Set the file in which to look for, for information on the globally
+installed packages.  Globally installed packages are those that are
+typically available to all users.  For example
+          <pre class="example">               pkg global_list /usr/share/octave/octave_packages
+          </pre>
+          <p>It is possible to get the current value of global_list with the following
+          <pre class="example">               pkg global_list
+          </pre>
+          <br><dt><span class="samp">rebuild</span><dd>Rebuilds the package database from the installed directories.  This can
+be used in cases where for some reason the package database is corrupted. 
+It can also take the <code>-auto</code> and <code>-noauto</code> options to allow the
+autoloading state of a package to be changed.  For example
+
+          <pre class="example">               pkg rebuild -noauto image
+          </pre>
+          <p>will remove the autoloading status of the image package. 
+<br><dt><span class="samp">build</span><dd>Builds a binary form of a package or packages.  The binary file produced
+will itself be an Octave package that can be installed normally with
+<code>pkg</code>.  The form of the command to build a binary package is
+
+          <pre class="example">               pkg build builddir image-1.0.0.tar.gz ...
+          </pre>
+          <p class="noindent">where <code>builddir</code> is the name of a directory where the temporary
+installation will be produced and the binary packages will be found. 
+The options <code>-verbose</code> and <code>-nodeps</code> are respected, while
+the other options are ignored. 
+</dl>
+        </p></blockquote></div>
+
+   </body></html>
+

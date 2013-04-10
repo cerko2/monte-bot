@@ -1,0 +1,82 @@
+<html lang="en">
+<head>
+<title>General Guidelines - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Contributing-Guidelines.html#Contributing-Guidelines" title="Contributing Guidelines">
+<link rel="prev" href="How-to-Contribute.html#How-to-Contribute" title="How to Contribute">
+<link rel="next" href="Octave-Sources-_0028m_002dfiles_0029.html#Octave-Sources-_0028m_002dfiles_0029" title="Octave Sources (m-files)">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="General-Guidelines"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Octave-Sources-_0028m_002dfiles_0029.html#Octave-Sources-_0028m_002dfiles_0029">Octave Sources (m-files)</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="How-to-Contribute.html#How-to-Contribute">How to Contribute</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Contributing-Guidelines.html#Contributing-Guidelines">Contributing Guidelines</a>
+<hr><br>
+</div>
+
+<h3 class="section">D.2 General Guidelines</h3>
+
+<p>All Octave's sources are distributed under the General Public License (GPL). 
+Currently, Octave uses GPL version 3.  For details about this license, see
+<a href="http://www.gnu.org/licenses/gpl.html">http://www.gnu.org/licenses/gpl.html</a>.  Therefore, whenever you create a
+new source file, it should have the following comment header (use appropriate
+year, name and comment marks):
+
+<pre class="example">     ## Copyright (C) 1996, 1997, 2007 John W. Eaton &lt;jwe@octave.org&gt;
+     ##
+     ## This file is part of Octave.
+     ##
+     ## Octave is free software; you can redistribute it and/or
+     ## modify it under the terms of the GNU General Public
+     ## License as published by the Free Software Foundation;
+     ## either version 3 of the License, or (at your option) any
+     ## later version.
+     ##
+     ## Octave is distributed in the hope that it will be useful,
+     ## but WITHOUT ANY WARRANTY; without even the implied
+     ## warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     ## PURPOSE.  See the GNU General Public License for more
+     ## details.
+     ##
+     ## You should have received a copy of the GNU General Public
+     ## License along with Octave; see the file COPYING.  If not,
+     ## see &lt;http://www.gnu.org/licenses/&gt;.
+</pre>
+   <p>Always include ChangeLog entries in changesets.  After making your source
+changes, record and briefly describe the changes in the nearest ChangeLog file
+upwards in the directory tree.  Use the previous entries as a template.  Your
+entry should contain your name and email, and the path to the modified source
+file relative to the parent directory of the ChangeLog file.  If there are more
+functions in the file, you should also include the name of the modified function
+(in parentheses after file path).  Example:
+
+<pre class="example">     2008-04-02  David Bateman  &lt;dbateman@free.fr&gt;
+     
+             * graphics.cc (void gnuplot_backend::close_figure (const
+             octave_value&amp;) const): Allow for an input and output stream.
+</pre>
+   <p class="noindent">The ChangeLog entries should describe what is changed, not why.  Any
+explanation of why a change is needed should appear as comments in the
+code, particularly if there is something that might not be obvious to
+someone reading it later.
+
+   <p>The preferred comment mark for places that may need further attention is FIXME.
+
+   </body></html>
+

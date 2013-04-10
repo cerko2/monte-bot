@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+<title>Models - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Statistics.html#Statistics" title="Statistics">
+<link rel="prev" href="Tests.html#Tests" title="Tests">
+<link rel="next" href="Distributions.html#Distributions" title="Distributions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Models"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Distributions.html#Distributions">Distributions</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Tests.html#Tests">Tests</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Statistics.html#Statistics">Statistics</a>
+<hr><br>
+</div>
+
+<h3 class="section">25.5 Models</h3>
+
+<!-- ./statistics/models/logistic_regression.m -->
+<p><a name="doc_002dlogistic_005fregression"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>theta</var>, <var>beta</var>, <var>dev</var>, <var>dl</var>, <var>d2l</var>, <var>p</var>] = <b>logistic_regression</b> (<var>y, x, print, theta, beta</var>)<var><a name="index-logistic_005fregression-1890"></a></var><br>
+<blockquote><p>Perform ordinal logistic regression.
+
+        <p>Suppose <var>y</var> takes values in <var>k</var> ordered categories, and let
+<code>gamma_i (</code><var>x</var><code>)</code> be the cumulative probability that <var>y</var>
+falls in one of the first <var>i</var> categories given the covariate
+<var>x</var>.  Then
+
+     <pre class="example">          [theta, beta] = logistic_regression (y, x)
+     </pre>
+        <p class="noindent">fits the model
+
+     <pre class="example">          logit (gamma_i (x)) = theta_i - beta' * x,   i = 1 ... k-1
+     </pre>
+        <p>The number of ordinal categories, <var>k</var>, is taken to be the number
+of distinct values of <code>round (</code><var>y</var><code>)</code>.  If <var>k</var> equals 2,
+<var>y</var> is binary and the model is ordinary logistic regression.  The
+matrix <var>x</var> is assumed to have full column rank.
+
+        <p>Given <var>y</var> only, <code>theta = logistic_regression (y)</code>
+fits the model with baseline logit odds only.
+
+        <p>The full form is
+
+     <pre class="example">          [theta, beta, dev, dl, d2l, gamma]
+             = logistic_regression (y, x, print, theta, beta)
+     </pre>
+        <p class="noindent">in which all output arguments and all input arguments except <var>y</var>
+are optional.
+
+        <p>Setting <var>print</var> to 1 requests summary information about the fitted
+model to be displayed.  Setting <var>print</var> to 2 requests information
+about convergence at each iteration.  Other values request no
+information to be displayed.  The input arguments <var>theta</var> and
+<var>beta</var> give initial estimates for <var>theta</var> and <var>beta</var>.
+
+        <p>The returned value <var>dev</var> holds minus twice the log-likelihood.
+
+        <p>The returned values <var>dl</var> and <var>d2l</var> are the vector of first
+and the matrix of second derivatives of the log-likelihood with
+respect to <var>theta</var> and <var>beta</var>.
+
+        <p><var>p</var> holds estimates for the conditional distribution of <var>y</var>
+given <var>x</var>. 
+</p></blockquote></div>
+
+   </body></html>
+

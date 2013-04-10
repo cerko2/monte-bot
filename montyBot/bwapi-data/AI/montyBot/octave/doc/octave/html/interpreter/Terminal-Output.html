@@ -1,0 +1,201 @@
+<html lang="en">
+<head>
+<title>Terminal Output - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Basic-Input-and-Output.html#Basic-Input-and-Output" title="Basic Input and Output">
+<link rel="next" href="Terminal-Input.html#Terminal-Input" title="Terminal Input">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Terminal-Output"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Terminal-Input.html#Terminal-Input">Terminal Input</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Basic-Input-and-Output.html#Basic-Input-and-Output">Basic Input and Output</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">14.1.1 Terminal Output</h4>
+
+<p>Since Octave normally prints the value of an expression as soon as it
+has been evaluated, the simplest of all I/O functions is a simple
+expression.  For example, the following expression will display the
+value of <span class="samp">pi</span>
+
+<pre class="example">     pi
+          -| pi = 3.1416
+</pre>
+   <p>This works well as long as it is acceptable to have the name of the
+variable (or <span class="samp">ans</span>) printed along with the value.  To print the
+value of a variable without printing its name, use the function
+<code>disp</code>.
+
+   <p>The <code>format</code> command offers some control over the way Octave prints
+values with <code>disp</code> and through the normal echoing mechanism.
+
+<!-- pr-output.cc -->
+<p><a name="doc_002ddisp"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>disp</b> (<var>x</var>)<var><a name="index-disp-707"></a></var><br>
+<blockquote><p>Display the value of <var>x</var>.  For example,
+
+     <pre class="example">          disp ("The value of pi is:"), disp (pi)
+          
+               -| the value of pi is:
+               -| 3.1416
+     </pre>
+        <p class="noindent">Note that the output from <code>disp</code> always ends with a newline.
+
+        <p>If an output value is requested, <code>disp</code> prints nothing and
+returns the formatted output in a string. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dfdisp.html#doc_002dfdisp">fdisp</a>. 
+</p></blockquote></div>
+
+<!-- pr-output.cc -->
+<p><a name="doc_002dformat"></a>
+
+<div class="defun">
+&mdash; Command: <b>format</b><var><a name="index-format-708"></a></var><br>
+&mdash; Command: <b>format</b><var> options<a name="index-format-709"></a></var><br>
+<blockquote><p>Reset or specify the format of the output produced by <code>disp</code> and
+Octave's normal echoing mechanism.  This command only affects the display
+of numbers but not how they are stored or computed.  To change the internal
+representation from the default double use one of the conversion functions
+such as <code>single</code>, <code>uint8</code>, <code>int64</code>, etc.
+
+        <p>By default, Octave displays 5 significant digits in a human readable form
+(option <span class="samp">short</span> paired with <span class="samp">loose</span> format for matrices). 
+If <code>format</code> is invoked without any options, this default format
+is restored.
+
+        <p>Valid formats for floating point numbers are listed in the following
+table.
+
+          <dl>
+<dt><code>short</code><dd>Fixed point format with 5 significant figures in a field that is a maximum
+of 10 characters wide.  (default).
+
+          <p>If Octave is unable to format a matrix so that columns line up on the
+decimal point and all numbers fit within the maximum field width then
+it switches to an exponential <span class="samp">e</span> format.
+
+          <br><dt><code>long</code><dd>Fixed point format with 15 significant figures in a field that is a maximum
+of 20 characters wide.
+
+          <p>As with the <span class="samp">short</span> format, Octave will switch to an exponential
+<span class="samp">e</span> format if it is unable to format a matrix properly using the
+current format.
+
+          <br><dt><code>short e</code><dt><code>long e</code><dd>Exponential format.  The number to be represented is split between a mantissa
+and an exponent (power of 10).  The mantissa has 5 significant digits in the
+short format and 15 digits in the long format. 
+For example, with the <span class="samp">short e</span> format, <code>pi</code> is displayed as
+<code>3.1416e+00</code>.
+
+          <br><dt><code>short E</code><dt><code>long E</code><dd>Identical to <span class="samp">short e</span> or <span class="samp">long e</span> but displays an uppercase
+<span class="samp">E</span> to indicate the exponent. 
+For example, with the <span class="samp">long E</span> format, <code>pi</code> is displayed as
+<code>3.14159265358979E+00</code>.
+
+          <br><dt><code>short g</code><dt><code>long g</code><dd>Optimally choose between fixed point and exponential format based on
+the magnitude of the number. 
+For example, with the <span class="samp">short g</span> format,
+<code>pi .^ [2; 4; 8; 16; 32]</code> is displayed as
+
+          <pre class="example">               ans =
+               
+                     9.8696
+                     97.409
+                     9488.5
+                 9.0032e+07
+                 8.1058e+15
+          </pre>
+          <br><dt><code>long G</code><dt><code>short G</code><dd>Identical to <span class="samp">short g</span> or <span class="samp">long g</span> but displays an uppercase
+<span class="samp">E</span> to indicate the exponent.
+
+          <br><dt><code>free</code><dt><code>none</code><dd>Print output in free format, without trying to line up columns of
+matrices on the decimal point.  This also causes complex numbers to be
+formatted as numeric pairs like this <span class="samp">(0.60419, 0.60709)</span> instead
+of like this <span class="samp">0.60419 + 0.60709i</span>. 
+</dl>
+
+        <p>The following formats affect all numeric output (floating point and
+integer types).
+
+          <dl>
+<dt><code>+</code><dt><code>+ </code><var>chars</var><dt><code>plus</code><dt><code>plus </code><var>chars</var><dd>Print a <span class="samp">+</span> symbol for nonzero matrix elements and a space for zero
+matrix elements.  This format can be very useful for examining the
+structure of a large sparse matrix.
+
+          <p>The optional argument <var>chars</var> specifies a list of 3 characters to use
+for printing values greater than zero, less than zero and equal to zero. 
+For example, with the <span class="samp">+ "+-."</span> format, <code>[1, 0, -1; -1, 0, 1]</code>
+is displayed as
+
+          <pre class="example">               ans =
+               
+               +.-
+               -.+
+          </pre>
+          <br><dt><code>bank</code><dd>Print in a fixed format with two digits to the right of the decimal
+point.
+
+          <br><dt><code>native-hex</code><dd>Print the hexadecimal representation of numbers as they are stored in
+memory.  For example, on a workstation which stores 8 byte real values
+in IEEE format with the least significant byte first, the value of
+<code>pi</code> when printed in <code>native-hex</code> format is <code>400921fb54442d18</code>.
+
+          <br><dt><code>hex</code><dd>The same as <code>native-hex</code>, but always print the most significant
+byte first. 
+<br><dt><code>native-bit</code><dd>Print the bit representation of numbers as stored in memory. 
+For example, the value of <code>pi</code> is
+
+          <pre class="example">               01000000000010010010000111111011
+               01010100010001000010110100011000
+          </pre>
+          <p>(shown here in two 32 bit sections for typesetting purposes) when
+printed in native-bit format on a workstation which stores 8 byte real values
+in IEEE format with the least significant byte first. 
+<br><dt><code>bit</code><dd>The same as <code>native-bit</code>, but always print the most significant
+bits first.
+
+          <br><dt><code>rat</code><dd>Print a rational approximation, i.e., values are approximated
+as the ratio of small integers. 
+For example, with the <span class="samp">rat</span> format,
+<code>pi</code> is displayed as <code>355/113</code>. 
+</dl>
+
+        <p>The following two options affect the display of all matrices.
+
+          <dl>
+<dt><code>compact</code><dd>Remove extra blank space around column number labels producing more compact
+output with more data per page. 
+<br><dt><code>loose</code><dd>Insert blank lines above and below column number labels to produce a more
+readable output with less data per page.  (default). 
+</dl>
+        </p></blockquote></div>
+
+<ul class="menu">
+<li><a accesskey="1" href="Paging-Screen-Output.html#Paging-Screen-Output">Paging Screen Output</a>
+</ul>
+
+   </body></html>
+

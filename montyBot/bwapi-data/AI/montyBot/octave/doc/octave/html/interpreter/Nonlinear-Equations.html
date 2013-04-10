@@ -1,0 +1,253 @@
+<html lang="en">
+<head>
+<title>Nonlinear Equations - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="Linear-Algebra.html#Linear-Algebra" title="Linear Algebra">
+<link rel="next" href="Diagonal-and-Permutation-Matrices.html#Diagonal-and-Permutation-Matrices" title="Diagonal and Permutation Matrices">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Nonlinear-Equations"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Diagonal-and-Permutation-Matrices.html#Diagonal-and-Permutation-Matrices">Diagonal and Permutation Matrices</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Linear-Algebra.html#Linear-Algebra">Linear Algebra</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr><br>
+</div>
+
+<h2 class="chapter">19 Nonlinear Equations</h2>
+
+<p><a name="index-nonlinear-equations-1631"></a><a name="index-equations_002c-nonlinear-1632"></a>
+Octave can solve sets of nonlinear equations of the form
+
+<pre class="example">     F (x) = 0
+</pre>
+   <p class="noindent">using the function <code>fsolve</code>, which is based on the <span class="sc">Minpack</span>
+subroutine <code>hybrd</code>.  This is an iterative technique so a starting
+point will have to be provided.  This also has the consequence that
+convergence is not guaranteed even if a solution exists.
+
+<!-- ./optimization/fsolve.m -->
+<p><a name="doc_002dfsolve"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>fsolve</b> (<var>fcn, x0, options</var>)<var><a name="index-fsolve-1633"></a></var><br>
+&mdash; Function File: [<var>x</var>, <var>fvec</var>, <var>info</var>, <var>output</var>, <var>fjac</var>] <b>=</b><var> fsolve </var>(<var>fcn, <small class="dots">...</small></var>)<var><a name="index-_003d-1634"></a></var><br>
+<blockquote><p>Solve a system of nonlinear equations defined by the function <var>fcn</var>. 
+<var>fcn</var> should accepts a vector (array) defining the unknown variables,
+and return a vector of left-hand sides of the equations.  Right-hand sides
+are defined to be zeros. 
+In other words, this function attempts to determine a vector <var>x</var> such
+that <var>fcn</var><code> (</code><var>x</var><code>)</code> gives (approximately) all zeros. 
+<var>x0</var> determines a starting guess.  The shape of <var>x0</var> is preserved
+in all calls to <var>fcn</var>, but otherwise it is treated as a column vector. 
+<var>options</var> is a structure specifying additional options. 
+Currently, <code>fsolve</code> recognizes these options:
+<code>"FunValCheck"</code>, <code>"OutputFcn"</code>, <code>"TolX"</code>,
+<code>"TolFun"</code>, <code>"MaxIter"</code>, <code>"MaxFunEvals"</code>,
+<code>"Jacobian"</code>, <code>"Updating"</code> and <code>"ComplexEqn"</code>.
+
+        <p>If <code>"Jacobian"</code> is <code>"on"</code>, it specifies that <var>fcn</var>,
+called with 2 output arguments, also returns the Jacobian matrix
+of right-hand sides at the requested point.  <code>"TolX"</code> specifies
+the termination tolerance in the unknown variables, while
+<code>"TolFun"</code> is a tolerance for equations.  Default is <code>1e-7</code>
+for both <code>"TolX"</code> and <code>"TolFun"</code>. 
+If <code>"Updating"</code> is "on", the function will attempt to use Broyden
+updates to update the Jacobian, in order to reduce the amount of jacobian
+calculations. 
+If your user function always calculates the Jacobian (regardless of number
+of output arguments), this option provides no advantage and should be set to
+false.
+
+        <p><code>"ComplexEqn"</code> is <code>"on"</code>, <code>fsolve</code> will attempt to solve
+complex equations in complex variables, assuming that the equations possess a
+complex derivative (i.e., are holomorphic).  If this is not what you want,
+should unpack the real and imaginary parts of the system to get a real
+system.
+
+        <p>For description of the other options, see <code>optimset</code>.
+
+        <p>On return, <var>fval</var> contains the value of the function <var>fcn</var>
+evaluated at <var>x</var>, and <var>info</var> may be one of the following values:
+
+          <dl>
+<dt>1<dd>Converged to a solution point.  Relative residual error is less than specified
+by TolFun. 
+<br><dt>2<dd>Last relative step size was less that TolX. 
+<br><dt>3<dd>Last relative decrease in residual was less than TolF. 
+<br><dt>0<dd>Iteration limit exceeded. 
+<br><dt>-3<dd>The trust region radius became excessively small. 
+</dl>
+
+        <p>Note: If you only have a single nonlinear equation of one variable, using
+<code>fzero</code> is usually a much better idea. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dfzero.html#doc_002dfzero">fzero</a>, <a href="doc_002doptimset.html#doc_002doptimset">optimset</a>.
+
+        <p>Note about user-supplied jacobians:
+As an inherent property of the algorithm, jacobian is always requested for a
+solution vector whose residual vector is already known, and it is the last
+accepted successful step.  Often this will be one of the last two calls, but
+not always.  If the savings by reusing intermediate results from residual
+calculation in jacobian calculation are significant, the best strategy is to
+employ OutputFcn: After a vector is evaluated for residuals, if OutputFcn is
+called with that vector, then the intermediate results should be saved for
+future jacobian evaluation, and should be kept until a jacobian evaluation
+is requested or until outputfcn is called with a different vector, in which
+case they should be dropped in favor of this most recent vector.  A short
+example how this can be achieved follows:
+
+     <pre class="example">          function [fvec, fjac] = user_func (x, optimvalues, state)
+          persistent sav = [], sav0 = [];
+          if (nargin == 1)
+            ## evaluation call
+            if (nargout == 1)
+              sav0.x = x; # mark saved vector
+              ## calculate fvec, save results to sav0.
+            elseif (nargout == 2)
+              ## calculate fjac using sav.
+            endif
+          else
+            ## outputfcn call.
+            if (all (x == sav0.x))
+              sav = sav0;
+            endif
+            ## maybe output iteration status, etc.
+          endif
+          endfunction
+          
+           ....
+          
+          fsolve (@user_func, x0, optimset ("OutputFcn", @user_func, ...))
+     </pre>
+        </blockquote></div>
+
+   <p>Here is a complete example.  To solve the set of equations
+
+<pre class="example">     -2x^2 + 3xy   + 4 sin(y) = 6
+      3x^2 - 2xy^2 + 3 cos(x) = -4
+</pre>
+   <p class="noindent">you first need to write a function to compute the value of the given
+function.  For example:
+
+<pre class="example">     function y = f (x)
+       y(1) = -2*x(1)^2 + 3*x(1)*x(2)   + 4*sin(x(2)) - 6;
+       y(2) =  3*x(1)^2 - 2*x(1)*x(2)^2 + 3*cos(x(1)) + 4;
+     endfunction
+</pre>
+   <p>Then, call <code>fsolve</code> with a specified initial condition to find the
+roots of the system of equations.  For example, given the function
+<code>f</code> defined above,
+
+<pre class="example">     [x, fval, info] = fsolve (@f, [1; 2])
+</pre>
+   <p class="noindent">results in the solution
+
+<pre class="example">     x =
+     
+       0.57983
+       2.54621
+     
+     fval =
+     
+       -5.7184e-10
+        5.5460e-10
+     
+     info = 1
+</pre>
+   <p class="noindent">A value of <code>info = 1</code> indicates that the solution has converged.
+
+   <p>The function <code>perror</code> may be used to print English messages
+corresponding to the numeric error codes.  For example,
+
+<pre class="example">     perror ("fsolve", 1)
+          -| solution converged to requested tolerance
+</pre>
+   <p>When no Jacobian is supplied (as in the example above) it is approximated
+numerically.  This requires more function evaluations, and hence is
+less efficient.  In the example above we could compute the Jacobian
+analytically as
+
+<pre class="example">     function J = jacobian(x)
+       J(1,1) =  3*x(2) - 4*x(1);
+       J(1,2) =  4*cos(x(2)) + 3*x(1);
+       J(2,1) = -2*x(2)^2 - 3*sin(x(1)) + 6*x(1);
+       J(2,2) = -4*x(1)*x(2);
+     endfunction
+</pre>
+   <p class="noindent">The Jacobian can then be used with the following call to <code>fsolve</code>:
+
+<pre class="example">     [x, fval, info] = fsolve ({@f, @jacobian}, [1; 2]);
+</pre>
+   <p class="noindent">which gives the same solution as before.
+
+<!-- ./optimization/fzero.m -->
+<p><a name="doc_002dfzero"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>x</var>, <var>fval</var>, <var>info</var>, <var>output</var>] = <b>fzero</b> (<var>fun, x0, options</var>)<var><a name="index-fzero-1635"></a></var><br>
+<blockquote><p>Find a zero point of a univariate function.  <var>fun</var> should be a function
+handle or name.  <var>x0</var> specifies a starting point.  <var>options</var> is a
+structure specifying additional options.  Currently, <code>fzero</code>
+recognizes these options: <code>"FunValCheck"</code>, <code>"OutputFcn"</code>,
+<code>"TolX"</code>, <code>"MaxIter"</code>, <code>"MaxFunEvals"</code>. 
+For description of these options, see <a href="doc_002doptimset.html#doc_002doptimset">optimset</a>.
+
+        <p>On exit, the function returns <var>x</var>, the approximate zero point
+and <var>fval</var>, the function value thereof. 
+<var>info</var> is an exit flag that can have these values:
+          <ul>
+<li>1
+The algorithm converged to a solution. 
+<li>0
+Maximum number of iterations or function evaluations has been exhausted. 
+<li>-1
+The algorithm has been terminated from user output function. 
+<li>-2
+A general unexpected error. 
+<li>-3
+A non-real value encountered. 
+<li>-4
+A NaN value encountered. 
+</ul>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002doptimset.html#doc_002doptimset">optimset</a>, <a href="doc_002dfsolve.html#doc_002dfsolve">fsolve</a>. 
+</p></blockquote></div>
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 2009 Jaroslav Hajek -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

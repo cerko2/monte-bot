@@ -1,0 +1,333 @@
+<html lang="en">
+<head>
+<title>Basic Statistical Functions - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Statistics.html#Statistics" title="Statistics">
+<link rel="prev" href="Descriptive-Statistics.html#Descriptive-Statistics" title="Descriptive Statistics">
+<link rel="next" href="Statistical-Plots.html#Statistical-Plots" title="Statistical Plots">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Basic-Statistical-Functions"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Statistical-Plots.html#Statistical-Plots">Statistical Plots</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Descriptive-Statistics.html#Descriptive-Statistics">Descriptive Statistics</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Statistics.html#Statistics">Statistics</a>
+<hr><br>
+</div>
+
+<h3 class="section">25.2 Basic Statistical Functions</h3>
+
+<p>Octave also supports various helpful statistical functions.
+
+<!-- ./statistics/base/mahalanobis.m -->
+<p><a name="doc_002dmahalanobis"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>mahalanobis</b> (<var>x, y</var>)<var><a name="index-mahalanobis-1840"></a></var><br>
+<blockquote><p>Return the Mahalanobis' D-square distance between the multivariate
+samples <var>x</var> and <var>y</var>, which must have the same number of
+components (columns), but may have a different number of observations
+(rows). 
+</p></blockquote></div>
+
+<!-- ./statistics/base/center.m -->
+<p><a name="doc_002dcenter"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>center</b> (<var>x</var>)<var><a name="index-center-1841"></a></var><br>
+&mdash; Function File:  <b>center</b> (<var>x, dim</var>)<var><a name="index-center-1842"></a></var><br>
+<blockquote><p>If <var>x</var> is a vector, subtract its mean. 
+If <var>x</var> is a matrix, do the above for each column. 
+If the optional argument <var>dim</var> is given, perform the above
+operation along this dimension
+</p></blockquote></div>
+
+<!-- ./statistics/base/studentize.m -->
+<p><a name="doc_002dstudentize"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>studentize</b> (<var>x, dim</var>)<var><a name="index-studentize-1843"></a></var><br>
+<blockquote><p>If <var>x</var> is a vector, subtract its mean and divide by its standard
+deviation.
+
+        <p>If <var>x</var> is a matrix, do the above along the first non-singleton
+dimension.  If the optional argument <var>dim</var> is given then operate
+along this dimension. 
+</p></blockquote></div>
+
+<!-- ./specfun/nchoosek.m -->
+<p><a name="doc_002dnchoosek"></a>
+
+<div class="defun">
+&mdash; Function File: <var>c</var> = <b>nchoosek</b> (<var>n, k</var>)<var><a name="index-nchoosek-1844"></a></var><br>
+<blockquote>
+<p>Compute the binomial coefficient or all combinations of <var>n</var>. 
+If <var>n</var> is a scalar then, calculate the binomial coefficient
+of <var>n</var> and <var>k</var>, defined as
+
+     <pre class="example">           /   \
+           | n |    n (n-1) (n-2) ... (n-k+1)       n!
+           |   |  = ------------------------- =  ---------
+           | k |               k!                k! (n-k)!
+           \   /
+     </pre>
+        <p>If <var>n</var> is a vector generate all combinations of the elements
+of <var>n</var>, taken <var>k</var> at a time, one row per combination.  The
+resulting <var>c</var> has size <code>[nchoosek (length (</code><var>n</var><code>),
+</code><var>k</var><code>), </code><var>k</var><code>]</code>.
+
+        <p><code>nchoosek</code> works only for non-negative integer arguments; use
+<code>bincoeff</code> for non-integer scalar arguments and for using vector
+arguments to compute many coefficients at once.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dbincoeff.html#doc_002dbincoeff">bincoeff</a>. 
+</p></blockquote></div>
+
+<!-- ./statistics/base/histc.m -->
+<p><a name="doc_002dhistc"></a>
+
+<div class="defun">
+&mdash; Function File: <var>n</var> = <b>histc</b> (<var>y, edges</var>)<var><a name="index-histc-1845"></a></var><br>
+&mdash; Function File: <var>n</var> = <b>histc</b> (<var>y, edges, dim</var>)<var><a name="index-histc-1846"></a></var><br>
+&mdash; Function File: [<var>n</var>, <var>idx</var>] = <b>histc</b> (<var><small class="dots">...</small></var>)<var><a name="index-histc-1847"></a></var><br>
+<blockquote><p>Produce histogram counts.
+
+        <p>When <var>y</var> is a vector, the function counts the number of elements of
+<var>y</var> that fall in the histogram bins defined by <var>edges</var>.  This must be
+a vector of monotonically non-decreasing values that define the edges of the
+histogram bins.  So, <var>n</var><code> (k)</code> contains the number of elements in
+<var>y</var> for which <var>edges</var><code> (k) &lt;= </code><var>y</var><code> &lt; </code><var>edges</var><code> (k+1)</code>. 
+The final element of <var>n</var> contains the number of elements of <var>y</var>
+that was equal to the last element of <var>edges</var>.
+
+        <p>When <var>y</var> is a N-dimensional array, the same operation as above is
+repeated along dimension <var>dim</var>.  If this argument is given, the operation
+is performed along the first non-singleton dimension.
+
+        <p>If a second output argument is requested an index matrix is also returned. 
+The <var>idx</var> matrix has same size as <var>y</var>.  Each element of <var>idx</var>
+contains the index of the histogram bin in which the corresponding element
+of <var>y</var> was counted.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dhist.html#doc_002dhist">hist</a>. 
+</p></blockquote></div>
+
+<!-- ./specfun/perms.m -->
+<p><a name="doc_002dperms"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>perms</b> (<var>v</var>)<var><a name="index-perms-1848"></a></var><br>
+<blockquote>
+<p>Generate all permutations of <var>v</var>, one row per permutation.  The
+result has size <code>factorial (</code><var>n</var><code>) * </code><var>n</var>, where <var>n</var>
+is the length of <var>v</var>.
+
+        <p>As an example, <code>perms([1, 2, 3])</code> returns the matrix
+     <pre class="example">            1   2   3
+            2   1   3
+            1   3   2
+            2   3   1
+            3   1   2
+            3   2   1
+     </pre>
+        </blockquote></div>
+
+<!-- ./statistics/base/values.m -->
+<p><a name="doc_002dvalues"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>values</b> (<var>x</var>)<var><a name="index-values-1849"></a></var><br>
+<blockquote><p>Return the different values in a column vector, arranged in ascending
+order.
+
+        <p>As an example, <code>values([1, 2, 3, 1])</code> returns the vector
+<code>[1, 2, 3]</code>. 
+</p></blockquote></div>
+
+<!-- ./statistics/base/table.m -->
+<p><a name="doc_002dtable"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>t</var>, <var>l_x</var>] = <b>table</b> (<var>x</var>)<var><a name="index-table-1850"></a></var><br>
+&mdash; Function File: [<var>t</var>, <var>l_x</var>, <var>l_y</var>] = <b>table</b> (<var>x, y</var>)<var><a name="index-table-1851"></a></var><br>
+<blockquote><p>Create a contingency table <var>t</var> from data vectors.  The <var>l</var>
+vectors are the corresponding levels.
+
+        <p>Currently, only 1- and 2-dimensional tables are supported. 
+</p></blockquote></div>
+
+<!-- ./statistics/base/spearman.m -->
+<p><a name="doc_002dspearman"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>spearman</b> (<var>x, y</var>)<var><a name="index-spearman-1852"></a></var><br>
+<blockquote><p>Compute Spearman's rank correlation coefficient <var>rho</var> for each of
+the variables specified by the input arguments.
+
+        <p>For matrices, each row is an observation and each column a variable;
+vectors are always observations and may be row or column vectors.
+
+        <p><code>spearman (</code><var>x</var><code>)</code> is equivalent to <code>spearman (</code><var>x</var><code>,
+</code><var>x</var><code>)</code>.
+
+        <p>For two data vectors <var>x</var> and <var>y</var>, Spearman's <var>rho</var> is the
+correlation of the ranks of <var>x</var> and <var>y</var>.
+
+        <p>If <var>x</var> and <var>y</var> are drawn from independent distributions,
+<var>rho</var> has zero mean and variance <code>1 / (n - 1)</code>, and is
+asymptotically normally distributed. 
+</p></blockquote></div>
+
+<!-- ./statistics/base/run_count.m -->
+<p><a name="doc_002drun_005fcount"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>run_count</b> (<var>x, n</var>)<var><a name="index-run_005fcount-1853"></a></var><br>
+<blockquote><p>Count the upward runs along the first non-singleton dimension of
+<var>x</var> of length 1, 2, <small class="dots">...</small>, <var>n</var>-1 and greater than or equal
+to <var>n</var>.  If the optional argument <var>dim</var> is given operate
+along this dimension
+</p></blockquote></div>
+
+<!-- ./statistics/base/ranks.m -->
+<p><a name="doc_002dranks"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>ranks</b> (<var>x, dim</var>)<var><a name="index-ranks-1854"></a></var><br>
+<blockquote><p>Return the ranks of <var>x</var> along the first non-singleton dimension
+adjust for ties.  If the optional argument <var>dim</var> is
+given, operate along this dimension. 
+</p></blockquote></div>
+
+<!-- ./statistics/base/range.m -->
+<p><a name="doc_002drange"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>range</b> (<var>x</var>)<var><a name="index-range-1855"></a></var><br>
+&mdash; Function File:  <b>range</b> (<var>x, dim</var>)<var><a name="index-range-1856"></a></var><br>
+<blockquote><p>If <var>x</var> is a vector, return the range, i.e., the difference
+between the maximum and the minimum, of the input data.
+
+        <p>If <var>x</var> is a matrix, do the above for each column of <var>x</var>.
+
+        <p>If the optional argument <var>dim</var> is supplied, work along dimension
+<var>dim</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/base/probit.m -->
+<p><a name="doc_002dprobit"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>probit</b> (<var>p</var>)<var><a name="index-probit-1857"></a></var><br>
+<blockquote><p>For each component of <var>p</var>, return the probit (the quantile of the
+standard normal distribution) of <var>p</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/base/logit.m -->
+<p><a name="doc_002dlogit"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>logit</b> (<var>p</var>)<var><a name="index-logit-1858"></a></var><br>
+<blockquote><p>For each component of <var>p</var>, return the logit of <var>p</var> defined as
+     <pre class="example">          logit(<var>p</var>) = log (<var>p</var> / (1-<var>p</var>))
+     </pre>
+        </blockquote></div>
+
+<!-- ./statistics/base/cloglog.m -->
+<p><a name="doc_002dcloglog"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>cloglog</b> (<var>x</var>)<var><a name="index-cloglog-1859"></a></var><br>
+<blockquote><p>Return the complementary log-log function of <var>x</var>, defined as
+
+     <pre class="example">          cloglog(x) = - log (- log (<var>x</var>))
+     </pre>
+        </blockquote></div>
+
+<!-- ./statistics/base/kendall.m -->
+<p><a name="doc_002dkendall"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>kendall</b> (<var>x, y</var>)<var><a name="index-kendall-1860"></a></var><br>
+<blockquote><p>Compute Kendall's <var>tau</var> for each of the variables specified by
+the input arguments.
+
+        <p>For matrices, each row is an observation and each column a variable;
+vectors are always observations and may be row or column vectors.
+
+        <p><code>kendall (</code><var>x</var><code>)</code> is equivalent to <code>kendall (</code><var>x</var><code>,
+</code><var>x</var><code>)</code>.
+
+        <p>For two data vectors <var>x</var>, <var>y</var> of common length <var>n</var>,
+Kendall's <var>tau</var> is the correlation of the signs of all rank
+differences of <var>x</var> and <var>y</var>;  i.e., if both <var>x</var> and
+<var>y</var> have distinct entries, then
+
+     <pre class="example">                   1
+          tau = -------   SUM sign (q(i) - q(j)) * sign (r(i) - r(j))
+                n (n-1)   i,j
+     </pre>
+        <p class="noindent">in which the
+<var>q</var>(<var>i</var>) and <var>r</var>(<var>i</var>)
+ are the ranks of
+<var>x</var> and <var>y</var>, respectively.
+
+        <p>If <var>x</var> and <var>y</var> are drawn from independent distributions,
+Kendall's <var>tau</var> is asymptotically normal with mean 0 and variance
+<code>(2 * (2</code><var>n</var><code>+5)) / (9 * </code><var>n</var><code> * (</code><var>n</var><code>-1))</code>. 
+</p></blockquote></div>
+
+<!-- ./statistics/base/iqr.m -->
+<p><a name="doc_002diqr"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>iqr</b> (<var>x, dim</var>)<var><a name="index-iqr-1861"></a></var><br>
+<blockquote><p>If <var>x</var> is a vector, return the interquartile range, i.e., the
+difference between the upper and lower quartile, of the input data.
+
+        <p>If <var>x</var> is a matrix, do the above for first non-singleton
+dimension of <var>x</var>.  If the option <var>dim</var> argument is given,
+then operate along this dimension. 
+</p></blockquote></div>
+
+<!-- ./statistics/base/cut.m -->
+<p><a name="doc_002dcut"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>cut</b> (<var>x, breaks</var>)<var><a name="index-cut-1862"></a></var><br>
+<blockquote><p>Create categorical data out of numerical or continuous data by
+cutting into intervals.
+
+        <p>If <var>breaks</var> is a scalar, the data is cut into that many
+equal-width intervals.  If <var>breaks</var> is a vector of break points,
+the category has <code>length (</code><var>breaks</var><code>) - 1</code> groups.
+
+        <p>The returned value is a vector of the same size as <var>x</var> telling
+which group each point in <var>x</var> belongs to.  Groups are labelled
+from 1 to the number of groups; points outside the range of
+<var>breaks</var> are labelled by <code>NaN</code>. 
+</p></blockquote></div>
+
+   </body></html>
+

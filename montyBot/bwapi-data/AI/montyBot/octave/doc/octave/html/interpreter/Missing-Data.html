@@ -1,0 +1,89 @@
+<html lang="en">
+<head>
+<title>Missing Data - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Built_002din-Data-Types.html#Built_002din-Data-Types" title="Built-in Data Types">
+<link rel="prev" href="Numeric-Objects.html#Numeric-Objects" title="Numeric Objects">
+<link rel="next" href="String-Objects.html#String-Objects" title="String Objects">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Missing-Data"></a>Next:&nbsp;<a rel="next" accesskey="n" href="String-Objects.html#String-Objects">String Objects</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Numeric-Objects.html#Numeric-Objects">Numeric Objects</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Built_002din-Data-Types.html#Built_002din-Data-Types">Built-in Data Types</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">3.1.2 Missing Data</h4>
+
+<p><a name="index-missing-data-184"></a>
+It is possible to represent missing data explicitly in Octave using
+<code>NA</code> (short for &ldquo;Not Available&rdquo;).  Missing data can only be
+represented when data is represented as floating point numbers.  In this
+case missing data is represented as a special case of the representation
+of <code>NaN</code>.
+
+<!-- data.cc -->
+<p><a name="doc_002dNA"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>NA</b><var><a name="index-NA-185"></a></var><br>
+&mdash; Built-in Function:  <b>NA</b> (<var>n</var>)<var><a name="index-NA-186"></a></var><br>
+&mdash; Built-in Function:  <b>NA</b> (<var>n, m</var>)<var><a name="index-NA-187"></a></var><br>
+&mdash; Built-in Function:  <b>NA</b> (<var>n, m, k, <small class="dots">...</small></var>)<var><a name="index-NA-188"></a></var><br>
+&mdash; Built-in Function:  <b>NA</b> (<var><small class="dots">...</small>, class</var>)<var><a name="index-NA-189"></a></var><br>
+<blockquote><p>Return a scalar, matrix, or N-dimensional array whose elements are all equal
+to the special constant used to designate missing values.
+
+        <p>Note that NA always compares not equal to NA (NA != NA). 
+To find NA values, use the <code>isna</code> function.
+
+        <p>When called with no arguments, return a scalar with the value <span class="samp">NA</span>. 
+When called with a single argument, return a square matrix with the dimension
+specified.  When called with more than one scalar argument the first two
+arguments are taken as the number of rows and columns and any further
+arguments specify additional matrix dimensions. 
+The optional argument <var>class</var> specifies the return type and may be
+either "double" or "single". 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002disna.html#doc_002disna">isna</a>. 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002disna"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isna</b> (<var>x</var>)<var><a name="index-isna-190"></a></var><br>
+<blockquote><p>Return 1 for elements of <var>x</var> that are NA (missing) values and zero
+otherwise.  For example,
+
+     <pre class="example">          isna ([13, Inf, NA, NaN])
+               =&gt; [ 0, 0, 1, 0 ]
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002disnan.html#doc_002disnan">isnan</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

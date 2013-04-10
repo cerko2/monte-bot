@@ -1,0 +1,203 @@
+<html lang="en">
+<head>
+<title>Object Sizes - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Data-Types.html#Data-Types" title="Data Types">
+<link rel="prev" href="User_002ddefined-Data-Types.html#User_002ddefined-Data-Types" title="User-defined Data Types">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Object-Sizes"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="User_002ddefined-Data-Types.html#User_002ddefined-Data-Types">User-defined Data Types</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Data-Types.html#Data-Types">Data Types</a>
+<hr><br>
+</div>
+
+<h3 class="section">3.3 Object Sizes</h3>
+
+<p>The following functions allow you to determine the size of a variable or
+expression.  These functions are defined for all objects.  They return
+&minus;1 when the operation doesn't make sense.  For example, Octave's
+data structure type doesn't have rows or columns, so the <code>rows</code> and
+<code>columns</code> functions return &minus;1 for structure arguments.
+
+<!-- data.cc -->
+<p><a name="doc_002dndims"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>ndims</b> (<var>a</var>)<var><a name="index-ndims-200"></a></var><br>
+<blockquote><p>Returns the number of dimensions of array <var>a</var>. 
+For any array, the result will always be larger than or equal to 2. 
+Trailing singleton dimensions are not counted. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dcolumns"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>columns</b> (<var>a</var>)<var><a name="index-columns-201"></a></var><br>
+<blockquote><p>Return the number of columns of <var>a</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsize.html#doc_002dsize">size</a>, <a href="doc_002dnumel.html#doc_002dnumel">numel</a>, <a href="doc_002drows.html#doc_002drows">rows</a>, <a href="doc_002dlength.html#doc_002dlength">length</a>, <a href="doc_002disscalar.html#doc_002disscalar">isscalar</a>, <a href="doc_002disvector.html#doc_002disvector">isvector</a>, <a href="doc_002dismatrix.html#doc_002dismatrix">ismatrix</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002drows"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>rows</b> (<var>a</var>)<var><a name="index-rows-202"></a></var><br>
+<blockquote><p>Return the number of rows of <var>a</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsize.html#doc_002dsize">size</a>, <a href="doc_002dnumel.html#doc_002dnumel">numel</a>, <a href="doc_002dcolumns.html#doc_002dcolumns">columns</a>, <a href="doc_002dlength.html#doc_002dlength">length</a>, <a href="doc_002disscalar.html#doc_002disscalar">isscalar</a>, <a href="doc_002disvector.html#doc_002disvector">isvector</a>, <a href="doc_002dismatrix.html#doc_002dismatrix">ismatrix</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dnumel"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>numel</b> (<var>a</var>)<var><a name="index-numel-203"></a></var><br>
+<blockquote><p>Returns the number of elements in the object <var>a</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsize.html#doc_002dsize">size</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dlength"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>length</b> (<var>a</var>)<var><a name="index-length-204"></a></var><br>
+<blockquote><p>Return the `length' of the object <var>a</var>.  For matrix objects, the
+length is the number of rows or columns, whichever is greater (this
+odd definition is used for compatibility with <span class="sc">matlab</span>). 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dsize"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>size</b> (<var>a, n</var>)<var><a name="index-size-205"></a></var><br>
+<blockquote><p>Return the number rows and columns of <var>a</var>.
+
+        <p>With one input argument and one output argument, the result is returned
+in a row vector.  If there are multiple output arguments, the number of
+rows is assigned to the first, and the number of columns to the second,
+etc.  For example,
+
+     <pre class="example">          size ([1, 2; 3, 4; 5, 6])
+               =&gt; [ 3, 2 ]
+          
+          [nr, nc] = size ([1, 2; 3, 4; 5, 6])
+               =&gt; nr = 3
+               =&gt; nc = 2
+     </pre>
+        <p>If given a second argument, <code>size</code> will return the size of the
+corresponding dimension.  For example
+
+     <pre class="example">          size ([1, 2; 3, 4; 5, 6], 2)
+               =&gt; 2
+     </pre>
+        <p class="noindent">returns the number of columns in the given matrix. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dnumel.html#doc_002dnumel">numel</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002disempty"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>isempty</b> (<var>a</var>)<var><a name="index-isempty-206"></a></var><br>
+<blockquote><p>Return 1 if <var>a</var> is an empty matrix (either the number of rows, or
+the number of columns, or both are zero).  Otherwise, return 0. 
+</p></blockquote></div>
+
+<!-- ov-null-mat.cc -->
+<p><a name="doc_002disnull"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>isnull</b> (<var>x</var>)<var><a name="index-isnull-207"></a></var><br>
+<blockquote><p>Return 1 if <var>x</var> is a special null matrix, string or single quoted string. 
+Indexed assignment with such a value as right-hand side should delete array elements. 
+This function should be used when overloading indexed assignment for user-defined
+classes instead of <code>isempty</code>, to distinguish the cases:
+          <dl>
+<dt><code>A(I) = []</code><dd>This should delete elements if <code>I</code> is nonempty. 
+<br><dt><code>X = []; A(I) = X</code><dd>This should give an error if <code>I</code> is nonempty. 
+</dl>
+        </p></blockquote></div>
+
+<!-- ov.cc -->
+<p><a name="doc_002dsizeof"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>sizeof</b> (<var>val</var>)<var><a name="index-sizeof-208"></a></var><br>
+<blockquote><p>Return the size of <var>val</var> in bytes
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dsize_005fequal"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>size_equal</b> (<var>a, b, <small class="dots">...</small></var>)<var><a name="index-size_005fequal-209"></a></var><br>
+<blockquote><p>Return true if the dimensions of all arguments agree. 
+Trailing singleton dimensions are ignored. 
+Called with a single argument, size_equal returns true. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsize.html#doc_002dsize">size</a>, <a href="doc_002dnumel.html#doc_002dnumel">numel</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dsqueeze"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>squeeze</b> (<var>x</var>)<var><a name="index-squeeze-210"></a></var><br>
+<blockquote><p>Remove singleton dimensions from <var>x</var> and return the result. 
+Note that for compatibility with <span class="sc">matlab</span>, all objects have
+a minimum of two dimensions and row vectors are left unchanged. 
+</p></blockquote></div>
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 1996, 1997, 2007, 2008, 2009 John W. Eaton -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

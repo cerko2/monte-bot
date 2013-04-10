@@ -1,0 +1,186 @@
+<html lang="en">
+<head>
+<title>Sums and Products - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Arithmetic.html#Arithmetic" title="Arithmetic">
+<link rel="prev" href="Trigonometry.html#Trigonometry" title="Trigonometry">
+<link rel="next" href="Utility-Functions.html#Utility-Functions" title="Utility Functions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Sums-and-Products"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Utility-Functions.html#Utility-Functions">Utility Functions</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Trigonometry.html#Trigonometry">Trigonometry</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Arithmetic.html#Arithmetic">Arithmetic</a>
+<hr><br>
+</div>
+
+<h3 class="section">17.4 Sums and Products</h3>
+
+<!-- data.cc -->
+<p><a name="doc_002dsum"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>sum</b> (<var>x</var>)<var><a name="index-sum-1422"></a></var><br>
+&mdash; Built-in Function:  <b>sum</b> (<var>x, dim</var>)<var><a name="index-sum-1423"></a></var><br>
+&mdash; Built-in Function:  <b>sum</b> (<var><small class="dots">...</small>, 'native'</var>)<var><a name="index-sum-1424"></a></var><br>
+<blockquote><p>Sum of elements along dimension <var>dim</var>.  If <var>dim</var> is
+omitted, it defaults to 1 (column-wise sum).
+
+        <p>As a special case, if <var>x</var> is a vector and <var>dim</var> is omitted,
+return the sum of the elements.
+
+        <p>If the optional argument 'native' is given, then the sum is performed
+in the same type as the original argument, rather than in the default
+double type.  For example
+
+     <pre class="example">          sum ([true, true])
+            =&gt; 2
+          sum ([true, true], 'native')
+            =&gt; true
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dcumsum.html#doc_002dcumsum">cumsum</a>, <a href="doc_002dsumsq.html#doc_002dsumsq">sumsq</a>, <a href="doc_002dprod.html#doc_002dprod">prod</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dprod"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>prod</b> (<var>x</var>)<var><a name="index-prod-1425"></a></var><br>
+&mdash; Built-in Function:  <b>prod</b> (<var>x, dim</var>)<var><a name="index-prod-1426"></a></var><br>
+<blockquote><p>Product of elements along dimension <var>dim</var>.  If <var>dim</var> is
+omitted, it defaults to 1 (column-wise products).
+
+        <p>As a special case, if <var>x</var> is a vector and <var>dim</var> is omitted,
+return the product of the elements. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dcumprod.html#doc_002dcumprod">cumprod</a>, <a href="doc_002dsum.html#doc_002dsum">sum</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dcumsum"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>cumsum</b> (<var>x</var>)<var><a name="index-cumsum-1427"></a></var><br>
+&mdash; Built-in Function:  <b>cumsum</b> (<var>x, dim</var>)<var><a name="index-cumsum-1428"></a></var><br>
+&mdash; Built-in Function:  <b>cumsum</b> (<var><small class="dots">...</small>, 'native'</var>)<var><a name="index-cumsum-1429"></a></var><br>
+<blockquote><p>Cumulative sum of elements along dimension <var>dim</var>.  If <var>dim</var>
+is omitted, it defaults to 1 (column-wise cumulative sums).
+
+        <p>As a special case, if <var>x</var> is a vector and <var>dim</var> is omitted,
+return the cumulative sum of the elements as a vector with the
+same orientation as <var>x</var>.
+
+        <p>The "native" argument implies the summation is performed in native type. 
+ See <code>sum</code> for a complete description and example of the use of
+"native". 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsum.html#doc_002dsum">sum</a>, <a href="doc_002dcumprod.html#doc_002dcumprod">cumprod</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dcumprod"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>cumprod</b> (<var>x</var>)<var><a name="index-cumprod-1430"></a></var><br>
+&mdash; Built-in Function:  <b>cumprod</b> (<var>x, dim</var>)<var><a name="index-cumprod-1431"></a></var><br>
+<blockquote><p>Cumulative product of elements along dimension <var>dim</var>.  If
+<var>dim</var> is omitted, it defaults to 1 (column-wise cumulative
+products).
+
+        <p>As a special case, if <var>x</var> is a vector and <var>dim</var> is omitted,
+return the cumulative product of the elements as a vector with the
+same orientation as <var>x</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dprod.html#doc_002dprod">prod</a>, <a href="doc_002dcumsum.html#doc_002dcumsum">cumsum</a>. 
+</p></blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dsumsq"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>sumsq</b> (<var>x</var>)<var><a name="index-sumsq-1432"></a></var><br>
+&mdash; Built-in Function:  <b>sumsq</b> (<var>x, dim</var>)<var><a name="index-sumsq-1433"></a></var><br>
+<blockquote><p>Sum of squares of elements along dimension <var>dim</var>.  If <var>dim</var>
+is omitted, it defaults to 1 (column-wise sum of squares).
+
+        <p>As a special case, if <var>x</var> is a vector and <var>dim</var> is omitted,
+return the sum of squares of the elements.
+
+        <p>This function is conceptually equivalent to computing
+     <pre class="example">          sum (x .* conj (x), dim)
+     </pre>
+        <p>but it uses less memory and avoids calling <code>conj</code> if <var>x</var> is real. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsum.html#doc_002dsum">sum</a>. 
+</p></blockquote></div>
+
+<!-- ./general/accumarray.m -->
+<p><a name="doc_002daccumarray"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>accumarray</b> (<var>subs, vals, sz, func, fillval, issparse</var>)<var><a name="index-accumarray-1434"></a></var><br>
+&mdash; Function File:  <b>accumarray</b> (<var>csubs, vals, <small class="dots">...</small></var>)<var><a name="index-accumarray-1435"></a></var><br>
+<blockquote>
+<p>Create an array by accumulating the elements of a vector into the
+positions defined by their subscripts.  The subscripts are defined by
+the rows of the matrix <var>subs</var> and the values by <var>vals</var>.  Each row
+of <var>subs</var> corresponds to one of the values in <var>vals</var>.
+
+        <p>The size of the matrix will be determined by the subscripts themselves. 
+However, if <var>sz</var> is defined it determines the matrix size.  The length
+of <var>sz</var> must correspond to the number of columns in <var>subs</var>.
+
+        <p>The default action of <code>accumarray</code> is to sum the elements with the
+same subscripts.  This behavior can be modified by defining the <var>func</var>
+function.  This should be a function or function handle that accepts a
+column vector and returns a scalar.  The result of the function should not
+depend on the order of the subscripts.
+
+        <p>The elements of the returned array that have no subscripts associated with
+them are set to zero.  Defining <var>fillval</var> to some other value allows
+these values to be defined.
+
+        <p>By default <code>accumarray</code> returns a full matrix.  If <var>issparse</var> is
+logically true, then a sparse matrix is returned instead.
+
+        <p>An example of the use of <code>accumarray</code> is:
+
+     <pre class="example">          accumarray ([1,1,1;2,1,2;2,3,2;2,1,2;2,3,2], 101:105)
+          =&gt; ans(:,:,1) = [101, 0, 0; 0, 0, 0]
+             ans(:,:,2) = [0, 0, 0; 206, 0, 208]
+     </pre>
+        </blockquote></div>
+
+   </body></html>
+

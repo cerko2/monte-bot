@@ -1,0 +1,95 @@
+<html lang="en">
+<head>
+<title>Evaluating Polynomials - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Polynomial-Manipulations.html#Polynomial-Manipulations" title="Polynomial Manipulations">
+<link rel="next" href="Finding-Roots.html#Finding-Roots" title="Finding Roots">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Evaluating-Polynomials"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Finding-Roots.html#Finding-Roots">Finding Roots</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Polynomial-Manipulations.html#Polynomial-Manipulations">Polynomial Manipulations</a>
+<hr><br>
+</div>
+
+<h3 class="section">27.1 Evaluating Polynomials</h3>
+
+<p>The value of a polynomial represented by the vector <var>c</var> can be evaluated
+at the point <var>x</var> very easily, as the following example shows:
+
+<pre class="example">     N = length(c)-1;
+     val = dot( x.^(N:-1:0), c );
+</pre>
+   <p class="noindent">While the above example shows how easy it is to compute the value of a
+polynomial, it isn't the most stable algorithm.  With larger polynomials
+you should use more elegant algorithms, such as Horner's Method, which
+is exactly what the Octave function <code>polyval</code> does.
+
+   <p>In the case where <var>x</var> is a square matrix, the polynomial given by
+<var>c</var> is still well-defined.  As when <var>x</var> is a scalar the obvious
+implementation is easily expressed in Octave, but also in this case
+more elegant algorithms perform better.  The <code>polyvalm</code> function
+provides such an algorithm.
+
+<!-- ./polynomial/polyval.m -->
+<p><a name="doc_002dpolyval"></a>
+
+<div class="defun">
+&mdash; Function File: <var>y</var> = <b>polyval</b> (<var>p, x</var>)<var><a name="index-polyval-2021"></a></var><br>
+&mdash; Function File: <var>y</var> = <b>polyval</b> (<var>p, x, </var>[]<var>, mu</var>)<var><a name="index-polyval-2022"></a></var><br>
+<blockquote><p>Evaluate the polynomial at of the specified values for <var>x</var>.  When <var>mu</var>
+is present evaluate the polynomial for (<var>x</var>-<var>mu</var>(1))/<var>mu</var>(2). 
+If <var>x</var> is a vector or matrix, the polynomial is evaluated for each of
+the elements of <var>x</var>.
+
+   &mdash; Function File: [<var>y</var>, <var>dy</var>] = <b>polyval</b> (<var>p, x, s</var>)<var><a name="index-polyval-2023"></a></var><br>
+&mdash; Function File: [<var>y</var>, <var>dy</var>] = <b>polyval</b> (<var>p, x, s, mu</var>)<var><a name="index-polyval-2024"></a></var><br>
+<blockquote><p>In addition to evaluating the polynomial, the second output
+represents the prediction interval, <var>y</var> +/- <var>dy</var>, which
+contains at least 50% of the future predictions.  To calculate the
+prediction interval, the structured variable <var>s</var>, originating
+form `polyfit', must be present. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dpolyfit.html#doc_002dpolyfit">polyfit</a>, <a href="doc_002dpolyvalm.html#doc_002dpolyvalm">polyvalm</a>, <a href="doc_002dpoly.html#doc_002dpoly">poly</a>, <a href="doc_002droots.html#doc_002droots">roots</a>, <a href="doc_002dconv.html#doc_002dconv">conv</a>, <a href="doc_002ddeconv.html#doc_002ddeconv">deconv</a>, <a href="doc_002dresidue.html#doc_002dresidue">residue</a>, <a href="doc_002dfilter.html#doc_002dfilter">filter</a>, <a href="doc_002dpolyderiv.html#doc_002dpolyderiv">polyderiv</a>, <a href="doc_002dpolyinteg.html#doc_002dpolyinteg">polyinteg</a>. 
+</p></blockquote></div>
+
+<!-- ./polynomial/polyvalm.m -->
+<p><a name="doc_002dpolyvalm"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>polyvalm</b> (<var>c, x</var>)<var><a name="index-polyvalm-2025"></a></var><br>
+<blockquote><p>Evaluate a polynomial in the matrix sense.
+
+        <p><code>polyvalm (</code><var>c</var><code>, </code><var>x</var><code>)</code> will evaluate the polynomial in the
+matrix sense, i.e., matrix multiplication is used instead of element by
+element multiplication as is used in polyval.
+
+        <p>The argument <var>x</var> must be a square matrix. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dpolyval.html#doc_002dpolyval">polyval</a>, <a href="doc_002dpoly.html#doc_002dpoly">poly</a>, <a href="doc_002droots.html#doc_002droots">roots</a>, <a href="doc_002dconv.html#doc_002dconv">conv</a>, <a href="doc_002ddeconv.html#doc_002ddeconv">deconv</a>, <a href="doc_002dresidue.html#doc_002dresidue">residue</a>, <a href="doc_002dfilter.html#doc_002dfilter">filter</a>, <a href="doc_002dpolyderiv.html#doc_002dpolyderiv">polyderiv</a>, <a href="doc_002dpolyinteg.html#doc_002dpolyinteg">polyinteg</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

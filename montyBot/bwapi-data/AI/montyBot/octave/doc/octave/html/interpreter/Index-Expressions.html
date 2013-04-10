@@ -1,0 +1,193 @@
+<html lang="en">
+<head>
+<title>Index Expressions - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Expressions.html#Expressions" title="Expressions">
+<link rel="next" href="Calling-Functions.html#Calling-Functions" title="Calling Functions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Index-Expressions"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Calling-Functions.html#Calling-Functions">Calling Functions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Expressions.html#Expressions">Expressions</a>
+<hr><br>
+</div>
+
+<h3 class="section">8.1 Index Expressions</h3>
+
+<p><a name="index-_0028-448"></a><a name="index-_0029-449"></a>
+An <dfn>index expression</dfn> allows you to reference or extract selected
+elements of a matrix or vector.
+
+   <p>Indices may be scalars, vectors, ranges, or the special operator
+<span class="samp">:</span>, which may be used to select entire rows or columns.
+
+   <p>Vectors are indexed using a single index expression.  Matrices may be
+indexed using one or two indices.  When using a single index
+expression, the elements of the matrix are taken in column-first order;
+the dimensions of the output match those of the index expression.  For
+example,
+<pre class="example">     a (2)       # a scalar
+     a (1:2)     # a row vector
+     a ([1; 2])  # a column vector
+</pre>
+   <p>As a special case, when a colon is used as a single index, the output
+is a column vector containing all the elements of the vector or matrix. 
+For example
+<pre class="example">     a (:)       # a column vector
+</pre>
+   <p>Given the matrix
+
+<pre class="example">     a = [1, 2; 3, 4]
+</pre>
+   <p class="noindent">all of the following expressions are equivalent
+
+<pre class="example">     a (1, [1, 2])
+     a (1, 1:2)
+     a (1, :)
+</pre>
+   <p class="noindent">and select the first row of the matrix.
+
+   <p>In general, an array with <span class="samp">n</span> dimensions can be indexed using <span class="samp">m</span>
+indices.  If <code>n == m</code>, each index corresponds to its respective dimension. 
+The set of index tuples determining the result is formed by the Cartesian product
+of the index vectors (or ranges or scalars). 
+If <code>n &lt; m</code>, then the array is padded by trailing singleton dimensions. 
+If <code>n &gt; m</code>, the last <code>n-m+1</code> dimensions are folded into a single
+dimension with extent equal to product of extents of the original dimensions.
+
+<!-- FIXED - sections on variable prefer_zero_one_indexing were removed -->
+<p>Indexing a scalar with a vector of ones can be used to create a
+vector the same size as the index vector, with each element equal to
+the value of the original scalar.  For example, the following statements
+
+<pre class="example">     a = 13;
+     a (ones (1, 4))
+</pre>
+   <p class="noindent">produce a vector whose four elements are all equal to 13.
+
+   <p>Similarly, indexing a scalar with two vectors of ones can be used to
+create a matrix.  For example the following statements
+
+<pre class="example">     a = 13;
+     a (ones (1, 2), ones (1, 3))
+</pre>
+   <p class="noindent">create a 2 by 3 matrix with all elements equal to 13.
+
+   <p>The last example could also be written as
+
+<pre class="example">     13 (ones (2, 3))
+</pre>
+   <p>It should be, noted that <code>ones (1, n)</code> (a row vector of ones) results in a
+range (with zero increment), and is therefore more efficient when used in index
+expression than other forms of <dfn>ones</dfn>.  In particular, when <span class="samp">r</span> is a row
+vector, the expressions
+
+<pre class="example">       r(ones (1, n), :)
+</pre>
+   <pre class="example">       r(ones (n, 1), :)
+</pre>
+   <p>will produce identical results, but the first one will be significantly
+faster, at least for <span class="samp">r</span> and <span class="samp">n</span> large enough.  The reason is that
+in the first case the index is kept in a compressed form, which allows Octave
+to choose a more efficient algorithm to handle the expression.
+
+   <p>In general, for an user unaware of these subtleties, it is best to use
+the function <dfn>repmat</dfn> for spreading arrays into bigger ones.
+
+   <p>It is also possible to create a matrix with different values.  The
+following example creates a 10 dimensional row vector a containing
+the values
+a(i) = sqrt(i).
+
+<pre class="example">     for i = 1:10
+       a(i) = sqrt (i);
+     endfor
+</pre>
+   <p class="noindent">Note that it is quite inefficient to create a vector using a loop like
+the one shown in the example above.  In this particular case, it would
+have been much more efficient to use the expression
+
+<pre class="example">     a = sqrt (1:10);
+</pre>
+   <p class="noindent">thus avoiding the loop entirely.  In cases where a loop is still
+required, or a number of values must be combined to form a larger
+matrix, it is generally much faster to set the size of the matrix first,
+and then insert elements using indexing commands.  For example, given a
+matrix <code>a</code>,
+
+<pre class="example">     [nr, nc] = size (a);
+     x = zeros (nr, n * nc);
+     for i = 1:n
+       x(:,(i-1)*nc+1:i*nc) = a;
+     endfor
+</pre>
+   <p class="noindent">is considerably faster than
+
+<pre class="example">     x = a;
+     for i = 1:n-1
+       x = [x, a];
+     endfor
+</pre>
+   <p class="noindent">particularly for large matrices because Octave does not have to
+repeatedly resize the result.
+
+<!-- ./general/sub2ind.m -->
+<p><a name="doc_002dsub2ind"></a>
+
+<div class="defun">
+&mdash; Function File: <var>ind</var> = <b>sub2ind</b> (<var>dims, i, j</var>)<var><a name="index-sub2ind-450"></a></var><br>
+&mdash; Function File: <var>ind</var> = <b>sub2ind</b> (<var>dims, s1, s2, <small class="dots">...</small>, sN</var>)<var><a name="index-sub2ind-451"></a></var><br>
+<blockquote><p>Convert subscripts into a linear index.
+
+        <p>The following example shows how to convert the two-dimensional
+index <code>(2,3)</code> of a 3-by-3 matrix to a linear index.  The matrix
+is linearly indexed moving from one column to next, filling up
+all rows in each column.
+
+     <pre class="example">          linear_index = sub2ind ([3, 3], 2, 3)
+          =&gt; 8
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dind2sub.html#doc_002dind2sub">ind2sub</a>. 
+</p></blockquote></div>
+
+<!-- ./general/ind2sub.m -->
+<p><a name="doc_002dind2sub"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>s1</var>, <var>s2</var>, <small class="dots">...</small>, <var>sN</var>] = <b>ind2sub</b> (<var>dims, ind</var>)<var><a name="index-ind2sub-452"></a></var><br>
+<blockquote><p>Convert a linear index into subscripts.
+
+        <p>The following example shows how to convert the linear index <code>8</code>
+in a 3-by-3 matrix into a subscript.  The matrix is linearly indexed
+moving from one column to next, filling up all rows in each column.
+     <pre class="example">          [r, c] = ind2sub ([3, 3], 8)
+          =&gt; r =  2
+          c =  3
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dsub2ind.html#doc_002dsub2ind">sub2ind</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

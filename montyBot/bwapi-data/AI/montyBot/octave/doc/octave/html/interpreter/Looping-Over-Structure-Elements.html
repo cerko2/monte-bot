@@ -1,0 +1,73 @@
+<html lang="en">
+<head>
+<title>Looping Over Structure Elements - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="The-_0040code_007bfor_007d-Statement.html#The-_0040code_007bfor_007d-Statement" title="The @code{for} Statement">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Looping-Over-Structure-Elements"></a>Up:&nbsp;<a rel="up" accesskey="u" href="The-_003ccode_003efor_003c_002fcode_003e-Statement.html#The-_003ccode_003efor_003c_002fcode_003e-Statement">The &lt;code&gt;for&lt;/code&gt; Statement</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">10.5.1 Looping Over Structure Elements</h4>
+
+<p><a name="index-structure-elements_002c-looping-over-571"></a><a name="index-looping-over-structure-elements-572"></a>
+A special form of the <code>for</code> statement allows you to loop over all
+the elements of a structure:
+
+<pre class="example">     for [ <var>val</var>, <var>key</var> ] = <var>expression</var>
+       <var>body</var>
+     endfor
+</pre>
+   <p class="noindent">In this form of the <code>for</code> statement, the value of <var>expression</var>
+must be a structure.  If it is, <var>key</var> and <var>val</var> are set to the
+name of the element and the corresponding value in turn, until there are
+no more elements.  For example,
+
+<pre class="example">     x.a = 1
+     x.b = [1, 2; 3, 4]
+     x.c = "string"
+     for [val, key] = x
+       key
+       val
+     endfor
+     
+          -| key = a
+          -| val = 1
+          -| key = b
+          -| val =
+          -|
+          -|   1  2
+          -|   3  4
+          -|
+          -| key = c
+          -| val = string
+</pre>
+   <p>The elements are not accessed in any particular order.  If you need to
+cycle through the list in a particular way, you will have to use the
+function <code>fieldnames</code> and sort the list yourself.
+
+   <p>The <var>key</var> variable may also be omitted.  If it is, the brackets are
+also optional.  This is useful for cycling through the values of all the
+structure elements when the names of the elements do not need to be
+known.
+
+   </body></html>
+

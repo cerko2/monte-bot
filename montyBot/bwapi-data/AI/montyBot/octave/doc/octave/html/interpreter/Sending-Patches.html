@@ -1,0 +1,92 @@
+<html lang="en">
+<head>
+<title>Sending Patches - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Trouble.html#Trouble" title="Trouble">
+<link rel="prev" href="Bug-Reporting.html#Bug-Reporting" title="Bug Reporting">
+<link rel="next" href="Service.html#Service" title="Service">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Sending-Patches"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Service.html#Service">Service</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Bug-Reporting.html#Bug-Reporting">Bug Reporting</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Trouble.html#Trouble">Trouble</a>
+<hr><br>
+</div>
+
+<h3 class="appendixsec">E.6 Sending Patches for Octave</h3>
+
+<p><a name="index-improving-Octave-2550"></a><a name="index-diffs_002c-submitting-2551"></a><a name="index-patches_002c-submitting-2552"></a><a name="index-submitting-diffs-2553"></a><a name="index-submitting-patches-2554"></a>
+If you would like to write bug fixes or improvements for Octave, that is
+very helpful.  When you send your changes, please follow these
+guidelines to avoid causing extra work for us in studying the patches.
+
+   <p>If you don't follow these guidelines, your information might still be
+useful, but using it will take extra work.  Maintaining Octave is a lot
+of work in the best of circumstances, and we can't keep up unless you do
+your best to help.
+
+     <ul>
+<li>Send an explanation with your changes of what problem they fix or what
+improvement they bring about.  For a bug fix, just include a copy of the
+bug report, and explain why the change fixes the bug.
+
+     <li>Always include a proper bug report for the problem you think you have
+fixed.  We need to convince ourselves that the change is right before
+installing it.  Even if it is right, we might have trouble judging it if
+we don't have a way to reproduce the problem.
+
+     <li>Include all the comments that are appropriate to help people reading the
+source in the future understand why this change was needed.
+
+     <li>Don't mix together changes made for different reasons. 
+Send them <em>individually</em>.
+
+     <p>If you make two changes for separate reasons, then we might not want to
+install them both.  We might want to install just one.
+
+     <li>Use <span class="samp">diff -c</span> to make your diffs.  Diffs without context are hard
+for us to install reliably.  More than that, they make it hard for us to
+study the diffs to decide whether we want to install them.  Unidiff
+format is better than contextless diffs, but not as easy to read as
+<span class="samp">-c</span> format.
+
+     <p>If you have GNU diff, use <span class="samp">diff -cp</span>, which shows the name of the
+function that each change occurs in.
+
+     <li>Write the change log entries for your changes.
+
+     <p>Read the <span class="file">ChangeLog</span> file to see what sorts of information to put
+in, and to learn the style that we use.  The purpose of the change log
+is to show people where to find what was changed.  So you need to be
+specific about what functions you changed; in large functions, it's
+often helpful to indicate where within the function the change was made.
+
+     <p>On the other hand, once you have shown people where to find the change,
+you need not explain its purpose.  Thus, if you add a new function, all
+you need to say about it is that it is new.  If you feel that the
+purpose needs explaining, it probably does&mdash;but the explanation will be
+much more useful if you put it in comments in the code.
+
+     <p>If you would like your name to appear in the header line for who made
+the change, send us the header line. 
+</ul>
+
+   </body></html>
+

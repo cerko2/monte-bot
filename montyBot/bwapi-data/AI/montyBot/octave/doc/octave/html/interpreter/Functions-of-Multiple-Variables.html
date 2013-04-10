@@ -1,0 +1,155 @@
+<html lang="en">
+<head>
+<title>Functions of Multiple Variables - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Numerical-Integration.html#Numerical-Integration" title="Numerical Integration">
+<link rel="prev" href="Functions-of-One-Variable.html#Functions-of-One-Variable" title="Functions of One Variable">
+<link rel="next" href="Orthogonal-Collocation.html#Orthogonal-Collocation" title="Orthogonal Collocation">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Functions-of-Multiple-Variables"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Orthogonal-Collocation.html#Orthogonal-Collocation">Orthogonal Collocation</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Functions-of-One-Variable.html#Functions-of-One-Variable">Functions of One Variable</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Numerical-Integration.html#Numerical-Integration">Numerical Integration</a>
+<hr><br>
+</div>
+
+<h3 class="section">22.3 Functions of Multiple Variables</h3>
+
+<p>Octave does not have built-in functions for computing the integral of
+functions of multiple variables directly.  It is however possible to
+compute the integral of a function of multiple variables using the
+functions for one-dimensional integrals.
+
+   <p>To illustrate how the integration can be performed, we will integrate
+the function
+<pre class="example">     f(x, y) = sin(pi*x*y)*sqrt(x*y)
+</pre>
+   <p>for x and y between 0 and 1.
+
+   <p>The first approach creates a function that integrates f with
+respect to x, and then integrates that function with respect to
+y.  Since <code>quad</code> is written in Fortran it cannot be called
+recursively.  This means that <code>quad</code> cannot integrate a function
+that calls <code>quad</code>, and hence cannot be used to perform the double
+integration.  It is however possible with <code>quadl</code>, which is what
+the following code does.
+
+<pre class="example">     function I = g(y)
+       I = ones(1, length(y));
+       for i = 1:length(y)
+         f = @(x) sin(pi.*x.*y(i)).*sqrt(x.*y(i));
+         I(i) = quadl(f, 0, 1);
+       endfor
+     endfunction
+     
+     I = quadl("g", 0, 1)
+           =&gt; 0.30022
+</pre>
+   <p>The above process can be simplified with the <code>dblquad</code> and
+<code>triplequad</code> functions for integrals over two and three
+variables.  For example
+
+<pre class="example">     I =  dblquad (@(x, y) sin(pi.*x.*y).*sqrt(x.*y), 0, 1, 0, 1)
+           =&gt; 0.30022
+</pre>
+   <!-- ./general/dblquad.m -->
+<p><a name="doc_002ddblquad"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>dblquad</b> (<var>f, xa, xb, ya, yb, tol, quadf, <small class="dots">...</small></var>)<var><a name="index-dblquad-1781"></a></var><br>
+<blockquote><p>Numerically evaluate a double integral.  The function over with to
+integrate is defined by <var>f</var>, and the interval for the
+integration is defined by <code>[</code><var>xa</var><code>, </code><var>xb</var><code>, </code><var>ya</var><code>,
+</code><var>yb</var><code>]</code>.  The function <var>f</var> must accept a vector <var>x</var> and a
+scalar <var>y</var>, and return a vector of the same length as <var>x</var>.
+
+        <p>If defined, <var>tol</var> defines the absolute tolerance to which to
+which to integrate each sub-integral.
+
+        <p>Additional arguments, are passed directly to <var>f</var>.  To use the default
+value for <var>tol</var> one may pass an empty matrix. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dtriplequad.html#doc_002dtriplequad">triplequad</a>, <a href="doc_002dquad.html#doc_002dquad">quad</a>, <a href="doc_002dquadv.html#doc_002dquadv">quadv</a>, <a href="doc_002dquadl.html#doc_002dquadl">quadl</a>, <a href="doc_002dquadgk.html#doc_002dquadgk">quadgk</a>, <a href="doc_002dtrapz.html#doc_002dtrapz">trapz</a>. 
+</p></blockquote></div>
+
+<!-- ./general/triplequad.m -->
+<p><a name="doc_002dtriplequad"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>triplequad</b> (<var>f, xa, xb, ya, yb, za, zb, tol, quadf, <small class="dots">...</small></var>)<var><a name="index-triplequad-1782"></a></var><br>
+<blockquote><p>Numerically evaluate a triple integral.  The function over which to
+integrate is defined by <var>f</var>, and the interval for the
+integration is defined by <code>[</code><var>xa</var><code>, </code><var>xb</var><code>, </code><var>ya</var><code>,
+</code><var>yb</var><code>, </code><var>za</var><code>, </code><var>zb</var><code>]</code>.  The function <var>f</var> must accept a
+vector <var>x</var> and a scalar <var>y</var>, and return a vector of the same
+length as <var>x</var>.
+
+        <p>If defined, <var>tol</var> defines the absolute tolerance to which to
+which to integrate each sub-integral.
+
+        <p>Additional arguments, are passed directly to <var>f</var>.  To use the default
+value for <var>tol</var> one may pass an empty matrix. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002ddblquad.html#doc_002ddblquad">dblquad</a>, <a href="doc_002dquad.html#doc_002dquad">quad</a>, <a href="doc_002dquadv.html#doc_002dquadv">quadv</a>, <a href="doc_002dquadl.html#doc_002dquadl">quadl</a>, <a href="doc_002dquadgk.html#doc_002dquadgk">quadgk</a>, <a href="doc_002dtrapz.html#doc_002dtrapz">trapz</a>. 
+</p></blockquote></div>
+
+   <p>The above mentioned approach works but is fairly slow, and that problem
+increases exponentially with the dimensionality the problem.  Another
+possible solution is to use Orthogonal Collocation as described in the
+previous section.  The integral of a function f(x,y) for
+x and y between 0 and 1 can be approximated using n
+points by
+the sum over <code>i=1:n</code> and <code>j=1:n</code> of <code>q(i)*q(j)*f(r(i),r(j))</code>,
+where q and r is as returned by <code>colloc(n)</code>.  The
+generalization to more than two variables is straight forward.  The
+following code computes the studied integral using n=7 points.
+
+<pre class="example">     f = @(x,y) sin(pi*x*y').*sqrt(x*y');
+     n = 7;
+     [t, A, B, q] = colloc(n);
+     I = q'*f(t,t)*q;
+           =&gt; 0.30022
+</pre>
+   <p class="noindent">It should be noted that the number of points determines the quality
+of the approximation.  If the integration needs to be performed between
+a and b instead of 0 and 1, a change of variables is needed.
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 1996, 1997, 2007, 2008, 2009 John W. Eaton -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

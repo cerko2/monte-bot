@@ -1,0 +1,180 @@
+<html lang="en">
+<head>
+<title>Comparing Strings - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Strings.html#Strings" title="Strings">
+<link rel="prev" href="Creating-Strings.html#Creating-Strings" title="Creating Strings">
+<link rel="next" href="Manipulating-Strings.html#Manipulating-Strings" title="Manipulating Strings">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Comparing-Strings"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Manipulating-Strings.html#Manipulating-Strings">Manipulating Strings</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Creating-Strings.html#Creating-Strings">Creating Strings</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Strings.html#Strings">Strings</a>
+<hr><br>
+</div>
+
+<h3 class="section">5.4 Comparing Strings</h3>
+
+<p>Since a string is a character array, comparisons between strings work
+element by element as the following example shows:
+
+<pre class="example">     GNU = "GNU's Not UNIX";
+     spaces = (GNU == " ")
+          =&gt; spaces =
+            0   0   0   0   0   1   0   0   0   1   0   0   0   0
+</pre>
+   <p class="noindent">To determine if two strings are identical it is necessary to use the
+<code>strcmp</code> function.  It compares complete strings and is case
+sensitive.  <code>strncmp</code> compares only the first <code>N</code> characters (with
+<code>N</code> given as a parameter).  <code>strcmpi</code> and <code>strncmpi</code> are the
+corresponding functions for case-insensitive comparison.
+
+<!-- strfns.cc -->
+<p><a name="doc_002dstrcmp"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>strcmp</b> (<var>s1, s2</var>)<var><a name="index-strcmp-304"></a></var><br>
+<blockquote><p>Return 1 if the character strings <var>s1</var> and <var>s2</var> are the same,
+and 0 otherwise.
+
+        <p>If either <var>s1</var> or <var>s2</var> is a cell array of strings, then an array
+of the same size is returned, containing the values described above for
+every member of the cell array.  The other argument may also be a cell
+array of strings (of the same size or with only one element), char matrix
+or character string.
+
+        <p><strong>Caution:</strong> For compatibility with <span class="sc">matlab</span>, Octave's strcmp
+function returns 1 if the character strings are equal, and 0 otherwise. 
+This is just the opposite of the corresponding C library function. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dstrcmpi.html#doc_002dstrcmpi">strcmpi</a>, <a href="doc_002dstrncmp.html#doc_002dstrncmp">strncmp</a>, <a href="doc_002dstrncmpi.html#doc_002dstrncmpi">strncmpi</a>. 
+</p></blockquote></div>
+
+<!-- strfns.cc -->
+<p><a name="doc_002dstrncmp"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>strncmp</b> (<var>s1, s2, n</var>)<var><a name="index-strncmp-305"></a></var><br>
+<blockquote><p>Return 1 if the first <var>n</var> characters of strings <var>s1</var> and <var>s2</var> are the same,
+and 0 otherwise.
+
+     <pre class="example">          strncmp ("abce", "abcd", 3)
+               =&gt; 1
+     </pre>
+        <p>If either <var>s1</var> or <var>s2</var> is a cell array of strings, then an array
+of the same size is returned, containing the values described above for
+every member of the cell array.  The other argument may also be a cell
+array of strings (of the same size or with only one element), char matrix
+or character string.
+
+     <pre class="example">          strncmp ("abce", {"abcd", "bca", "abc"}, 3)
+               =&gt; [1, 0, 1]
+     </pre>
+        <p><strong>Caution:</strong> For compatibility with <span class="sc">matlab</span>, Octave's strncmp
+function returns 1 if the character strings are equal, and 0 otherwise. 
+This is just the opposite of the corresponding C library function. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dstrncmpi.html#doc_002dstrncmpi">strncmpi</a>, <a href="doc_002dstrcmp.html#doc_002dstrcmp">strcmp</a>, <a href="doc_002dstrcmpi.html#doc_002dstrcmpi">strcmpi</a>. 
+</p></blockquote></div>
+
+<!-- ./strings/strcmpi.m -->
+<p><a name="doc_002dstrcmpi"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>strcmpi</b> (<var>s1, s2</var>)<var><a name="index-strcmpi-306"></a></var><br>
+<blockquote><p>Ignoring case, return 1 if the character strings (or character
+arrays) <var>s1</var> and <var>s2</var> are the same, and 0 otherwise.
+
+        <p>If either <var>s1</var> or <var>s2</var> is a cell array of strings, then an array
+of the same size is returned, containing the values described above for
+every member of the cell array.  The other argument may also be a cell
+array of strings (of the same size or with only one element), char matrix
+or character string.
+
+        <p><strong>Caution:</strong> For compatibility with <span class="sc">matlab</span>, Octave's strcmpi
+function returns 1 if the character strings are equal, and 0 otherwise. 
+This is just the opposite of the corresponding C library function. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dstrcmp.html#doc_002dstrcmp">strcmp</a>, <a href="doc_002dstrncmp.html#doc_002dstrncmp">strncmp</a>, <a href="doc_002dstrncmpi.html#doc_002dstrncmpi">strncmpi</a>. 
+</p></blockquote></div>
+
+<!-- ./strings/strncmpi.m -->
+<p><a name="doc_002dstrncmpi"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>strncmpi</b> (<var>s1, s2, n</var>)<var><a name="index-strncmpi-307"></a></var><br>
+<blockquote><p>Ignoring case, return 1 if the first <var>n</var> characters of character
+strings (or character arrays) <var>s1</var> and <var>s2</var> are the same, and
+0 otherwise.
+
+        <p>If either <var>s1</var> or <var>s2</var> is a cell array of strings, then an array
+of the same size is returned, containing the values described above for
+every member of the cell array.  The other argument may also be a cell
+array of strings (of the same size or with only one element), char matrix
+or character string.
+
+        <p><strong>Caution:</strong> For compatibility with <span class="sc">matlab</span>, Octave's strncmpi
+function returns 1 if the character strings are equal, and 0 otherwise. 
+This is just the opposite of the corresponding C library function. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dstrcmp.html#doc_002dstrcmp">strcmp</a>, <a href="doc_002dstrcmpi.html#doc_002dstrcmpi">strcmpi</a>, <a href="doc_002dstrncmp.html#doc_002dstrncmp">strncmp</a>. 
+</p></blockquote></div>
+
+<!-- ./strings/validatestring.m -->
+<p><a name="doc_002dvalidatestring"></a>
+
+<div class="defun">
+&mdash; Function File: <var>validstr</var> = <b>validatestring</b> (<var>str, strarray</var>)<var><a name="index-validatestring-308"></a></var><br>
+&mdash; Function File: <var>validstr</var> = <b>validatestring</b> (<var>str, strarray, funcname</var>)<var><a name="index-validatestring-309"></a></var><br>
+&mdash; Function File: <var>validstr</var> = <b>validatestring</b> (<var>str, strarray, funcname, varname</var>)<var><a name="index-validatestring-310"></a></var><br>
+&mdash; Function File: <var>validstr</var> = <b>validatestring</b> (<var><small class="dots">...</small>, position</var>)<var><a name="index-validatestring-311"></a></var><br>
+<blockquote><p>Verify that <var>str</var> is a string or substring of an element of
+<var>strarray</var>.
+
+        <p><var>str</var> is a character string to be tested, and <var>strarray</var> is a
+cellstr of valid values.  <var>validstr</var> will be the validated form
+of <var>str</var> where validation is defined as <var>str</var> being a member
+or substring of <var>validstr</var>.  If <var>str</var> is a substring of
+<var>validstr</var> and there are multiple matches, the shortest match
+will be returned if all matches are substrings of each other, and an
+error will be raised if the matches are not substrings of each other.
+
+        <p>All comparisons are case insensitive. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dstrcmp.html#doc_002dstrcmp">strcmp</a>, <a href="doc_002dstrcmpi.html#doc_002dstrcmpi">strcmpi</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

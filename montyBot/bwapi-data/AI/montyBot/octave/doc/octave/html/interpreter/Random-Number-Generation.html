@@ -1,0 +1,411 @@
+<html lang="en">
+<head>
+<title>Random Number Generation - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Statistics.html#Statistics" title="Statistics">
+<link rel="prev" href="Distributions.html#Distributions" title="Distributions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Random-Number-Generation"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="Distributions.html#Distributions">Distributions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Statistics.html#Statistics">Statistics</a>
+<hr><br>
+</div>
+
+<h3 class="section">25.7 Random Number Generation</h3>
+
+<p>Octave can generate random numbers from a large number of distributions. 
+The random number generators are based on the random number generators
+described in <a href="Special-Utility-Matrices.html#Special-Utility-Matrices">Special Utility Matrices</a>. 
+<!-- Should rand, randn, rande, randp, and randg be moved to here? -->
+
+   <p>The following table summarizes the available random number generators
+(in alphabetical order).
+
+   <p><table summary=""><tr align="left"><td valign="top" width="40%"><strong>Distribution</strong>             </td><td valign="top" width="30%"><strong>Function</strong>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Beta Distribution                 </td><td valign="top" width="30%"><code>betarnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Binomial Distribution             </td><td valign="top" width="30%"><code>binornd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Cauchy Distribution               </td><td valign="top" width="30%"><code>cauchy_rnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Chi-Square Distribution           </td><td valign="top" width="30%"><code>chi2rnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Univariate Discrete Distribution  </td><td valign="top" width="30%"><code>discrete_rnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Empirical Distribution            </td><td valign="top" width="30%"><code>empirical_rnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Exponential Distribution          </td><td valign="top" width="30%"><code>exprnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">F Distribution                    </td><td valign="top" width="30%"><code>frnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Gamma Distribution                </td><td valign="top" width="30%"><code>gamrnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Geometric Distribution            </td><td valign="top" width="30%"><code>geornd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Hypergeometric Distribution       </td><td valign="top" width="30%"><code>hygernd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Laplace Distribution              </td><td valign="top" width="30%"><code>laplace_rnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Logistic Distribution             </td><td valign="top" width="30%"><code>logistic_rnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Log-Normal Distribution           </td><td valign="top" width="30%"><code>lognrnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Pascal Distribution               </td><td valign="top" width="30%"><code>nbinrnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Univariate Normal Distribution    </td><td valign="top" width="30%"><code>normrnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Poisson Distribution              </td><td valign="top" width="30%"><code>poissrnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">t (Student) Distribution          </td><td valign="top" width="30%"><code>trnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Univariate Discrete Distribution  </td><td valign="top" width="30%"><code>unidrnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Uniform Distribution              </td><td valign="top" width="30%"><code>unifrnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Weibull Distribution              </td><td valign="top" width="30%"><code>wblrnd</code>
+<br></td></tr><tr align="left"><td valign="top" width="40%">Wiener Process                    </td><td valign="top" width="30%"><code>wienrnd</code>
+   <br></td></tr></table>
+
+<!-- ./statistics/distributions/betarnd.m -->
+<p><a name="doc_002dbetarnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>betarnd</b> (<var>a, b, r, c</var>)<var><a name="index-betarnd-1955"></a></var><br>
+&mdash; Function File:  <b>betarnd</b> (<var>a, b, sz</var>)<var><a name="index-betarnd-1956"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> or <code>size (</code><var>sz</var><code>)</code> matrix of
+random samples from the Beta distribution with parameters <var>a</var> and
+<var>b</var>.  Both <var>a</var> and <var>b</var> must be scalar or of size <var>r</var>
+ by <var>c</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the common size of <var>a</var> and <var>b</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/binornd.m -->
+<p><a name="doc_002dbinornd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>binornd</b> (<var>n, p, r, c</var>)<var><a name="index-binornd-1957"></a></var><br>
+&mdash; Function File:  <b>binornd</b> (<var>n, p, sz</var>)<var><a name="index-binornd-1958"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var>  or a <code>size (</code><var>sz</var><code>)</code> matrix of
+random samples from the binomial distribution with parameters <var>n</var>
+and <var>p</var>.  Both <var>n</var> and <var>p</var> must be scalar or of size
+<var>r</var> by <var>c</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the common size of <var>n</var> and <var>p</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/cauchy_rnd.m -->
+<p><a name="doc_002dcauchy_005frnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>cauchy_rnd</b> (<var>lambda, sigma, r, c</var>)<var><a name="index-cauchy_005frnd-1959"></a></var><br>
+&mdash; Function File:  <b>cauchy_rnd</b> (<var>lambda, sigma, sz</var>)<var><a name="index-cauchy_005frnd-1960"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> or a <code>size (</code><var>sz</var><code>)</code> matrix of
+random samples from the Cauchy distribution with parameters <var>lambda</var>
+and <var>sigma</var> which must both be scalar or of size <var>r</var> by <var>c</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the common size of <var>lambda</var> and <var>sigma</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/chi2rnd.m -->
+<p><a name="doc_002dchi2rnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>chi2rnd</b> (<var>n, r, c</var>)<var><a name="index-chi2rnd-1961"></a></var><br>
+&mdash; Function File:  <b>chi2rnd</b> (<var>n, sz</var>)<var><a name="index-chi2rnd-1962"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var>  or a <code>size (</code><var>sz</var><code>)</code> matrix of
+random samples from the chisquare distribution with <var>n</var> degrees
+of freedom.  <var>n</var> must be a scalar or of size <var>r</var> by <var>c</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the size of <var>n</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/discrete_rnd.m -->
+<p><a name="doc_002ddiscrete_005frnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>discrete_rnd</b> (<var>n, v, p</var>)<var><a name="index-discrete_005frnd-1963"></a></var><br>
+&mdash; Function File:  <b>discrete_rnd</b> (<var>v, p, r, c</var>)<var><a name="index-discrete_005frnd-1964"></a></var><br>
+&mdash; Function File:  <b>discrete_rnd</b> (<var>v, p, sz</var>)<var><a name="index-discrete_005frnd-1965"></a></var><br>
+<blockquote><p>Generate a row vector containing a random sample of size <var>n</var> from
+the univariate distribution which assumes the values in <var>v</var> with
+probabilities <var>p</var>.  <var>n</var> must be a scalar.
+
+        <p>If <var>r</var> and <var>c</var> are given create a matrix with <var>r</var> rows and
+<var>c</var> columns.  Or if <var>sz</var> is a vector, create a matrix of size
+<var>sz</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/empirical_rnd.m -->
+<p><a name="doc_002dempirical_005frnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>empirical_rnd</b> (<var>n, data</var>)<var><a name="index-empirical_005frnd-1966"></a></var><br>
+&mdash; Function File:  <b>empirical_rnd</b> (<var>data, r, c</var>)<var><a name="index-empirical_005frnd-1967"></a></var><br>
+&mdash; Function File:  <b>empirical_rnd</b> (<var>data, sz</var>)<var><a name="index-empirical_005frnd-1968"></a></var><br>
+<blockquote><p>Generate a bootstrap sample of size <var>n</var> from the empirical
+distribution obtained from the univariate sample <var>data</var>.
+
+        <p>If <var>r</var> and <var>c</var> are given create a matrix with <var>r</var> rows and
+<var>c</var> columns.  Or if <var>sz</var> is a vector, create a matrix of size
+<var>sz</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/exprnd.m -->
+<p><a name="doc_002dexprnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>exprnd</b> (<var>lambda, r, c</var>)<var><a name="index-exprnd-1969"></a></var><br>
+&mdash; Function File:  <b>exprnd</b> (<var>lambda, sz</var>)<var><a name="index-exprnd-1970"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> matrix of random samples from the
+exponential distribution with mean <var>lambda</var>, which must be a
+scalar or of size <var>r</var> by <var>c</var>.  Or if <var>sz</var> is a vector,
+create a matrix of size <var>sz</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the size of <var>lambda</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/frnd.m -->
+<p><a name="doc_002dfrnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>frnd</b> (<var>m, n, r, c</var>)<var><a name="index-frnd-1971"></a></var><br>
+&mdash; Function File:  <b>frnd</b> (<var>m, n, sz</var>)<var><a name="index-frnd-1972"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> matrix of random samples from the F
+distribution with <var>m</var> and <var>n</var> degrees of freedom.  Both
+<var>m</var> and <var>n</var> must be scalar or of size <var>r</var> by <var>c</var>. 
+If <var>sz</var> is a vector the random samples are in a matrix of
+size <var>sz</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the common size of <var>m</var> and <var>n</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/gamrnd.m -->
+<p><a name="doc_002dgamrnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>gamrnd</b> (<var>a, b, r, c</var>)<var><a name="index-gamrnd-1973"></a></var><br>
+&mdash; Function File:  <b>gamrnd</b> (<var>a, b, sz</var>)<var><a name="index-gamrnd-1974"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> or a <code>size (</code><var>sz</var><code>)</code> matrix of
+random samples from the Gamma distribution with parameters <var>a</var>
+and <var>b</var>.  Both <var>a</var> and <var>b</var> must be scalar or of size
+<var>r</var> by <var>c</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the common size of <var>a</var> and <var>b</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dgamma.html#doc_002dgamma">gamma</a>, <a href="doc_002dgammaln.html#doc_002dgammaln">gammaln</a>, <a href="doc_002dgammainc.html#doc_002dgammainc">gammainc</a>, <a href="doc_002dgampdf.html#doc_002dgampdf">gampdf</a>, <a href="doc_002dgamcdf.html#doc_002dgamcdf">gamcdf</a>, <a href="doc_002dgaminv.html#doc_002dgaminv">gaminv</a>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/geornd.m -->
+<p><a name="doc_002dgeornd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>geornd</b> (<var>p, r, c</var>)<var><a name="index-geornd-1975"></a></var><br>
+&mdash; Function File:  <b>geornd</b> (<var>p, sz</var>)<var><a name="index-geornd-1976"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> matrix of random samples from the
+geometric distribution with parameter <var>p</var>, which must be a scalar
+or of size <var>r</var> by <var>c</var>.
+
+        <p>If <var>r</var> and <var>c</var> are given create a matrix with <var>r</var> rows and
+<var>c</var> columns.  Or if <var>sz</var> is a vector, create a matrix of size
+<var>sz</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/hygernd.m -->
+<p><a name="doc_002dhygernd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>hygernd</b> (<var>t, m, n, r, c</var>)<var><a name="index-hygernd-1977"></a></var><br>
+&mdash; Function File:  <b>hygernd</b> (<var>t, m, n, sz</var>)<var><a name="index-hygernd-1978"></a></var><br>
+&mdash; Function File:  <b>hygernd</b> (<var>t, m, n</var>)<var><a name="index-hygernd-1979"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> matrix of random samples from the
+hypergeometric distribution with parameters <var>t</var>, <var>m</var>,
+and <var>n</var>.
+
+        <p>The parameters <var>t</var>, <var>m</var>, and <var>n</var> must positive integers
+with <var>m</var> and <var>n</var> not greater than <var>t</var>.
+
+        <p>The parameter <var>sz</var> must be scalar or a vector of matrix
+dimensions.  If <var>sz</var> is scalar, then a <var>sz</var> by <var>sz</var>
+matrix of random samples is generated. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/laplace_rnd.m -->
+<p><a name="doc_002dlaplace_005frnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>laplace_rnd</b> (<var>r, c</var>)<var><a name="index-laplace_005frnd-1980"></a></var><br>
+&mdash; Function File:  <b>laplace_rnd</b> (<var>sz</var>)<var>;<a name="index-laplace_005frnd-1981"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> matrix of random numbers from the
+Laplace distribution.  Or if <var>sz</var> is a vector, create a matrix of
+<var>sz</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/logistic_rnd.m -->
+<p><a name="doc_002dlogistic_005frnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>logistic_rnd</b> (<var>r, c</var>)<var><a name="index-logistic_005frnd-1982"></a></var><br>
+&mdash; Function File:  <b>logistic_rnd</b> (<var>sz</var>)<var><a name="index-logistic_005frnd-1983"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> matrix of random numbers from the
+logistic distribution.  Or if <var>sz</var> is a vector, create a matrix of
+<var>sz</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/lognrnd.m -->
+<p><a name="doc_002dlognrnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>lognrnd</b> (<var>mu, sigma, r, c</var>)<var><a name="index-lognrnd-1984"></a></var><br>
+&mdash; Function File:  <b>lognrnd</b> (<var>mu, sigma, sz</var>)<var><a name="index-lognrnd-1985"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> matrix of random samples from the
+lognormal distribution with parameters <var>mu</var> and <var>sigma</var>.  Both
+<var>mu</var> and <var>sigma</var> must be scalar or of size <var>r</var> by <var>c</var>. 
+Or if <var>sz</var> is a vector, create a matrix of size <var>sz</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the common size of <var>mu</var> and <var>sigma</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/nbinrnd.m -->
+<p><a name="doc_002dnbinrnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>nbinrnd</b> (<var>n, p, r, c</var>)<var><a name="index-nbinrnd-1986"></a></var><br>
+&mdash; Function File:  <b>nbinrnd</b> (<var>n, p, sz</var>)<var><a name="index-nbinrnd-1987"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> matrix of random samples from the Pascal
+(negative binomial) distribution with parameters <var>n</var> and <var>p</var>. 
+Both <var>n</var> and <var>p</var> must be scalar or of size <var>r</var> by <var>c</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the common size of <var>n</var> and <var>p</var>.  Or if <var>sz</var> is a vector,
+create a matrix of size <var>sz</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/normrnd.m -->
+<p><a name="doc_002dnormrnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>normrnd</b> (<var>m, s, r, c</var>)<var><a name="index-normrnd-1988"></a></var><br>
+&mdash; Function File:  <b>normrnd</b> (<var>m, s, sz</var>)<var><a name="index-normrnd-1989"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var>  or <code>size (</code><var>sz</var><code>)</code> matrix of
+random samples from the normal distribution with parameters mean <var>m</var>
+and standard deviation <var>s</var>.  Both <var>m</var> and <var>s</var> must be scalar
+or of size <var>r</var> by <var>c</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the common size of <var>m</var> and <var>s</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/poissrnd.m -->
+<p><a name="doc_002dpoissrnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>poissrnd</b> (<var>lambda, r, c</var>)<var><a name="index-poissrnd-1990"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> matrix of random samples from the
+Poisson distribution with parameter <var>lambda</var>, which must be a
+scalar or of size <var>r</var> by <var>c</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the size of <var>lambda</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/trnd.m -->
+<p><a name="doc_002dtrnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>trnd</b> (<var>n, r, c</var>)<var><a name="index-trnd-1991"></a></var><br>
+&mdash; Function File:  <b>trnd</b> (<var>n, sz</var>)<var><a name="index-trnd-1992"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> matrix of random samples from the t
+(Student) distribution with <var>n</var> degrees of freedom.  <var>n</var> must
+be a scalar or of size <var>r</var> by <var>c</var>.  Or if <var>sz</var> is a
+vector create a matrix of size <var>sz</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the size of <var>n</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/unidrnd.m -->
+<p><a name="doc_002dunidrnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>unidrnd</b> (<var>mx</var>)<var>;<a name="index-unidrnd-1993"></a></var><br>
+&mdash; Function File:  <b>unidrnd</b> (<var>mx, v</var>)<var>;<a name="index-unidrnd-1994"></a></var><br>
+&mdash; Function File:  <b>unidrnd</b> (<var>mx, m, n, <small class="dots">...</small></var>)<var>;<a name="index-unidrnd-1995"></a></var><br>
+<blockquote><p>Return random values from discrete uniform distribution, with maximum
+value(s) given by the integer <var>mx</var>, which may be a scalar or
+multidimensional array.
+
+        <p>If <var>mx</var> is a scalar, the size of the result is specified by
+the vector <var>v</var>, or by the optional arguments <var>m</var>, <var>n</var>,
+<small class="dots">...</small>.  Otherwise, the size of the result is the same as the size
+of <var>mx</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/unifrnd.m -->
+<p><a name="doc_002dunifrnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>unifrnd</b> (<var>a, b, r, c</var>)<var><a name="index-unifrnd-1996"></a></var><br>
+&mdash; Function File:  <b>unifrnd</b> (<var>a, b, sz</var>)<var><a name="index-unifrnd-1997"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> or a <code>size (</code><var>sz</var><code>)</code> matrix of
+random samples from the uniform distribution on [<var>a</var>, <var>b</var>]. 
+Both <var>a</var> and <var>b</var> must be scalar or of size <var>r</var> by <var>c</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the common size of <var>a</var> and <var>b</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/wblrnd.m -->
+<p><a name="doc_002dwblrnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>wblrnd</b> (<var>scale, shape, r, c</var>)<var><a name="index-wblrnd-1998"></a></var><br>
+&mdash; Function File:  <b>wblrnd</b> (<var>scale, shape, sz</var>)<var><a name="index-wblrnd-1999"></a></var><br>
+<blockquote><p>Return an <var>r</var> by <var>c</var> matrix of random samples from the
+Weibull distribution with parameters <var>scale</var> and <var>shape</var>
+which must be scalar or of size <var>r</var> by <var>c</var>.  Or if <var>sz</var>
+is a vector return a matrix of size <var>sz</var>.
+
+        <p>If <var>r</var> and <var>c</var> are omitted, the size of the result matrix is
+the common size of <var>alpha</var> and <var>sigma</var>. 
+</p></blockquote></div>
+
+<!-- ./statistics/distributions/wienrnd.m -->
+<p><a name="doc_002dwienrnd"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>wienrnd</b> (<var>t, d, n</var>)<var><a name="index-wienrnd-2000"></a></var><br>
+<blockquote><p>Return a simulated realization of the <var>d</var>-dimensional Wiener Process
+on the interval [0, <var>t</var>].  If <var>d</var> is omitted, <var>d</var> = 1 is
+used.  The first column of the return matrix contains time, the
+remaining columns contain the Wiener process.
+
+        <p>The optional parameter <var>n</var> gives the number of summands used for
+simulating the process over an interval of length 1.  If <var>n</var> is
+omitted, <var>n</var> = 1000 is used. 
+</p></blockquote></div>
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 1996, 1997, 1999, 2000, 2002, 2007, 2008, 2009 John W. Eaton -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

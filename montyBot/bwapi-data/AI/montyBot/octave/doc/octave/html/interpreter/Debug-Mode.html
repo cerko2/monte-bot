@@ -1,0 +1,107 @@
+<html lang="en">
+<head>
+<title>Debug Mode - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Debugging.html#Debugging" title="Debugging">
+<link rel="prev" href="Breakpoints.html#Breakpoints" title="Breakpoints">
+<link rel="next" href="Call-Stack.html#Call-Stack" title="Call Stack">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Debug-Mode"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Call-Stack.html#Call-Stack">Call Stack</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Breakpoints.html#Breakpoints">Breakpoints</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Debugging.html#Debugging">Debugging</a>
+<hr><br>
+</div>
+
+<h3 class="section">13.4 Debug Mode</h3>
+
+<p>There are two additional support functions that allow the user to
+interrogate where in the execution of a script Octave entered the debug
+mode and to print the code in the script surrounding the point where
+Octave entered debug mode.
+
+<!-- debug.cc -->
+<p><a name="doc_002ddbwhere"></a>
+
+<div class="defun">
+&mdash; Loadable Function:  <b>dbwhere</b> ()<var><a name="index-dbwhere-698"></a></var><br>
+<blockquote><p>Show where we are in the code
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002ddbclear.html#doc_002ddbclear">dbclear</a>, <a href="doc_002ddbstatus.html#doc_002ddbstatus">dbstatus</a>, <a href="doc_002ddbstop.html#doc_002ddbstop">dbstop</a>. 
+</p></blockquote></div>
+
+<!-- debug.cc -->
+<p><a name="doc_002ddbtype"></a>
+
+<div class="defun">
+&mdash; Loadable Function:  <b>dbtype</b> ()<var><a name="index-dbtype-699"></a></var><br>
+<blockquote><p>List script file with line numbers. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002ddbclear.html#doc_002ddbclear">dbclear</a>, <a href="doc_002ddbstatus.html#doc_002ddbstatus">dbstatus</a>, <a href="doc_002ddbstop.html#doc_002ddbstop">dbstop</a>. 
+</p></blockquote></div>
+
+   <p>You may also use <code>isdebugmode</code> to determine whether the debugger is
+currently active.
+
+<!-- debug.cc -->
+<p><a name="doc_002disdebugmode"></a>
+
+<div class="defun">
+&mdash; Command:  <b>isdebugmode</b> ()<var><a name="index-isdebugmode-700"></a></var><br>
+<blockquote><p>Return true if debug mode is on, otherwise false. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002ddbstack.html#doc_002ddbstack">dbstack</a>, <a href="doc_002ddbclear.html#doc_002ddbclear">dbclear</a>, <a href="doc_002ddbstop.html#doc_002ddbstop">dbstop</a>, <a href="doc_002ddbstatus.html#doc_002ddbstatus">dbstatus</a>. 
+</p></blockquote></div>
+
+   <p>Debug mode also allows single line stepping through a function using
+the commands <code>dbstep</code>.
+
+<!-- debug.cc -->
+<p><a name="doc_002ddbstep"></a>
+
+<div class="defun">
+&mdash; Command:  <b>dbstep</b><var> n<a name="index-dbstep-701"></a></var><br>
+&mdash; Command:  <b>dbstep</b><var> in<a name="index-dbstep-702"></a></var><br>
+&mdash; Command:  <b>dbstep</b><var> out<a name="index-dbstep-703"></a></var><br>
+<blockquote><p>In debugging mode, execute the next <var>n</var> lines of code.  If <var>n</var> is
+omitted execute the next line of code.  If the next line of code is itself
+defined in terms of an m-file remain in the existing function.
+
+        <p>Using <code>dbstep in</code> will cause execution of the next line to step into
+any m-files defined on the next line.  Using <code>dbstep out</code> with cause
+execution to continue until the current function returns. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002ddbcont.html#doc_002ddbcont">dbcont</a>, <a href="doc_002ddbquit.html#doc_002ddbquit">dbquit</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

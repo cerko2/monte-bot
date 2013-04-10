@@ -1,0 +1,104 @@
+<html lang="en">
+<head>
+<title>Coordinate Transformations - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Arithmetic.html#Arithmetic" title="Arithmetic">
+<link rel="prev" href="Special-Functions.html#Special-Functions" title="Special Functions">
+<link rel="next" href="Mathematical-Constants.html#Mathematical-Constants" title="Mathematical Constants">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Coordinate-Transformations"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Mathematical-Constants.html#Mathematical-Constants">Mathematical Constants</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Special-Functions.html#Special-Functions">Special Functions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Arithmetic.html#Arithmetic">Arithmetic</a>
+<hr><br>
+</div>
+
+<h3 class="section">17.7 Coordinate Transformations</h3>
+
+<!-- ./general/cart2pol.m -->
+<p><a name="doc_002dcart2pol"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>theta</var>, <var>r</var>] = <b>cart2pol</b> (<var>x, y</var>)<var><a name="index-cart2pol-1503"></a></var><br>
+&mdash; Function File: [<var>theta</var>, <var>r</var>, <var>z</var>] = <b>cart2pol</b> (<var>x, y, z</var>)<var><a name="index-cart2pol-1504"></a></var><br>
+<blockquote><p>Transform Cartesian to polar or cylindrical coordinates. 
+<var>x</var>, <var>y</var> (and <var>z</var>) must be the same shape, or scalar. 
+<var>theta</var> describes the angle relative to the positive x-axis. 
+<var>r</var> is the distance to the z-axis (0, 0, z). 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dpol2cart.html#doc_002dpol2cart">pol2cart</a>, <a href="doc_002dcart2sph.html#doc_002dcart2sph">cart2sph</a>, <a href="doc_002dsph2cart.html#doc_002dsph2cart">sph2cart</a>. 
+</p></blockquote></div>
+
+<!-- ./general/pol2cart.m -->
+<p><a name="doc_002dpol2cart"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>x</var>, <var>y</var>] = <b>pol2cart</b> (<var>theta, r</var>)<var><a name="index-pol2cart-1505"></a></var><br>
+&mdash; Function File: [<var>x</var>, <var>y</var>, <var>z</var>] = <b>pol2cart</b> (<var>theta, r, z</var>)<var><a name="index-pol2cart-1506"></a></var><br>
+<blockquote><p>Transform polar or cylindrical to Cartesian coordinates. 
+<var>theta</var>, <var>r</var> (and <var>z</var>) must be the same shape, or scalar. 
+<var>theta</var> describes the angle relative to the positive x-axis. 
+<var>r</var> is the distance to the z-axis (0, 0, z). 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dcart2pol.html#doc_002dcart2pol">cart2pol</a>, <a href="doc_002dcart2sph.html#doc_002dcart2sph">cart2sph</a>, <a href="doc_002dsph2cart.html#doc_002dsph2cart">sph2cart</a>. 
+</p></blockquote></div>
+
+<!-- ./general/cart2sph.m -->
+<p><a name="doc_002dcart2sph"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>theta</var>, <var>phi</var>, <var>r</var>] = <b>cart2sph</b> (<var>x, y, z</var>)<var><a name="index-cart2sph-1507"></a></var><br>
+<blockquote><p>Transform Cartesian to spherical coordinates. 
+<var>x</var>, <var>y</var> and <var>z</var> must be the same shape, or scalar. 
+<var>theta</var> describes the angle relative to the positive x-axis. 
+<var>phi</var> is the angle relative to the xy-plane. 
+<var>r</var> is the distance to the origin (0, 0, 0). 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dpol2cart.html#doc_002dpol2cart">pol2cart</a>, <a href="doc_002dcart2pol.html#doc_002dcart2pol">cart2pol</a>, <a href="doc_002dsph2cart.html#doc_002dsph2cart">sph2cart</a>. 
+</p></blockquote></div>
+
+<!-- ./general/sph2cart.m -->
+<p><a name="doc_002dsph2cart"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>x</var>, <var>y</var>, <var>z</var>] = <b>sph2cart</b> (<var>theta, phi, r</var>)<var><a name="index-sph2cart-1508"></a></var><br>
+<blockquote><p>Transform spherical to Cartesian coordinates. 
+<var>x</var>, <var>y</var> and <var>z</var> must be the same shape, or scalar. 
+<var>theta</var> describes the angle relative to the positive x-axis. 
+<var>phi</var> is the angle relative to the xy-plane. 
+<var>r</var> is the distance to the origin (0, 0, 0). 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dpol2cart.html#doc_002dpol2cart">pol2cart</a>, <a href="doc_002dcart2pol.html#doc_002dcart2pol">cart2pol</a>, <a href="doc_002dcart2sph.html#doc_002dcart2sph">cart2sph</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

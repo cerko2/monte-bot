@@ -1,0 +1,253 @@
+<html lang="en">
+<head>
+<title>Three-dimensional Function Plotting - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Three_002dDimensional-Plotting.html#Three_002dDimensional-Plotting" title="Three-Dimensional Plotting">
+<link rel="next" href="Three_002ddimensional-Geometric-Shapes.html#Three_002ddimensional-Geometric-Shapes" title="Three-dimensional Geometric Shapes">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Three_002ddimensional-Function-Plotting"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Three_002ddimensional-Geometric-Shapes.html#Three_002ddimensional-Geometric-Shapes">Three-dimensional Geometric Shapes</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Three_002dDimensional-Plotting.html#Three_002dDimensional-Plotting">Three-Dimensional Plotting</a>
+<hr><br>
+</div>
+
+<h5 class="subsubsection">15.1.2.1 Three-dimensional Function Plotting</h5>
+
+<!-- ./plot/ezplot3.m -->
+<p><a name="doc_002dezplot3"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>ezplot3</b> (<var>fx, fy, fz</var>)<var><a name="index-ezplot3-1017"></a></var><br>
+&mdash; Function File:  <b>ezplot3</b> (<var><small class="dots">...</small>, dom</var>)<var><a name="index-ezplot3-1018"></a></var><br>
+&mdash; Function File:  <b>ezplot3</b> (<var><small class="dots">...</small>, n</var>)<var><a name="index-ezplot3-1019"></a></var><br>
+&mdash; Function File:  <b>ezplot3</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-ezplot3-1020"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>ezplot3</b> (<var><small class="dots">...</small></var>)<var><a name="index-ezplot3-1021"></a></var><br>
+<blockquote>
+<p>Plots in three-dimensions the curve defined parametrically. 
+<var>fx</var>, <var>fy</var>, and <var>fz</var> are strings, inline functions
+or function handles with one arguments defining the function.  By
+default the plot is over the domain <code>-2*pi &lt; </code><var>x</var><code> &lt; 2*pi</code>
+with 60 points.
+
+        <p>If <var>dom</var> is a two element vector, it represents the minimum and maximum
+value of <var>t</var>.  <var>n</var> is a scalar defining the number of points to use.
+
+        <p>The optional return value <var>h</var> provides a list of handles to the
+the parts of the vector field (body, arrow and marker).
+
+     <pre class="example">          fx = @(t) cos (t);
+          fy = @(t) sin (t);
+          fz = @(t) t;
+          ezplot3 (fx, fy, fz, [0, 10*pi], 100);
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dplot3.html#doc_002dplot3">plot3</a>, <a href="doc_002dezplot.html#doc_002dezplot">ezplot</a>, <a href="doc_002dezsurf.html#doc_002dezsurf">ezsurf</a>, <a href="doc_002dezmesh.html#doc_002dezmesh">ezmesh</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/ezmesh.m -->
+<p><a name="doc_002dezmesh"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>ezmesh</b> (<var>f</var>)<var><a name="index-ezmesh-1022"></a></var><br>
+&mdash; Function File:  <b>ezmesh</b> (<var>fx, fy, fz</var>)<var><a name="index-ezmesh-1023"></a></var><br>
+&mdash; Function File:  <b>ezmesh</b> (<var><small class="dots">...</small>, dom</var>)<var><a name="index-ezmesh-1024"></a></var><br>
+&mdash; Function File:  <b>ezmesh</b> (<var><small class="dots">...</small>, n</var>)<var><a name="index-ezmesh-1025"></a></var><br>
+&mdash; Function File:  <b>ezmesh</b> (<var><small class="dots">...</small>, 'circ'</var>)<var><a name="index-ezmesh-1026"></a></var><br>
+&mdash; Function File:  <b>ezmesh</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-ezmesh-1027"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>ezmesh</b> (<var><small class="dots">...</small></var>)<var><a name="index-ezmesh-1028"></a></var><br>
+<blockquote>
+<p>Plots the mesh defined by a function.  <var>f</var> is a string, inline
+function or function handle with two arguments defining the function.  By
+default the plot is over the domain <code>-2*pi &lt; </code><var>x</var><code> &lt; 2*pi</code> and
+<code>-2*pi &lt; </code><var>y</var><code> &lt; 2*pi</code> with 60 points in each dimension.
+
+        <p>If <var>dom</var> is a two element vector, it represents the minimum and maximum
+value of both <var>x</var> and <var>y</var>.  If <var>dom</var> is a four element vector,
+then the minimum and maximum value of <var>x</var> and <var>y</var> are specify
+separately.
+
+        <p><var>n</var> is a scalar defining the number of points to use in each dimension.
+
+        <p>If three functions are passed, then plot the parametrically defined
+function <code>[</code><var>fx</var><code> (</code><var>s</var><code>, </code><var>t</var><code>), </code><var>fy</var><code> (</code><var>s</var><code>, </code><var>t</var><code>),
+</code><var>fz</var><code> (</code><var>s</var><code>, </code><var>t</var><code>)]</code>.
+
+        <p>If the argument 'circ' is given, then the function is plotted over a disk
+centered on the middle of the domain <var>dom</var>.
+
+        <p>The optional return value <var>h</var> provides a list of handles to the
+the parts of the vector field (body, arrow and marker).
+
+     <pre class="example">          f = @(x,y) sqrt(abs(x .* y)) ./ (1 + x.^2 + y.^2);
+          ezmesh (f, [-3, 3]);
+     </pre>
+        <p>An example of a parametrically defined function is
+
+     <pre class="example">          fx = @(s,t) cos (s) .* cos(t);
+          fy = @(s,t) sin (s) .* cos(t);
+          fz = @(s,t) sin(t);
+          ezmesh (fx, fy, fz, [-pi, pi, -pi/2, pi/2], 20);
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dezplot.html#doc_002dezplot">ezplot</a>, <a href="doc_002dezsurf.html#doc_002dezsurf">ezsurf</a>, <a href="doc_002dezsurfc.html#doc_002dezsurfc">ezsurfc</a>, <a href="doc_002dezmeshc.html#doc_002dezmeshc">ezmeshc</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/ezmeshc.m -->
+<p><a name="doc_002dezmeshc"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>ezmeshc</b> (<var>f</var>)<var><a name="index-ezmeshc-1029"></a></var><br>
+&mdash; Function File:  <b>ezmeshc</b> (<var>fx, fy, fz</var>)<var><a name="index-ezmeshc-1030"></a></var><br>
+&mdash; Function File:  <b>ezmeshc</b> (<var><small class="dots">...</small>, dom</var>)<var><a name="index-ezmeshc-1031"></a></var><br>
+&mdash; Function File:  <b>ezmeshc</b> (<var><small class="dots">...</small>, n</var>)<var><a name="index-ezmeshc-1032"></a></var><br>
+&mdash; Function File:  <b>ezmeshc</b> (<var><small class="dots">...</small>, 'circ'</var>)<var><a name="index-ezmeshc-1033"></a></var><br>
+&mdash; Function File:  <b>ezmeshc</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-ezmeshc-1034"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>ezmeshc</b> (<var><small class="dots">...</small></var>)<var><a name="index-ezmeshc-1035"></a></var><br>
+<blockquote>
+<p>Plots the mesh and contour lines defined by a function.  <var>f</var> is a string,
+inline function or function handle with two arguments defining the function. 
+By default the plot is over the domain <code>-2*pi &lt; </code><var>x</var><code> &lt; 2*pi</code> and
+<code>-2*pi &lt; </code><var>y</var><code> &lt; 2*pi</code> with 60 points in each dimension.
+
+        <p>If <var>dom</var> is a two element vector, it represents the minimum and maximum
+value of both <var>x</var> and <var>y</var>.  If <var>dom</var> is a four element vector,
+then the minimum and maximum value of <var>x</var> and <var>y</var> are specify
+separately.
+
+        <p><var>n</var> is a scalar defining the number of points to use in each dimension.
+
+        <p>If three functions are passed, then plot the parametrically defined
+function <code>[</code><var>fx</var><code> (</code><var>s</var><code>, </code><var>t</var><code>), </code><var>fy</var><code> (</code><var>s</var><code>, </code><var>t</var><code>),
+</code><var>fz</var><code> (</code><var>s</var><code>, </code><var>t</var><code>)]</code>.
+
+        <p>If the argument 'circ' is given, then the function is plotted over a disk
+centered on the middle of the domain <var>dom</var>.
+
+        <p>The optional return value <var>h</var> provides a list of handles to the
+the parts of the vector field (body, arrow and marker).
+
+     <pre class="example">          f = @(x,y) sqrt(abs(x .* y)) ./ (1 + x.^2 + y.^2);
+          ezmeshc (f, [-3, 3]);
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dezplot.html#doc_002dezplot">ezplot</a>, <a href="doc_002dezsurfc.html#doc_002dezsurfc">ezsurfc</a>, <a href="doc_002dezsurf.html#doc_002dezsurf">ezsurf</a>, <a href="doc_002dezmesh.html#doc_002dezmesh">ezmesh</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/ezsurf.m -->
+<p><a name="doc_002dezsurf"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>ezsurf</b> (<var>f</var>)<var><a name="index-ezsurf-1036"></a></var><br>
+&mdash; Function File:  <b>ezsurf</b> (<var>fx, fy, fz</var>)<var><a name="index-ezsurf-1037"></a></var><br>
+&mdash; Function File:  <b>ezsurf</b> (<var><small class="dots">...</small>, dom</var>)<var><a name="index-ezsurf-1038"></a></var><br>
+&mdash; Function File:  <b>ezsurf</b> (<var><small class="dots">...</small>, n</var>)<var><a name="index-ezsurf-1039"></a></var><br>
+&mdash; Function File:  <b>ezsurf</b> (<var><small class="dots">...</small>, 'circ'</var>)<var><a name="index-ezsurf-1040"></a></var><br>
+&mdash; Function File:  <b>ezsurf</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-ezsurf-1041"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>ezsurf</b> (<var><small class="dots">...</small></var>)<var><a name="index-ezsurf-1042"></a></var><br>
+<blockquote>
+<p>Plots the surface defined by a function.  <var>f</var> is a string, inline
+function or function handle with two arguments defining the function.  By
+default the plot is over the domain <code>-2*pi &lt; </code><var>x</var><code> &lt; 2*pi</code> and
+<code>-2*pi &lt; </code><var>y</var><code> &lt; 2*pi</code> with 60 points in each dimension.
+
+        <p>If <var>dom</var> is a two element vector, it represents the minimum and maximum
+value of both <var>x</var> and <var>y</var>.  If <var>dom</var> is a four element vector,
+then the minimum and maximum value of <var>x</var> and <var>y</var> are specify
+separately.
+
+        <p><var>n</var> is a scalar defining the number of points to use in each dimension.
+
+        <p>If three functions are passed, then plot the parametrically defined
+function <code>[</code><var>fx</var><code> (</code><var>s</var><code>, </code><var>t</var><code>), </code><var>fy</var><code> (</code><var>s</var><code>, </code><var>t</var><code>),
+</code><var>fz</var><code> (</code><var>s</var><code>, </code><var>t</var><code>)]</code>.
+
+        <p>If the argument 'circ' is given, then the function is plotted over a disk
+centered on the middle of the domain <var>dom</var>.
+
+        <p>The optional return value <var>h</var> provides a list of handles to the
+the parts of the vector field (body, arrow and marker).
+
+     <pre class="example">          f = @(x,y) sqrt(abs(x .* y)) ./ (1 + x.^2 + y.^2);
+          ezsurf (f, [-3, 3]);
+     </pre>
+        <p>An example of a parametrically defined function is
+
+     <pre class="example">          fx = @(s,t) cos (s) .* cos(t);
+          fy = @(s,t) sin (s) .* cos(t);
+          fz = @(s,t) sin(t);
+          ezsurf (fx, fy, fz, [-pi, pi, -pi/2, pi/2], 20);
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dezplot.html#doc_002dezplot">ezplot</a>, <a href="doc_002dezmesh.html#doc_002dezmesh">ezmesh</a>, <a href="doc_002dezsurfc.html#doc_002dezsurfc">ezsurfc</a>, <a href="doc_002dezmeshc.html#doc_002dezmeshc">ezmeshc</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/ezsurfc.m -->
+<p><a name="doc_002dezsurfc"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>ezsurfc</b> (<var>f</var>)<var><a name="index-ezsurfc-1043"></a></var><br>
+&mdash; Function File:  <b>ezsurfc</b> (<var>fx, fy, fz</var>)<var><a name="index-ezsurfc-1044"></a></var><br>
+&mdash; Function File:  <b>ezsurfc</b> (<var><small class="dots">...</small>, dom</var>)<var><a name="index-ezsurfc-1045"></a></var><br>
+&mdash; Function File:  <b>ezsurfc</b> (<var><small class="dots">...</small>, n</var>)<var><a name="index-ezsurfc-1046"></a></var><br>
+&mdash; Function File:  <b>ezsurfc</b> (<var><small class="dots">...</small>, 'circ'</var>)<var><a name="index-ezsurfc-1047"></a></var><br>
+&mdash; Function File:  <b>ezsurfc</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-ezsurfc-1048"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>ezsurfc</b> (<var><small class="dots">...</small></var>)<var><a name="index-ezsurfc-1049"></a></var><br>
+<blockquote>
+<p>Plots the surface and contour lines defined by a function.  <var>f</var> is a
+string, inline function or function handle with two arguments defining the
+function.  By default the plot is over the domain <code>-2*pi &lt; </code><var>x</var><code> &lt;
+2*pi</code> and <code>-2*pi &lt; </code><var>y</var><code> &lt; 2*pi</code> with 60 points in each dimension.
+
+        <p>If <var>dom</var> is a two element vector, it represents the minimum and maximum
+value of both <var>x</var> and <var>y</var>.  If <var>dom</var> is a four element vector,
+then the minimum and maximum value of <var>x</var> and <var>y</var> are specify
+separately.
+
+        <p><var>n</var> is a scalar defining the number of points to use in each dimension.
+
+        <p>If three functions are passed, then plot the parametrically defined
+function <code>[</code><var>fx</var><code> (</code><var>s</var><code>, </code><var>t</var><code>), </code><var>fy</var><code> (</code><var>s</var><code>, </code><var>t</var><code>),
+</code><var>fz</var><code> (</code><var>s</var><code>, </code><var>t</var><code>)]</code>.
+
+        <p>If the argument 'circ' is given, then the function is plotted over a disk
+centered on the middle of the domain <var>dom</var>.
+
+        <p>The optional return value <var>h</var> provides a list of handles to the
+the parts of the vector field (body, arrow and marker).
+
+     <pre class="example">          f = @(x,y) sqrt(abs(x .* y)) ./ (1 + x.^2 + y.^2);
+          ezsurfc (f, [-3, 3]);
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dezplot.html#doc_002dezplot">ezplot</a>, <a href="doc_002dezmeshc.html#doc_002dezmeshc">ezmeshc</a>, <a href="doc_002dezsurf.html#doc_002dezsurf">ezsurf</a>, <a href="doc_002dezmesh.html#doc_002dezmesh">ezmesh</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

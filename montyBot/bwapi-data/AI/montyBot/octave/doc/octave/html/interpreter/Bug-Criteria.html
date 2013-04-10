@@ -1,0 +1,65 @@
+<html lang="en">
+<head>
+<title>Bug Criteria - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Trouble.html#Trouble" title="Trouble">
+<link rel="prev" href="Reporting-Bugs.html#Reporting-Bugs" title="Reporting Bugs">
+<link rel="next" href="Bug-Lists.html#Bug-Lists" title="Bug Lists">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Bug-Criteria"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Bug-Lists.html#Bug-Lists">Bug Lists</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Reporting-Bugs.html#Reporting-Bugs">Reporting Bugs</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Trouble.html#Trouble">Trouble</a>
+<hr><br>
+</div>
+
+<h3 class="appendixsec">E.3 Have You Found a Bug?</h3>
+
+<p><a name="index-bug-criteria-2521"></a>
+If you are not sure whether you have found a bug, here are some guidelines:
+
+     
+<a name="index-fatal-signal-2522"></a>
+<a name="index-core-dump-2523"></a>
+<ul><li>If Octave gets a fatal signal, for any input whatever, that is
+a bug.  Reliable interpreters never crash.
+
+     <p><a name="index-incorrect-output-2524"></a><a name="index-incorrect-results-2525"></a><a name="index-results_002c-incorrect-2526"></a><a name="index-answers_002c-incorrect-2527"></a><a name="index-erroneous-results-2528"></a><a name="index-wrong-answers-2529"></a><li>If Octave produces incorrect results, for any input whatever,
+that is a bug.
+
+     <p><a name="index-undefined-behavior-2530"></a><a name="index-undefined-function-value-2531"></a><li>Some output may appear to be incorrect when it is in fact due to a
+program whose behavior is undefined, which happened by chance to give
+the desired results on another system.  For example, the range operator
+may produce different results because of differences in the way floating
+point arithmetic is handled on various systems.
+
+     <p><a name="index-erroneous-messages-2532"></a><a name="index-incorrect-error-messages-2533"></a><a name="index-error-messages_002c-incorrect-2534"></a><li>If Octave produces an error message for valid input, that is a bug.
+
+     <p><a name="index-invalid-input-2535"></a><li>If Octave does not produce an error message for invalid input, that is
+a bug.  However, you should note that your idea of &ldquo;invalid input&rdquo;
+might be my idea of &ldquo;an extension&rdquo; or &ldquo;support for traditional
+practice&rdquo;.
+
+     <p><a name="index-improving-Octave-2536"></a><a name="index-suggestions-2537"></a><li>If you are an experienced user of programs like Octave, your suggestions
+for improvement are welcome in any case. 
+</ul>
+
+   </body></html>
+

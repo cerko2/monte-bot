@@ -1,0 +1,244 @@
+<html lang="en">
+<head>
+<title>Demonstration Functions - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Test-and-Demo-Functions.html#Test-and-Demo-Functions" title="Test and Demo Functions">
+<link rel="prev" href="Test-Functions.html#Test-Functions" title="Test Functions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Demonstration-Functions"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="Test-Functions.html#Test-Functions">Test Functions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Test-and-Demo-Functions.html#Test-and-Demo-Functions">Test and Demo Functions</a>
+<hr><br>
+</div>
+
+<h3 class="section">B.2 Demonstration Functions</h3>
+
+<!-- ./testfun/demo.m -->
+<p><a name="doc_002ddemo"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>demo</b> (<var>'name',n</var>)<var><a name="index-demo-2499"></a></var><br>
+<blockquote>
+<p>Runs any examples associated with the function '<var>name</var>'. 
+Examples are stored in the script file, or in a file with the same
+name but no extension somewhere on your path.  To keep them separate
+from the usual script code, all lines are prefixed by <code>%!</code>.  Each
+example is introduced by the keyword 'demo' flush left to the prefix,
+with no intervening spaces.  The remainder of the example can contain
+arbitrary Octave code.  For example:
+
+     <pre class="example">             %!demo
+             %! t=0:0.01:2*pi; x = sin(t);
+             %! plot(t,x)
+             %! %-------------------------------------------------
+             %! % the figure window shows one cycle of a sine wave
+     </pre>
+        <p>Note that the code is displayed before it is executed, so a simple
+comment at the end suffices.  It is generally not necessary to use
+disp or printf within the demo.
+
+        <p>Demos are run in a function environment with no access to external
+variables.  This means that all demos in your function must use
+separate initialization code.  Alternatively, you can combine your
+demos into one huge demo, with the code:
+
+     <pre class="example">             %! input("Press &lt;enter&gt; to continue: ","s");
+     </pre>
+        <p>between the sections, but this is discouraged.  Other techniques
+include using multiple plots by saying figure between each, or
+using subplot to put multiple plots in the same window.
+
+        <p>Also, since demo evaluates inside a function context, you cannot
+define new functions inside a demo.  Instead you will have to
+use <code>eval(example('function',n))</code> to see them.  Because eval only
+evaluates one line, or one statement if the statement crosses
+multiple lines, you must wrap your demo in "if 1 &lt;demo stuff&gt; endif"
+with the 'if' on the same line as 'demo'.  For example,
+
+     <pre class="example">            %!demo if 1
+            %!  function y=f(x)
+            %!    y=x;
+            %!  endfunction
+            %!  f(3)
+            %! endif
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dtest.html#doc_002dtest">test</a>, <a href="doc_002dexample.html#doc_002dexample">example</a>. 
+</p></blockquote></div>
+
+<!-- ./testfun/rundemos.m -->
+<p><a name="doc_002drundemos"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>rundemos</b> (<var>directory</var>)<var><a name="index-rundemos-2500"></a></var><br>
+</div>
+
+<!-- ./testfun/example.m -->
+<p><a name="doc_002dexample"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>example</b> (<var>'name',n</var>)<var><a name="index-example-2501"></a></var><br>
+&mdash; Function File: [<var>x</var>, <var>idx</var>] = <b>example</b> (<var>'name',n</var>)<var><a name="index-example-2502"></a></var><br>
+<blockquote>
+<p>Display the code for example <var>n</var> associated with the function
+'<var>name</var>', but do not run it.  If <var>n</var> is not given, all examples
+are displayed.
+
+        <p>Called with output arguments, the examples are returned in the form of
+a string <var>x</var>, with <var>idx</var> indicating the ending position of the
+various examples.
+
+        <p>See <code>demo</code> for a complete explanation. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002ddemo.html#doc_002ddemo">demo</a>, <a href="doc_002dtest.html#doc_002dtest">test</a>. 
+</p></blockquote></div>
+
+<!-- ./testfun/speed.m -->
+<p><a name="doc_002dspeed"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>speed</b> (<var>f, init, max_n, f2, tol</var>)<var><a name="index-speed-2503"></a></var><br>
+&mdash; Function File: [<var>order</var>, <var>n</var>, <var>T_f</var>, <var>T_f2</var>] = <b>speed</b> (<var><small class="dots">...</small></var>)<var><a name="index-speed-2504"></a></var><br>
+<blockquote>
+<p>Determine the execution time of an expression for various <var>n</var>. 
+The <var>n</var> are log-spaced from 1 to <var>max_n</var>.  For each <var>n</var>,
+an initialization expression is computed to create whatever data
+are needed for the test.  If a second expression is given, the
+execution times of the two expressions will be compared.  Called
+without output arguments the results are presented graphically.
+
+          <dl>
+<dt><var>f</var><dd>The expression to evaluate.
+
+          <br><dt><var>max_n</var><dd>The maximum test length to run.  Default value is 100.  Alternatively,
+use <code>[min_n,max_n]</code> or for complete control, <code>[n1,n2,...,nk]</code>.
+
+          <br><dt><var>init</var><dd>Initialization expression for function argument values.  Use <var>k</var>
+for the test number and <var>n</var> for the size of the test.  This should
+compute values for all variables listed in args.  Note that init will
+be evaluated first for k = 0, so things which are constant throughout
+the test can be computed then.  The default value is <var>x</var><code> =
+randn (</code><var>n</var><code>, 1);</code>.
+
+          <br><dt><var>f2</var><dd>An alternative expression to evaluate, so the speed of the two
+can be compared.  Default is <code>[]</code>.
+
+          <br><dt><var>tol</var><dd>If <var>tol</var> is <code>Inf</code>, then no comparison will be made between the
+results of expression <var>f</var> and expression <var>f2</var>.  Otherwise,
+expression <var>f</var> should produce a value <var>v</var> and expression <var>f2</var>
+should produce a value <var>v2</var>, and these shall be compared using
+<code>assert(</code><var>v</var><code>,</code><var>v2</var><code>,</code><var>tol</var><code>)</code>.  If <var>tol</var> is positive,
+the tolerance is assumed to be absolute.  If <var>tol</var> is negative,
+the tolerance is assumed to be relative.  The default is <code>eps</code>.
+
+          <br><dt><var>order</var><dd>The time complexity of the expression <code>O(a n^p)</code>.  This
+is a structure with fields <code>a</code> and <code>p</code>.
+
+          <br><dt><var>n</var><dd>The values <var>n</var> for which the expression was calculated and
+the execution time was greater than zero.
+
+          <br><dt><var>T_f</var><dd>The nonzero execution times recorded for the expression <var>f</var> in seconds.
+
+          <br><dt><var>T_f2</var><dd>The nonzero execution times recorded for the expression <var>f2</var> in seconds. 
+If it is needed, the mean time ratio is just <code>mean(T_f./T_f2)</code>.
+
+        </dl>
+
+        <p>The slope of the execution time graph shows the approximate
+power of the asymptotic running time <code>O(n^p)</code>.  This
+power is plotted for the region over which it is approximated
+(the latter half of the graph).  The estimated power is not
+very accurate, but should be sufficient to determine the
+general order of your algorithm.  It should indicate if for
+example your implementation is unexpectedly <code>O(n^2)</code>
+rather than <code>O(n)</code> because it extends a vector each
+time through the loop rather than preallocating one which is
+big enough.  For example, in the current version of Octave,
+the following is not the expected <code>O(n)</code>:
+
+     <pre class="example">          speed ("for i = 1:n, y{i} = x(i); end", "", [1000,10000])
+     </pre>
+        <p>but it is if you preallocate the cell array <code>y</code>:
+
+     <pre class="example">          speed ("for i = 1:n, y{i} = x(i); end", ...
+                 "x = rand (n, 1); y = cell (size (x));", [1000, 10000])
+     </pre>
+        <p>An attempt is made to approximate the cost of the individual
+operations, but it is wildly inaccurate.  You can improve the
+stability somewhat by doing more work for each <code>n</code>.  For
+example:
+
+     <pre class="example">          speed ("airy(x)", "x = rand (n, 10)", [10000, 100000])
+     </pre>
+        <p>When comparing a new and original expression, the line on the
+speedup ratio graph should be larger than 1 if the new expression
+is faster.  Better algorithms have a shallow slope.  Generally,
+vectorizing an algorithm will not change the slope of the execution
+time graph, but it will shift it relative to the original.  For
+example:
+
+     <pre class="example">          speed ("v = sum (x)", "", [10000, 100000], ...
+                 "v = 0; for i = 1:length (x), v += x(i); end")
+     </pre>
+        <p>A more complex example, if you had an original version of <code>xcorr</code>
+using for loops and another version using an FFT, you could compare the
+run speed for various lags as follows, or for a fixed lag with varying
+vector lengths as follows:
+
+     <pre class="example">          speed ("v = xcorr (x, n)", "x = rand (128, 1);", 100,
+                 "v2 = xcorr_orig (x, n)", -100*eps)
+          speed ("v = xcorr (x, 15)", "x = rand (20+n, 1);", 100,
+                 "v2 = xcorr_orig (x, n)", -100*eps)
+     </pre>
+        <p>Assuming one of the two versions is in <var>xcorr_orig</var>, this
+would compare their speed and their output values.  Note that the
+FFT version is not exact, so we specify an acceptable tolerance on
+the comparison <code>100*eps</code>, and the errors should be computed
+relatively, as <code>abs((</code><var>x</var><code> - </code><var>y</var><code>)./</code><var>y</var><code>)</code> rather than
+absolutely as <code>abs(</code><var>x</var><code> - </code><var>y</var><code>)</code>.
+
+        <p>Type <code>example('speed')</code> to see some real examples.  Note for
+obscure reasons, you can't run examples 1 and 2 directly using
+<code>demo('speed')</code>.  Instead use, <code>eval(example('speed',1))</code>
+and <code>eval(example('speed',2))</code>. 
+</p></blockquote></div>
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 1996, 1997, 1999, 2002, 2004, 2005, 2007, 2008, -->
+<!-- 2009 John W. Eaton -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

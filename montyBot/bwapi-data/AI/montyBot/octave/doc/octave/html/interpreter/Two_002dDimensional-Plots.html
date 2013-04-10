@@ -1,0 +1,1419 @@
+<html lang="en">
+<head>
+<title>Two-Dimensional Plots - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Plotting-Basics.html#Plotting-Basics" title="Plotting Basics">
+<link rel="next" href="Three_002dDimensional-Plotting.html#Three_002dDimensional-Plotting" title="Three-Dimensional Plotting">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Two_002dDimensional-Plots"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Three_002dDimensional-Plotting.html#Three_002dDimensional-Plotting">Three-Dimensional Plotting</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Plotting-Basics.html#Plotting-Basics">Plotting Basics</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">15.1.1 Two-Dimensional Plots</h4>
+
+<p>The <code>plot</code> function allows you to create simple x-y plots with
+linear axes.  For example,
+
+<pre class="example">     x = -10:0.1:10;
+     plot (x, sin (x));
+</pre>
+   <p class="noindent">displays a sine wave shown in <a href="fig_003aplot.html#fig_003aplot">fig:plot</a>.  On most systems, this
+command will open a separate plot window to display the graph.
+
+   <div class="float">
+<a name="fig_003aplot"></a><div align="center"><img src="plot.png" alt="plot.png"></div>
+   <p><strong class="float-caption">Figure 15.1: Simple Two-Dimensional Plot.</strong></p></div>
+
+<!-- ./plot/plot.m -->
+<p><a name="doc_002dplot"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>plot</b> (<var>y</var>)<var><a name="index-plot-817"></a></var><br>
+&mdash; Function File:  <b>plot</b> (<var>x, y</var>)<var><a name="index-plot-818"></a></var><br>
+&mdash; Function File:  <b>plot</b> (<var>x, y, property, value, <small class="dots">...</small></var>)<var><a name="index-plot-819"></a></var><br>
+&mdash; Function File:  <b>plot</b> (<var>x, y, fmt</var>)<var><a name="index-plot-820"></a></var><br>
+&mdash; Function File:  <b>plot</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-plot-821"></a></var><br>
+<blockquote><p>Produces two-dimensional plots.  Many different combinations of
+arguments are possible.  The simplest form is
+
+     <pre class="example">          plot (<var>y</var>)
+     </pre>
+        <p class="noindent">where the argument is taken as the set of <var>y</var> coordinates and the
+<var>x</var> coordinates are taken to be the indices of the elements,
+starting with 1.
+
+        <p>To save a plot, in one of several image formats such as PostScript
+or PNG, use the <code>print</code> command.
+
+        <p>If more than one argument is given, they are interpreted as
+
+     <pre class="example">          plot (<var>y</var>, <var>property</var>, <var>value</var>, ...)
+     </pre>
+        <p class="noindent">or
+
+     <pre class="example">          plot (<var>x</var>, <var>y</var>, <var>property</var>, <var>value</var>, ...)
+     </pre>
+        <p class="noindent">or
+
+     <pre class="example">          plot (<var>x</var>, <var>y</var>, <var>fmt</var>, ...)
+     </pre>
+        <p class="noindent">and so on.  Any number of argument sets may appear.  The <var>x</var> and
+<var>y</var> values are interpreted as follows:
+
+          <ul>
+<li>If a single data argument is supplied, it is taken as the set of <var>y</var>
+coordinates and the <var>x</var> coordinates are taken to be the indices of
+the elements, starting with 1.
+
+          <li>If the <var>x</var> is a vector and <var>y</var> is a matrix, then
+the columns (or rows) of <var>y</var> are plotted versus <var>x</var>. 
+(using whichever combination matches, with columns tried first.)
+
+          <li>If the <var>x</var> is a matrix and <var>y</var> is a vector,
+<var>y</var> is plotted versus the columns (or rows) of <var>x</var>. 
+(using whichever combination matches, with columns tried first.)
+
+          <li>If both arguments are vectors, the elements of <var>y</var> are plotted versus
+the elements of <var>x</var>.
+
+          <li>If both arguments are matrices, the columns of <var>y</var> are plotted
+versus the columns of <var>x</var>.  In this case, both matrices must have
+the same number of rows and columns and no attempt is made to transpose
+the arguments to make the number of rows match.
+
+          <p>If both arguments are scalars, a single point is plotted. 
+</ul>
+
+        <p>Multiple property-value pairs may be specified, but they must appear
+in pairs.  These arguments are applied to the lines drawn by
+<code>plot</code>.
+
+        <p>If the <var>fmt</var> argument is supplied, it is interpreted as
+follows.  If <var>fmt</var> is missing, the default gnuplot line style
+is assumed.
+
+          <dl>
+<dt><span class="samp">-</span><dd>Set lines plot style (default).
+
+          <br><dt><span class="samp">.</span><dd>Set dots plot style.
+
+          <br><dt><var>n</var><dd>Interpreted as the plot color if <var>n</var> is an integer in the range 1 to
+6.
+
+          <br><dt><var>nm</var><dd>If <var>nm</var> is a two digit integer and <var>m</var> is an integer in the
+range 1 to 6, <var>m</var> is interpreted as the point style.  This is only
+valid in combination with the <code>@</code> or <code>-@</code> specifiers.
+
+          <br><dt><var>c</var><dd>If <var>c</var> is one of <code>"k"</code> (black), <code>"r"</code> (red), <code>"g"</code>
+(green), <code>"b"</code> (blue), <code>"m"</code> (magenta), <code>"c"</code> (cyan),
+or <code>"w"</code> (white), it is interpreted as the line plot color.
+
+          <br><dt><span class="samp">";title;"</span><dd>Here <code>"title"</code> is the label for the key.
+
+          <br><dt><span class="samp">+</span><dt><span class="samp">*</span><dt><span class="samp">o</span><dt><span class="samp">x</span><dt><span class="samp">^</span><dd>Used in combination with the points or linespoints styles, set the point
+style. 
+</dl>
+
+        <p>The <var>fmt</var> argument may also be used to assign key titles. 
+To do so, include the desired title between semi-colons after the
+formatting sequence described above, e.g., "+3;Key Title;"
+Note that the last semi-colon is required and will generate an error if
+it is left out.
+
+        <p>Here are some plot examples:
+
+     <pre class="example">          plot (x, y, "@12", x, y2, x, y3, "4", x, y4, "+")
+     </pre>
+        <p>This command will plot <code>y</code> with points of type 2 (displayed as
+<span class="samp">+</span>) and color 1 (red), <code>y2</code> with lines, <code>y3</code> with lines of
+color 4 (magenta) and <code>y4</code> with points displayed as <span class="samp">+</span>.
+
+     <pre class="example">          plot (b, "*", "markersize", 3)
+     </pre>
+        <p>This command will plot the data in the variable <code>b</code>,
+with points displayed as <span class="samp">*</span> with a marker size of 3.
+
+     <pre class="example">          t = 0:0.1:6.3;
+          plot (t, cos(t), "-;cos(t);", t, sin(t), "+3;sin(t);");
+     </pre>
+        <p>This will plot the cosine and sine functions and label them accordingly
+in the key.
+
+        <p>If the first argument is an axis handle, then plot into these axes,
+rather than the current axis handle returned by <code>gca</code>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsemilogx.html#doc_002dsemilogx">semilogx</a>, <a href="doc_002dsemilogy.html#doc_002dsemilogy">semilogy</a>, <a href="doc_002dloglog.html#doc_002dloglog">loglog</a>, <a href="doc_002dpolar.html#doc_002dpolar">polar</a>, <a href="doc_002dmesh.html#doc_002dmesh">mesh</a>, <a href="doc_002dcontour.html#doc_002dcontour">contour</a>, <a href="doc_002dbar.html#doc_002dbar">bar</a>, <a href="doc_002dstairs.html#doc_002dstairs">stairs</a>, <a href="doc_002derrorbar.html#doc_002derrorbar">errorbar</a>, <a href="doc_002dxlabel.html#doc_002dxlabel">xlabel</a>, <a href="doc_002dylabel.html#doc_002dylabel">ylabel</a>, <a href="doc_002dtitle.html#doc_002dtitle">title</a>, <a href="doc_002dprint.html#doc_002dprint">print</a>. 
+</p></blockquote></div>
+
+   <p>The <code>plotyy</code> function may be used to create a plot with two
+independent y axes.
+
+<!-- ./plot/plotyy.m -->
+<p><a name="doc_002dplotyy"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>plotyy</b> (<var>x1, y1, x2, y2</var>)<var><a name="index-plotyy-822"></a></var><br>
+&mdash; Function File:  <b>plotyy</b> (<var><small class="dots">...</small>, fun</var>)<var><a name="index-plotyy-823"></a></var><br>
+&mdash; Function File:  <b>plotyy</b> (<var><small class="dots">...</small>, fun1, fun2</var>)<var><a name="index-plotyy-824"></a></var><br>
+&mdash; Function File:  <b>plotyy</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-plotyy-825"></a></var><br>
+&mdash; Function File: [<var>ax</var>, <var>h1</var>, <var>h2</var>] = <b>plotyy</b> (<var><small class="dots">...</small></var>)<var><a name="index-plotyy-826"></a></var><br>
+<blockquote><p>Plots two sets of data with independent y-axes.  The arguments <var>x1</var> and
+<var>y1</var> define the arguments for the first plot and <var>x1</var> and <var>y2</var>
+for the second.
+
+        <p>By default the arguments are evaluated with
+<code>feval (@plot, </code><var>x</var><code>, </code><var>y</var><code>)</code>.  However the type of plot can be
+modified with the <var>fun</var> argument, in which case the plots are
+generated by <code>feval (</code><var>fun</var><code>, </code><var>x</var><code>, </code><var>y</var><code>)</code>.  <var>fun</var> can be
+a function handle, an inline function or a string of a function name.
+
+        <p>The function to use for each of the plots can be independently defined
+with <var>fun1</var> and <var>fun2</var>.
+
+        <p>If given, <var>h</var> defines the principal axis in which to plot the <var>x1</var>
+and <var>y1</var> data.  The return value <var>ax</var> is a two element vector with
+the axis handles of the two plots.  <var>h1</var> and <var>h2</var> are handles to
+the objects generated by the plot commands.
+
+     <pre class="example">          x = 0:0.1:2*pi;
+          y1 = sin (x);
+          y2 = exp (x - 1);
+          ax = plotyy (x, y1, x - 1, y2, @plot, @semilogy);
+          xlabel ("X");
+          ylabel (ax(1), "Axis 1");
+          ylabel (ax(2), "Axis 2");
+     </pre>
+        </blockquote></div>
+
+   <p>The functions <code>semilogx</code>, <code>semilogy</code>, and <code>loglog</code> are
+similar to the <code>plot</code> function, but produce plots in which one or
+both of the axes use log scales.
+
+<!-- ./plot/semilogx.m -->
+<p><a name="doc_002dsemilogx"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>semilogx</b> (<var>args</var>)<var><a name="index-semilogx-827"></a></var><br>
+<blockquote><p>Produce a two-dimensional plot using a log scale for the <var>x</var>
+axis.  See the description of <code>plot</code> for a description of the
+arguments that <code>semilogx</code> will accept. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dsemilogy.html#doc_002dsemilogy">semilogy</a>, <a href="doc_002dloglog.html#doc_002dloglog">loglog</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/semilogy.m -->
+<p><a name="doc_002dsemilogy"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>semilogy</b> (<var>args</var>)<var><a name="index-semilogy-828"></a></var><br>
+<blockquote><p>Produce a two-dimensional plot using a log scale for the <var>y</var>
+axis.  See the description of <code>plot</code> for a description of the
+arguments that <code>semilogy</code> will accept. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dsemilogx.html#doc_002dsemilogx">semilogx</a>, <a href="doc_002dloglog.html#doc_002dloglog">loglog</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/loglog.m -->
+<p><a name="doc_002dloglog"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>loglog</b> (<var>args</var>)<var><a name="index-loglog-829"></a></var><br>
+<blockquote><p>Produce a two-dimensional plot using log scales for both axes.  See
+the description of <code>plot</code> for a description of the arguments
+that <code>loglog</code> will accept. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dsemilogx.html#doc_002dsemilogx">semilogx</a>, <a href="doc_002dsemilogy.html#doc_002dsemilogy">semilogy</a>. 
+</p></blockquote></div>
+
+   <p>The functions <code>bar</code>, <code>barh</code>, <code>stairs</code>, and <code>stem</code>
+are useful for displaying discrete data.  For example,
+
+<pre class="example">     hist (randn (10000, 1), 30);
+</pre>
+   <p class="noindent">produces the histogram of 10,000 normally distributed random numbers
+shown in <a href="fig_003ahist.html#fig_003ahist">fig:hist</a>.
+
+   <div class="float">
+<a name="fig_003ahist"></a><div align="center"><img src="hist.png" alt="hist.png"></div>
+   <p><strong class="float-caption">Figure 15.2: Histogram.</strong></p></div>
+
+<!-- ./plot/bar.m -->
+<p><a name="doc_002dbar"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>bar</b> (<var>x, y</var>)<var><a name="index-bar-830"></a></var><br>
+&mdash; Function File:  <b>bar</b> (<var>y</var>)<var><a name="index-bar-831"></a></var><br>
+&mdash; Function File:  <b>bar</b> (<var>x, y, w</var>)<var><a name="index-bar-832"></a></var><br>
+&mdash; Function File:  <b>bar</b> (<var>x, y, w, style</var>)<var><a name="index-bar-833"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>bar</b> (<var><small class="dots">...</small>, prop, val</var>)<var><a name="index-bar-834"></a></var><br>
+&mdash; Function File:  <b>bar</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-bar-835"></a></var><br>
+<blockquote><p>Produce a bar graph from two vectors of x-y data.
+
+        <p>If only one argument is given, it is taken as a vector of y-values
+and the x coordinates are taken to be the indices of the elements.
+
+        <p>The default width of 0.8 for the bars can be changed using <var>w</var>.
+
+        <p>If <var>y</var> is a matrix, then each column of <var>y</var> is taken to be a
+separate bar graph plotted on the same graph.  By default the columns
+are plotted side-by-side.  This behavior can be changed by the <var>style</var>
+argument, which can take the values <code>"grouped"</code> (the default),
+or <code>"stacked"</code>.
+
+        <p>The optional return value <var>h</var> provides a handle to the "bar series"
+object with one handle per column of the variable <var>y</var>.  This
+series allows common elements of the group of bar series objects to
+be changed in a single bar series and the same properties are changed
+in the other "bar series".  For example
+
+     <pre class="example">          h = bar (rand (5, 10));
+          set (h(1), "basevalue", 0.5);
+     </pre>
+        <p class="noindent">changes the position on the base of all of the bar series.
+
+        <p>The optional input handle <var>h</var> allows an axis handle to be passed. 
+Properties of the patch graphics object can be changed using
+<var>prop</var>, <var>val</var> pairs.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dbarh.html#doc_002dbarh">barh</a>, <a href="doc_002dplot.html#doc_002dplot">plot</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/barh.m -->
+<p><a name="doc_002dbarh"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>barh</b> (<var>x, y</var>)<var><a name="index-barh-836"></a></var><br>
+&mdash; Function File:  <b>barh</b> (<var>y</var>)<var><a name="index-barh-837"></a></var><br>
+&mdash; Function File:  <b>barh</b> (<var>x, y, w</var>)<var><a name="index-barh-838"></a></var><br>
+&mdash; Function File:  <b>barh</b> (<var>x, y, w, style</var>)<var><a name="index-barh-839"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>barh</b> (<var><small class="dots">...</small>, prop, val</var>)<var><a name="index-barh-840"></a></var><br>
+&mdash; Function File:  <b>barh</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-barh-841"></a></var><br>
+<blockquote><p>Produce a horizontal bar graph from two vectors of x-y data.
+
+        <p>If only one argument is given, it is taken as a vector of y-values
+and the x coordinates are taken to be the indices of the elements.
+
+        <p>The default width of 0.8 for the bars can be changed using <var>w</var>.
+
+        <p>If <var>y</var> is a matrix, then each column of <var>y</var> is taken to be a
+separate bar graph plotted on the same graph.  By default the columns
+are plotted side-by-side.  This behavior can be changed by the <var>style</var>
+argument, which can take the values <code>"grouped"</code> (the default),
+or <code>"stacked"</code>.
+
+        <p>The optional return value <var>h</var> provides a handle to the bar series
+object.  See <code>bar</code> for a description of the use of the bar series.
+
+        <p>The optional input handle <var>h</var> allows an axis handle to be passed. 
+Properties of the patch graphics object can be changed using
+<var>prop</var>, <var>val</var> pairs.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dbar.html#doc_002dbar">bar</a>, <a href="doc_002dplot.html#doc_002dplot">plot</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/hist.m -->
+<p><a name="doc_002dhist"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>hist</b> (<var>y, x, norm</var>)<var><a name="index-hist-842"></a></var><br>
+<blockquote><p>Produce histogram counts or plots.
+
+        <p>With one vector input argument, plot a histogram of the values with
+10 bins.  The range of the histogram bins is determined by the range
+of the data.  With one matrix input argument, plot a histogram where
+each bin contains a bar per input column.
+
+        <p>Given a second scalar argument, use that as the number of bins.
+
+        <p>Given a second vector argument, use that as the centers of the bins,
+with the width of the bins determined from the adjacent values in
+the vector.
+
+        <p>If third argument is provided, the histogram is normalized such that
+the sum of the bars is equal to <var>norm</var>.
+
+        <p>Extreme values are lumped in the first and last bins.
+
+        <p>With two output arguments, produce the values <var>nn</var> and <var>xx</var> such
+that <code>bar (</code><var>xx</var><code>, </code><var>nn</var><code>)</code> will plot the histogram. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dbar.html#doc_002dbar">bar</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/stairs.m -->
+<p><a name="doc_002dstairs"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>stairs</b> (<var>x, y</var>)<var><a name="index-stairs-843"></a></var><br>
+&mdash; Function File:  <b>stairs</b> (<var><small class="dots">...</small>, style</var>)<var><a name="index-stairs-844"></a></var><br>
+&mdash; Function File:  <b>stairs</b> (<var><small class="dots">...</small>, prop, val</var>)<var><a name="index-stairs-845"></a></var><br>
+&mdash; Function File:  <b>stairs</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-stairs-846"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>stairs</b> (<var><small class="dots">...</small></var>)<var><a name="index-stairs-847"></a></var><br>
+<blockquote><p>Produce a stairstep plot.  The arguments may be vectors or matrices.
+
+        <p>If only one argument is given, it is taken as a vector of y-values
+and the x coordinates are taken to be the indices of the elements.
+
+        <p>If two output arguments are specified, the data are generated but
+not plotted.  For example,
+
+     <pre class="example">          stairs (x, y);
+     </pre>
+        <p class="noindent">and
+
+     <pre class="example">          [xs, ys] = stairs (x, y);
+          plot (xs, ys);
+     </pre>
+        <p class="noindent">are equivalent. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dsemilogx.html#doc_002dsemilogx">semilogx</a>, <a href="doc_002dsemilogy.html#doc_002dsemilogy">semilogy</a>, <a href="doc_002dloglog.html#doc_002dloglog">loglog</a>, <a href="doc_002dpolar.html#doc_002dpolar">polar</a>, <a href="doc_002dmesh.html#doc_002dmesh">mesh</a>, <a href="doc_002dcontour.html#doc_002dcontour">contour</a>, <a href="doc_002dbar.html#doc_002dbar">bar</a>, <a href="doc_002dxlabel.html#doc_002dxlabel">xlabel</a>, <a href="doc_002dylabel.html#doc_002dylabel">ylabel</a>, <a href="doc_002dtitle.html#doc_002dtitle">title</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/stem.m -->
+<p><a name="doc_002dstem"></a>
+
+<div class="defun">
+&mdash; Function File: <var>h</var> = <b>stem</b> (<var>x, y, linespec</var>)<var><a name="index-stem-848"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>stem</b> (<var><small class="dots">...</small>, "filled"</var>)<var><a name="index-stem-849"></a></var><br>
+<blockquote><p>Plot a stem graph from two vectors of x-y data.  If only one argument
+is given, it is taken as the y-values and the x coordinates are taken
+from the indices of the elements.
+
+        <p>If <var>y</var> is a matrix, then each column of the matrix is plotted as
+a separate stem graph.  In this case <var>x</var> can either be a vector,
+the same length as the number of rows in <var>y</var>, or it can be a
+matrix of the same size as <var>y</var>.
+
+        <p>The default color is <code>"r"</code> (red).  The default line style is
+<code>"-"</code> and the default marker is <code>"o"</code>.  The line style can
+be altered by the <code>linespec</code> argument in the same manner as the
+<code>plot</code> command.  For example
+
+     <pre class="example">          x = 1:10;
+          y = ones (1, length (x))*2.*x;
+          stem (x, y, "b");
+     </pre>
+        <p class="noindent">plots 10 stems with heights from 2 to 20 in blue;
+
+        <p>The return value of <code>stem</code> is a vector if "stem series" graphics
+handles, with one handle per column of the variable <var>y</var>.  This
+handle regroups the elements of the stem graph together as the
+children of the "stem series" handle, allowing them to be altered
+together.  For example
+
+     <pre class="example">          x = [0 : 10].';
+          y = [sin(x), cos(x)]
+          h = stem (x, y);
+          set (h(2), "color", "g");
+          set (h(1), "basevalue", -1)
+     </pre>
+        <p class="noindent">changes the color of the second "stem series"  and moves the base line
+of the first. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dbar.html#doc_002dbar">bar</a>, <a href="doc_002dbarh.html#doc_002dbarh">barh</a>, <a href="doc_002dplot.html#doc_002dplot">plot</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/stem3.m -->
+<p><a name="doc_002dstem3"></a>
+
+<div class="defun">
+&mdash; Function File: <var>h</var> = <b>stem3</b> (<var>x, y, z, linespec</var>)<var><a name="index-stem3-850"></a></var><br>
+<blockquote><p>Plot a three-dimensional stem graph and return the handles of the line
+and marker objects used to draw the stems as "stem series" object. 
+The default color is <code>"r"</code> (red).  The default line style is
+<code>"-"</code> and the default marker is <code>"o"</code>.
+
+        <p>For example,
+     <pre class="example">          theta = 0:0.2:6;
+          stem3 (cos (theta), sin (theta), theta)
+     </pre>
+        <p class="noindent">plots 31 stems with heights from 0 to 6 lying on a circle.  Color
+definitions with rgb-triples are not valid! 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dbar.html#doc_002dbar">bar</a>, <a href="doc_002dbarh.html#doc_002dbarh">barh</a>, <a href="doc_002dstem.html#doc_002dstem">stem</a>, <a href="doc_002dplot.html#doc_002dplot">plot</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/scatter.m -->
+<p><a name="doc_002dscatter"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>scatter</b> (<var>x, y, s, c</var>)<var><a name="index-scatter-851"></a></var><br>
+&mdash; Function File:  <b>scatter</b> (<var><small class="dots">...</small>, 'filled'</var>)<var><a name="index-scatter-852"></a></var><br>
+&mdash; Function File:  <b>scatter</b> (<var><small class="dots">...</small>, style</var>)<var><a name="index-scatter-853"></a></var><br>
+&mdash; Function File:  <b>scatter</b> (<var><small class="dots">...</small>, prop, val</var>)<var><a name="index-scatter-854"></a></var><br>
+&mdash; Function File:  <b>scatter</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-scatter-855"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>scatter</b> (<var><small class="dots">...</small></var>)<var><a name="index-scatter-856"></a></var><br>
+<blockquote>
+<p>Plot a scatter plot of the data.  A marker is plotted at each point
+defined by the points in the vectors <var>x</var> and <var>y</var>.  The size of
+the markers used is determined by the <var>s</var>, which can be a scalar,
+a vector of the same length of <var>x</var> and <var>y</var>.  If <var>s</var> is not
+given or is an empty matrix, then the default value of 8 points is used.
+
+        <p>The color of the markers is determined by <var>c</var>, which can be a string
+defining a fixed color, a 3 element vector giving the red, green and blue
+components of the color, a vector of the same length as <var>x</var> that gives
+a scaled index into the current colormap, or a <var>n</var>-by-3 matrix defining
+the colors of each of the markers individually.
+
+        <p>The marker to use can be changed with the <var>style</var> argument, that is a
+string defining a marker in the same manner as the <code>plot</code> command. 
+If the argument 'filled' is given then the markers as filled.  All
+additional arguments are passed to the underlying patch command.
+
+        <p>The optional return value <var>h</var> provides a handle to the patch object
+
+     <pre class="example">          x = randn (100, 1);
+          y = randn (100, 1);
+          scatter (x, y, [], sqrt(x.^2 + y.^2));
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dpatch.html#doc_002dpatch">patch</a>, <a href="doc_002dscatter3.html#doc_002dscatter3">scatter3</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/scatter3.m -->
+<p><a name="doc_002dscatter3"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>scatter3</b> (<var>x, y, z, s, c</var>)<var><a name="index-scatter3-857"></a></var><br>
+&mdash; Function File:  <b>scatter3</b> (<var><small class="dots">...</small>, 'filled'</var>)<var><a name="index-scatter3-858"></a></var><br>
+&mdash; Function File:  <b>scatter3</b> (<var><small class="dots">...</small>, style</var>)<var><a name="index-scatter3-859"></a></var><br>
+&mdash; Function File:  <b>scatter3</b> (<var><small class="dots">...</small>, prop, val</var>)<var><a name="index-scatter3-860"></a></var><br>
+&mdash; Function File:  <b>scatter3</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-scatter3-861"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>scatter3</b> (<var><small class="dots">...</small></var>)<var><a name="index-scatter3-862"></a></var><br>
+<blockquote>
+<p>Plot a scatter plot of the data in 3D.  A marker is plotted at each point
+defined by the points in the vectors <var>x</var>, <var>y</var> and <var>z</var>.  The size
+of the markers used is determined by <var>s</var>, which can be a scalar or
+a vector of the same length of <var>x</var>, <var>y</var> and <var>z</var>.  If <var>s</var> is
+not given or is an empty matrix, then the default value of 8 points is used.
+
+        <p>The color of the markers is determined by <var>c</var>, which can be a string
+defining a fixed color, a 3 element vector giving the red, green and blue
+components of the color, a vector of the same length as <var>x</var> that gives
+a scaled index into the current colormap, or a <var>n</var>-by-3 matrix defining
+the colors of each of the markers individually.
+
+        <p>The marker to use can be changed with the <var>style</var> argument, that is a
+string defining a marker in the same manner as the <code>plot</code> command. 
+If the argument 'filled' is given then the markers as filled.  All
+additional arguments are passed to the underlying patch command.
+
+        <p>The optional return value <var>h</var> provides a handle to the patch object
+
+     <pre class="example">          [x, y, z] = peaks (20);
+          scatter3 (x(:), y(:), z(:), [], z(:));
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dpatch.html#doc_002dpatch">patch</a>, <a href="doc_002dscatter.html#doc_002dscatter">scatter</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/plotmatrix.m -->
+<p><a name="doc_002dplotmatrix"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>plotmatrix</b> (<var>x, y</var>)<var><a name="index-plotmatrix-863"></a></var><br>
+&mdash; Function File:  <b>plotmatrix</b> (<var>x</var>)<var><a name="index-plotmatrix-864"></a></var><br>
+&mdash; Function File:  <b>plotmatrix</b> (<var><small class="dots">...</small>, style</var>)<var><a name="index-plotmatrix-865"></a></var><br>
+&mdash; Function File:  <b>plotmatrix</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-plotmatrix-866"></a></var><br>
+&mdash; Function File: [<var>h</var>, <var>ax</var>, <var>bigax</var>, <var>p</var>, <var>pax</var>] = <b>plotmatrix</b> (<var><small class="dots">...</small></var>)<var><a name="index-plotmatrix-867"></a></var><br>
+<blockquote><p>Scatter plot of the columns of one matrix against another.  Given the
+arguments <var>x</var> and <var>y</var>, that have a matching number of rows,
+<code>plotmatrix</code> plots a set of axes corresponding to
+
+     <pre class="example">          plot (<var>x</var> (:, i), <var>y</var> (:, j)
+     </pre>
+        <p>Given a single argument <var>x</var>, then this is equivalent to
+
+     <pre class="example">          plotmatrix (<var>x</var>, <var>x</var>)
+     </pre>
+        <p class="noindent">except that the diagonal of the set of axes will be replaced with the
+histogram <code>hist (</code><var>x</var><code> (:, i))</code>.
+
+        <p>The marker to use can be changed with the <var>style</var> argument, that is a
+string defining a marker in the same manner as the <code>plot</code>
+command.  If a leading axes handle <var>h</var> is passed to
+<code>plotmatrix</code>, then this axis will be used for the plot.
+
+        <p>The optional return value <var>h</var> provides handles to the individual
+graphics objects in the scatter plots, whereas <var>ax</var> returns the
+handles to the scatter plot axis objects.  <var>bigax</var> is a hidden
+axis object that surrounds the other axes, such that the commands
+<code>xlabel</code>, <code>title</code>, etc., will be associated with this hidden
+axis.  Finally <var>p</var> returns the graphics objects associated with
+the histogram and <var>pax</var> the corresponding axes objects.
+
+     <pre class="example">          plotmatrix (randn (100, 3), 'g+')
+     </pre>
+        </blockquote></div>
+
+<!-- ./plot/pareto.m -->
+<p><a name="doc_002dpareto"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>pareto</b> (<var>x</var>)<var><a name="index-pareto-868"></a></var><br>
+&mdash; Function File:  <b>pareto</b> (<var>x, y</var>)<var><a name="index-pareto-869"></a></var><br>
+&mdash; Function File:  <b>pareto</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-pareto-870"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>pareto</b> (<var><small class="dots">...</small></var>)<var><a name="index-pareto-871"></a></var><br>
+<blockquote><p>Draw a Pareto chart, also called ABC chart.  A Pareto chart is a bar graph
+used to arrange information in such a way that priorities for process
+improvement can be established.  It organizes and displays information
+to show the relative importance of data.  The chart is similar to the
+histogram or bar chart, except that the bars are arranged in decreasing
+order from left to right along the abscissa.
+
+        <p>The fundamental idea (Pareto principle) behind the use of Pareto
+diagrams is that the majority of an effect is due to a small subset of the
+causes, so for quality improvement the first few (as presented on the
+diagram) contributing causes to a problem usually account for the majority
+of the result.  Thus, targeting these "major causes" for elimination
+results in the most cost-effective improvement scheme.
+
+        <p>The data are passed as <var>x</var> and the abscissa as <var>y</var>.  If <var>y</var> is
+absent, then the abscissa are assumed to be <code>1 : length (</code><var>x</var><code>)</code>. 
+<var>y</var> can be a string array, a cell array of strings or a numerical
+vector.
+
+        <p>An example of the use of <code>pareto</code> is
+
+     <pre class="example">          Cheese = {"Cheddar", "Swiss", "Camembert", ...
+                    "Munster", "Stilton", "Blue"};
+          Sold = [105, 30, 70, 10, 15, 20];
+          pareto(Sold, Cheese);
+     </pre>
+        </blockquote></div>
+
+<!-- ./plot/rose.m -->
+<p><a name="doc_002drose"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>rose</b> (<var>th, r</var>)<var><a name="index-rose-872"></a></var><br>
+&mdash; Function File:  <b>rose</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-rose-873"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>rose</b> (<var><small class="dots">...</small></var>)<var><a name="index-rose-874"></a></var><br>
+&mdash; Function File: [<var>r</var>, <var>th</var>] = <b>rose</b> (<var><small class="dots">...</small></var>)<var><a name="index-rose-875"></a></var><br>
+<blockquote>
+<p>Plot an angular histogram.  With one vector argument <var>th</var>, plots the
+histogram with 20 angular bins.  If <var>th</var> is a matrix, then each column
+of <var>th</var> produces a separate histogram.
+
+        <p>If <var>r</var> is given and is a scalar, then the histogram is produced with
+<var>r</var> bins.  If <var>r</var> is a vector, then the center of each bin are
+defined by the values of <var>r</var>.
+
+        <p>The optional return value <var>h</var> provides a list of handles to the
+the parts of the vector field (body, arrow and marker).
+
+        <p>If two output arguments are requested, then rather than plotting the
+histogram, the polar vectors necessary to plot the histogram are
+returned.
+
+     <pre class="example">          [r, t] = rose ([2*randn(1e5,1), pi + 2 * randn(1e5,1)]);
+          polar (r, t);
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dcompass.html#doc_002dcompass">compass</a>, <a href="doc_002dpolar.html#doc_002dpolar">polar</a>, <a href="doc_002dhist.html#doc_002dhist">hist</a>. 
+</p></blockquote></div>
+
+   <p>The <code>contour</code>, <code>contourf</code> and <code>contourc</code> functions
+produce two-dimensional contour plots from three-dimensional data.
+
+<!-- ./plot/contour.m -->
+<p><a name="doc_002dcontour"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>contour</b> (<var>z</var>)<var><a name="index-contour-876"></a></var><br>
+&mdash; Function File:  <b>contour</b> (<var>z, vn</var>)<var><a name="index-contour-877"></a></var><br>
+&mdash; Function File:  <b>contour</b> (<var>x, y, z</var>)<var><a name="index-contour-878"></a></var><br>
+&mdash; Function File:  <b>contour</b> (<var>x, y, z, vn</var>)<var><a name="index-contour-879"></a></var><br>
+&mdash; Function File:  <b>contour</b> (<var><small class="dots">...</small>, style</var>)<var><a name="index-contour-880"></a></var><br>
+&mdash; Function File:  <b>contour</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-contour-881"></a></var><br>
+&mdash; Function File: [<var>c</var>, <var>h</var>] = <b>contour</b> (<var><small class="dots">...</small></var>)<var><a name="index-contour-882"></a></var><br>
+<blockquote><p>Plot level curves (contour lines) of the matrix <var>z</var>, using the
+contour matrix <var>c</var> computed by <code>contourc</code> from the same
+arguments; see the latter for their interpretation.  The set of
+contour levels, <var>c</var>, is only returned if requested.  For example:
+
+     <pre class="example">          x = 0:2;
+          y = x;
+          z = x' * y;
+          contour (x, y, z, 2:3)
+     </pre>
+        <p>The style to use for the plot can be defined with a line style <var>style</var>
+in a similar manner to the line styles used with the <code>plot</code> command. 
+Any markers defined by <var>style</var> are ignored.
+
+        <p>The optional input and output argument <var>h</var> allows an axis handle to
+be passed to <code>contour</code> and the handles to the contour objects to be
+returned. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dcontourc.html#doc_002dcontourc">contourc</a>, <a href="doc_002dpatch.html#doc_002dpatch">patch</a>, <a href="doc_002dplot.html#doc_002dplot">plot</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/contourf.m -->
+<p><a name="doc_002dcontourf"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>c</var>, <var>h</var>] = <b>contourf</b> (<var>x, y, z, lvl</var>)<var><a name="index-contourf-883"></a></var><br>
+&mdash; Function File: [<var>c</var>, <var>h</var>] = <b>contourf</b> (<var>x, y, z, n</var>)<var><a name="index-contourf-884"></a></var><br>
+&mdash; Function File: [<var>c</var>, <var>h</var>] = <b>contourf</b> (<var>x, y, z</var>)<var><a name="index-contourf-885"></a></var><br>
+&mdash; Function File: [<var>c</var>, <var>h</var>] = <b>contourf</b> (<var>z, n</var>)<var><a name="index-contourf-886"></a></var><br>
+&mdash; Function File: [<var>c</var>, <var>h</var>] = <b>contourf</b> (<var>z, lvl</var>)<var><a name="index-contourf-887"></a></var><br>
+&mdash; Function File: [<var>c</var>, <var>h</var>] = <b>contourf</b> (<var>z</var>)<var><a name="index-contourf-888"></a></var><br>
+&mdash; Function File: [<var>c</var>, <var>h</var>] = <b>contourf</b> (<var>ax, <small class="dots">...</small></var>)<var><a name="index-contourf-889"></a></var><br>
+&mdash; Function File: [<var>c</var>, <var>h</var>] = <b>contourf</b> (<var><small class="dots">...</small>, "property", val</var>)<var><a name="index-contourf-890"></a></var><br>
+<blockquote><p>Compute and plot filled contours of the matrix <var>z</var>. 
+Parameters <var>x</var>, <var>y</var> and <var>n</var> or <var>lvl</var> are optional.
+
+        <p>The return value <var>c</var> is a 2xn matrix containing the contour lines
+as described in the help to the contourc function.
+
+        <p>The return value <var>h</var> is handle-vector to the patch objects creating
+the filled contours.
+
+        <p>If <var>x</var> and <var>y</var> are omitted they are taken as the row/column
+index of <var>z</var>.  <var>n</var> is a scalar denoting the number of lines
+to compute.  Alternatively <var>lvl</var> is a vector containing the
+contour levels.  If only one value (e.g., lvl0) is wanted, set
+<var>lvl</var> to [lvl0, lvl0].  If both <var>n</var> or <var>lvl</var> are omitted
+a default value of 10 contour level is assumed.
+
+        <p>If provided, the filled contours are added to the axes object
+<var>ax</var> instead of the current axis.
+
+        <p>The following example plots filled contours of the <code>peaks</code>
+function.
+     <pre class="example">          [x, y, z] = peaks (50);
+          contourf (x, y, z, -7:9)
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dcontour.html#doc_002dcontour">contour</a>, <a href="doc_002dcontourc.html#doc_002dcontourc">contourc</a>, <a href="doc_002dpatch.html#doc_002dpatch">patch</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/contourc.m -->
+<p><a name="doc_002dcontourc"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>c</var>, <var>lev</var>] = <b>contourc</b> (<var>x, y, z, vn</var>)<var><a name="index-contourc-891"></a></var><br>
+<blockquote><p>Compute isolines (contour lines) of the matrix <var>z</var>. 
+Parameters <var>x</var>, <var>y</var> and <var>vn</var> are optional.
+
+        <p>The return value <var>lev</var> is a vector of the contour levels. 
+The return value <var>c</var> is a 2 by <var>n</var> matrix containing the
+contour lines in the following format
+
+     <pre class="example">          <var>c</var> = [lev1, x1, x2, ..., levn, x1, x2, ...
+               len1, y1, y2, ..., lenn, y1, y2, ...]
+     </pre>
+        <p class="noindent">in which contour line <var>n</var> has a level (height) of <var>levn</var> and
+length of <var>lenn</var>.
+
+        <p>If <var>x</var> and <var>y</var> are omitted they are taken as the row/column
+index of <var>z</var>.  <var>vn</var> is either a scalar denoting the number of lines
+to compute or a vector containing the values of the lines.  If only one
+value is wanted, set <var>vn</var><code> = [val, val]</code>;
+If <var>vn</var> is omitted it defaults to 10.
+
+        <p>For example,
+     <pre class="example">          x = 0:2;
+          y = x;
+          z = x' * y;
+          contourc (x, y, z, 2:3)
+               =&gt;   2.0000   2.0000   1.0000   3.0000   1.5000   2.0000
+               2.0000   1.0000   2.0000   2.0000   2.0000   1.5000
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dcontour.html#doc_002dcontour">contour</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/contour3.m -->
+<p><a name="doc_002dcontour3"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>contour3</b> (<var>z</var>)<var><a name="index-contour3-892"></a></var><br>
+&mdash; Function File:  <b>contour3</b> (<var>z, vn</var>)<var><a name="index-contour3-893"></a></var><br>
+&mdash; Function File:  <b>contour3</b> (<var>x, y, z</var>)<var><a name="index-contour3-894"></a></var><br>
+&mdash; Function File:  <b>contour3</b> (<var>x, y, z, vn</var>)<var><a name="index-contour3-895"></a></var><br>
+&mdash; Function File:  <b>contour3</b> (<var><small class="dots">...</small>, style</var>)<var><a name="index-contour3-896"></a></var><br>
+&mdash; Function File:  <b>contour3</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-contour3-897"></a></var><br>
+&mdash; Function File: [<var>c</var>, <var>h</var>] = <b>contour3</b> (<var><small class="dots">...</small></var>)<var><a name="index-contour3-898"></a></var><br>
+<blockquote><p>Plot level curves (contour lines) of the matrix <var>z</var>, using the
+contour matrix <var>c</var> computed by <code>contourc</code> from the same
+arguments; see the latter for their interpretation.  The contours are
+plotted at the Z level corresponding to their contour.  The set of
+contour levels, <var>c</var>, is only returned if requested.  For example:
+
+     <pre class="example">          contour3 (peaks (19));
+          hold on
+          surface (peaks (19), "facecolor", "none", "EdgeColor", "black")
+          colormap hot
+     </pre>
+        <p>The style to use for the plot can be defined with a line style <var>style</var>
+in a similar manner to the line styles used with the <code>plot</code> command. 
+Any markers defined by <var>style</var> are ignored.
+
+        <p>The optional input and output argument <var>h</var> allows an axis handle to
+be passed to <code>contour</code> and the handles to the contour objects to be
+returned. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dcontourc.html#doc_002dcontourc">contourc</a>, <a href="doc_002dpatch.html#doc_002dpatch">patch</a>, <a href="doc_002dplot.html#doc_002dplot">plot</a>. 
+</p></blockquote></div>
+
+   <p>The <code>errorbar</code>, <code>semilogxerr</code>, <code>semilogyerr</code>, and
+<code>loglogerr</code> functions produce plots with error bar markers.  For
+example,
+
+<pre class="example">     x = 0:0.1:10;
+     y = sin (x);
+     yp =  0.1 .* randn (size (x));
+     ym = -0.1 .* randn (size (x));
+     errorbar (x, sin (x), ym, yp);
+</pre>
+   <p class="noindent">produces the figure shown in <a href="fig_003aerrorbar.html#fig_003aerrorbar">fig:errorbar</a>.
+
+   <div class="float">
+<a name="fig_003aerrorbar"></a><div align="center"><img src="errorbar.png" alt="errorbar.png"></div>
+   <p><strong class="float-caption">Figure 15.3: Errorbar plot.</strong></p></div>
+
+<!-- ./plot/errorbar.m -->
+<p><a name="doc_002derrorbar"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>errorbar</b> (<var>args</var>)<var><a name="index-errorbar-899"></a></var><br>
+<blockquote><p>This function produces two-dimensional plots with errorbars.  Many
+different combinations of arguments are possible.  The simplest form is
+
+     <pre class="example">          errorbar (<var>y</var>, <var>ey</var>)
+     </pre>
+        <p class="noindent">where the first argument is taken as the set of <var>y</var> coordinates
+and the second argument <var>ey</var> is taken as the errors of the
+<var>y</var> values.  <var>x</var> coordinates are taken to be the indices
+of the elements, starting with 1.
+
+        <p>If more than two arguments are given, they are interpreted as
+
+     <pre class="example">          errorbar (<var>x</var>, <var>y</var>, ..., <var>fmt</var>, ...)
+     </pre>
+        <p class="noindent">where after <var>x</var> and <var>y</var> there can be up to four error
+parameters such as <var>ey</var>, <var>ex</var>, <var>ly</var>, <var>uy</var>, etc.,
+depending on the plot type.  Any number of argument sets may appear,
+as long as they are separated with a format string <var>fmt</var>.
+
+        <p>If <var>y</var> is a matrix, <var>x</var> and error parameters must also be matrices
+having same dimensions.  The columns of <var>y</var> are plotted versus the
+corresponding columns of <var>x</var> and errorbars are drawn from
+the corresponding columns of error parameters.
+
+        <p>If <var>fmt</var> is missing, yerrorbars ("~") plot style is assumed.
+
+        <p>If the <var>fmt</var> argument is supplied, it is interpreted as in
+normal plots.  In addition the following plot styles are supported by
+errorbar:
+
+          <dl>
+<dt><span class="samp">~</span><dd>Set yerrorbars plot style (default).
+
+          <br><dt><span class="samp">&gt;</span><dd>Set xerrorbars plot style.
+
+          <br><dt><span class="samp">~&gt;</span><dd>Set xyerrorbars plot style.
+
+          <br><dt><span class="samp">#</span><dd>Set boxes plot style.
+
+          <br><dt><span class="samp">#~</span><dd>Set boxerrorbars plot style.
+
+          <br><dt><span class="samp">#~&gt;</span><dd>Set boxxyerrorbars plot style. 
+</dl>
+
+        <p>Examples:
+
+     <pre class="example">          errorbar (<var>x</var>, <var>y</var>, <var>ex</var>, "&gt;")
+     </pre>
+        <p>produces an xerrorbar plot of <var>y</var> versus <var>x</var> with <var>x</var>
+errorbars drawn from <var>x</var>-<var>ex</var> to <var>x</var>+<var>ex</var>.
+
+     <pre class="example">          errorbar (<var>x</var>, <var>y1</var>, <var>ey</var>, "~",
+                    <var>x</var>, <var>y2</var>, <var>ly</var>, <var>uy</var>)
+     </pre>
+        <p>produces yerrorbar plots with <var>y1</var> and <var>y2</var> versus <var>x</var>. 
+Errorbars for <var>y1</var> are drawn from <var>y1</var>-<var>ey</var> to
+<var>y1</var>+<var>ey</var>, errorbars for <var>y2</var> from <var>y2</var>-<var>ly</var> to
+<var>y2</var>+<var>uy</var>.
+
+     <pre class="example">          errorbar (<var>x</var>, <var>y</var>, <var>lx</var>, <var>ux</var>,
+                    <var>ly</var>, <var>uy</var>, "~&gt;")
+     </pre>
+        <p>produces an xyerrorbar plot of <var>y</var> versus <var>x</var> in which
+<var>x</var> errorbars are drawn from <var>x</var>-<var>lx</var> to <var>x</var>+<var>ux</var>
+and <var>y</var> errorbars from <var>y</var>-<var>ly</var> to <var>y</var>+<var>uy</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsemilogxerr.html#doc_002dsemilogxerr">semilogxerr</a>, <a href="doc_002dsemilogyerr.html#doc_002dsemilogyerr">semilogyerr</a>, <a href="doc_002dloglogerr.html#doc_002dloglogerr">loglogerr</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/semilogxerr.m -->
+<p><a name="doc_002dsemilogxerr"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>semilogxerr</b> (<var>args</var>)<var><a name="index-semilogxerr-900"></a></var><br>
+<blockquote><p>Produce two-dimensional plots on a semilogarithm axis with errorbars. 
+Many different combinations of arguments are possible.  The most used
+form is
+
+     <pre class="example">          semilogxerr (<var>x</var>, <var>y</var>, <var>ey</var>, <var>fmt</var>)
+     </pre>
+        <p class="noindent">which produces a semi-logarithm plot of <var>y</var> versus <var>x</var>
+with errors in the <var>y</var>-scale defined by <var>ey</var> and the plot
+format defined by <var>fmt</var>.  See errorbar for available formats and
+additional information. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002derrorbar.html#doc_002derrorbar">errorbar</a>, <a href="doc_002dloglogerr.html#doc_002dloglogerr">loglogerr</a>, <a href="doc_002dsemilogyerr.html#doc_002dsemilogyerr">semilogyerr</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/semilogyerr.m -->
+<p><a name="doc_002dsemilogyerr"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>semilogyerr</b> (<var>args</var>)<var><a name="index-semilogyerr-901"></a></var><br>
+<blockquote><p>Produce two-dimensional plots on a semilogarithm axis with errorbars. 
+Many different combinations of arguments are possible.  The most used
+form is
+
+     <pre class="example">          semilogyerr (<var>x</var>, <var>y</var>, <var>ey</var>, <var>fmt</var>)
+     </pre>
+        <p class="noindent">which produces a semi-logarithm plot of <var>y</var> versus <var>x</var>
+with errors in the <var>y</var>-scale defined by <var>ey</var> and the plot
+format defined by <var>fmt</var>.  See errorbar for available formats and
+additional information. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002derrorbar.html#doc_002derrorbar">errorbar</a>, <a href="doc_002dloglogerr.html#doc_002dloglogerr">loglogerr</a>, <a href="doc_002dsemilogxerr.html#doc_002dsemilogxerr">semilogxerr</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/loglogerr.m -->
+<p><a name="doc_002dloglogerr"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>loglogerr</b> (<var>args</var>)<var><a name="index-loglogerr-902"></a></var><br>
+<blockquote><p>Produce two-dimensional plots on double logarithm axis with
+errorbars.  Many different combinations of arguments are possible. 
+The most used form is
+
+     <pre class="example">          loglogerr (<var>x</var>, <var>y</var>, <var>ey</var>, <var>fmt</var>)
+     </pre>
+        <p class="noindent">which produces a double logarithm plot of <var>y</var> versus <var>x</var>
+with errors in the <var>y</var>-scale defined by <var>ey</var> and the plot
+format defined by <var>fmt</var>.  See errorbar for available formats and
+additional information. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002derrorbar.html#doc_002derrorbar">errorbar</a>, <a href="doc_002dsemilogxerr.html#doc_002dsemilogxerr">semilogxerr</a>, <a href="doc_002dsemilogyerr.html#doc_002dsemilogyerr">semilogyerr</a>. 
+</p></blockquote></div>
+
+   <p>Finally, the <code>polar</code> function allows you to easily plot data in
+polar coordinates.  However, the display coordinates remain rectangular
+and linear.  For example,
+
+<pre class="example">     polar (0:0.1:10*pi, 0:0.1:10*pi);
+</pre>
+   <p class="noindent">produces the spiral plot shown in <a href="fig_003apolar.html#fig_003apolar">fig:polar</a>.
+
+   <div class="float">
+<a name="fig_003apolar"></a><div align="center"><img src="polar.png" alt="polar.png"></div>
+   <p><strong class="float-caption">Figure 15.4: Polar plot.</strong></p></div>
+
+<!-- ./plot/polar.m -->
+<p><a name="doc_002dpolar"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>polar</b> (<var>theta, rho, fmt</var>)<var><a name="index-polar-903"></a></var><br>
+<blockquote><p>Make a two-dimensional plot given the polar coordinates <var>theta</var> and
+<var>rho</var>.
+
+        <p>The optional third argument specifies the line type. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/pie.m -->
+<p><a name="doc_002dpie"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>pie</b> (<var>y</var>)<var><a name="index-pie-904"></a></var><br>
+&mdash; Function File:  <b>pie</b> (<var>y, explode</var>)<var><a name="index-pie-905"></a></var><br>
+&mdash; Function File:  <b>pie</b> (<var><small class="dots">...</small>, labels</var>)<var><a name="index-pie-906"></a></var><br>
+&mdash; Function File:  <b>pie</b> (<var>h, <small class="dots">...</small></var>)<var>;<a name="index-pie-907"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>pie</b> (<var><small class="dots">...</small></var>)<var>;<a name="index-pie-908"></a></var><br>
+<blockquote><p>Produce a pie chart.
+
+        <p>Called with a single vector argument, produces a pie chart of the
+elements in <var>x</var>, with the size of the slice determined by percentage
+size of the values of <var>x</var>.
+
+        <p>The variable <var>explode</var> is a vector of the same length as <var>x</var> that
+if non zero 'explodes' the slice from the pie chart.
+
+        <p>If given <var>labels</var> is a cell array of strings of the same length as
+<var>x</var>, giving the labels of each of the slices of the pie chart.
+
+        <p>The optional return value <var>h</var> provides a handle to the patch object.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dbar.html#doc_002dbar">bar</a>, <a href="doc_002dstem.html#doc_002dstem">stem</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/quiver.m -->
+<p><a name="doc_002dquiver"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>quiver</b> (<var>u, v</var>)<var><a name="index-quiver-909"></a></var><br>
+&mdash; Function File:  <b>quiver</b> (<var>x, y, u, v</var>)<var><a name="index-quiver-910"></a></var><br>
+&mdash; Function File:  <b>quiver</b> (<var><small class="dots">...</small>, s</var>)<var><a name="index-quiver-911"></a></var><br>
+&mdash; Function File:  <b>quiver</b> (<var><small class="dots">...</small>, style</var>)<var><a name="index-quiver-912"></a></var><br>
+&mdash; Function File:  <b>quiver</b> (<var><small class="dots">...</small>, 'filled'</var>)<var><a name="index-quiver-913"></a></var><br>
+&mdash; Function File:  <b>quiver</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-quiver-914"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>quiver</b> (<var><small class="dots">...</small></var>)<var><a name="index-quiver-915"></a></var><br>
+<blockquote>
+<p>Plot the <code>(</code><var>u</var><code>, </code><var>v</var><code>)</code> components of a vector field in
+an <code>(</code><var>x</var><code>, </code><var>y</var><code>)</code> meshgrid.  If the grid is uniform, you can
+specify <var>x</var> and <var>y</var> as vectors.
+
+        <p>If <var>x</var> and <var>y</var> are undefined they are assumed to be
+<code>(1:</code><var>m</var><code>, 1:</code><var>n</var><code>)</code> where <code>[</code><var>m</var><code>, </code><var>n</var><code>] =
+size(</code><var>u</var><code>)</code>.
+
+        <p>The variable <var>s</var> is a scalar defining a scaling factor to use for
+ the arrows of the field relative to the mesh spacing.  A value of 0
+disables all scaling.  The default value is 1.
+
+        <p>The style to use for the plot can be defined with a line style <var>style</var>
+in a similar manner to the line styles used with the <code>plot</code> command. 
+If a marker is specified then markers at the grid points of the vectors are
+printed rather than arrows.  If the argument 'filled' is given then the
+markers as filled.
+
+        <p>The optional return value <var>h</var> provides a quiver group that
+regroups the components of the quiver plot (body, arrow and marker),
+and allows them to be changed together
+
+     <pre class="example">          [x, y] = meshgrid (1:2:20);
+          h = quiver (x, y, sin (2*pi*x/10), sin (2*pi*y/10));
+          set (h, "maxheadsize", 0.33);
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/quiver3.m -->
+<p><a name="doc_002dquiver3"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>quiver3</b> (<var>u, v, w</var>)<var><a name="index-quiver3-916"></a></var><br>
+&mdash; Function File:  <b>quiver3</b> (<var>x, y, z, u, v, w</var>)<var><a name="index-quiver3-917"></a></var><br>
+&mdash; Function File:  <b>quiver3</b> (<var><small class="dots">...</small>, s</var>)<var><a name="index-quiver3-918"></a></var><br>
+&mdash; Function File:  <b>quiver3</b> (<var><small class="dots">...</small>, style</var>)<var><a name="index-quiver3-919"></a></var><br>
+&mdash; Function File:  <b>quiver3</b> (<var><small class="dots">...</small>, 'filled'</var>)<var><a name="index-quiver3-920"></a></var><br>
+&mdash; Function File:  <b>quiver3</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-quiver3-921"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>quiver3</b> (<var><small class="dots">...</small></var>)<var><a name="index-quiver3-922"></a></var><br>
+<blockquote>
+<p>Plot the <code>(</code><var>u</var><code>, </code><var>v</var><code>, </code><var>w</var><code>)</code> components of a vector field in
+an <code>(</code><var>x</var><code>, </code><var>y</var><code>), </code><var>z</var> meshgrid.  If the grid is uniform, you
+can specify <var>x</var>, <var>y</var> <var>z</var> as vectors.
+
+        <p>If <var>x</var>, <var>y</var> and <var>z</var> are undefined they are assumed to be
+<code>(1:</code><var>m</var><code>, 1:</code><var>n</var><code>, 1:</code><var>p</var><code>)</code> where <code>[</code><var>m</var><code>, </code><var>n</var><code>] =
+size(</code><var>u</var><code>)</code> and <var>p</var><code> = max (size (</code><var>w</var><code>))</code>.
+
+        <p>The variable <var>s</var> is a scalar defining a scaling factor to use for
+ the arrows of the field relative to the mesh spacing.  A value of 0
+disables all scaling.  The default value is 1.
+
+        <p>The style to use for the plot can be defined with a line style <var>style</var>
+in a similar manner to the line styles used with the <code>plot</code> command. 
+If a marker is specified then markers at the grid points of the vectors are
+printed rather than arrows.  If the argument 'filled' is given then the
+markers as filled.
+
+        <p>The optional return value <var>h</var> provides a quiver group that
+regroups the components of the quiver plot (body, arrow and marker),
+and allows them to be changed together
+
+     <pre class="example">          [x, y, z] = peaks (25);
+          surf (x, y, z);
+          hold on;
+          [u, v, w] = surfnorm (x, y, z / 10);
+          h = quiver3 (x, y, z, u, v, w);
+          set (h, "maxheadsize", 0.33);
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/compass.m -->
+<p><a name="doc_002dcompass"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>compass</b> (<var>u, v</var>)<var><a name="index-compass-923"></a></var><br>
+&mdash; Function File:  <b>compass</b> (<var>z</var>)<var><a name="index-compass-924"></a></var><br>
+&mdash; Function File:  <b>compass</b> (<var><small class="dots">...</small>, style</var>)<var><a name="index-compass-925"></a></var><br>
+&mdash; Function File:  <b>compass</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-compass-926"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>compass</b> (<var><small class="dots">...</small></var>)<var><a name="index-compass-927"></a></var><br>
+<blockquote>
+<p>Plot the <code>(</code><var>u</var><code>, </code><var>v</var><code>)</code> components of a vector field emanating
+from the origin of a polar plot.  If a single complex argument <var>z</var> is
+given, then <var>u</var><code> = real (</code><var>z</var><code>)</code> and <var>v</var><code> = imag
+(</code><var>z</var><code>)</code>.
+
+        <p>The style to use for the plot can be defined with a line style <var>style</var>
+in a similar manner to the line styles used with the <code>plot</code> command.
+
+        <p>The optional return value <var>h</var> provides a list of handles to the
+the parts of the vector field (body, arrow and marker).
+
+     <pre class="example">          a = toeplitz([1;randn(9,1)],[1,randn(1,9)]);
+          compass (eig (a))
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dpolar.html#doc_002dpolar">polar</a>, <a href="doc_002dquiver.html#doc_002dquiver">quiver</a>, <a href="doc_002dfeather.html#doc_002dfeather">feather</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/feather.m -->
+<p><a name="doc_002dfeather"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>feather</b> (<var>u, v</var>)<var><a name="index-feather-928"></a></var><br>
+&mdash; Function File:  <b>feather</b> (<var>z</var>)<var><a name="index-feather-929"></a></var><br>
+&mdash; Function File:  <b>feather</b> (<var><small class="dots">...</small>, style</var>)<var><a name="index-feather-930"></a></var><br>
+&mdash; Function File:  <b>feather</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-feather-931"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>feather</b> (<var><small class="dots">...</small></var>)<var><a name="index-feather-932"></a></var><br>
+<blockquote>
+<p>Plot the <code>(</code><var>u</var><code>, </code><var>v</var><code>)</code> components of a vector field emanating
+from equidistant points on the x-axis.  If a single complex argument
+<var>z</var> is given, then <var>u</var><code> = real (</code><var>z</var><code>)</code> and
+<var>v</var><code> = imag (</code><var>z</var><code>)</code>.
+
+        <p>The style to use for the plot can be defined with a line style <var>style</var>
+in a similar manner to the line styles used with the <code>plot</code> command.
+
+        <p>The optional return value <var>h</var> provides a list of handles to the
+the parts of the vector field (body, arrow and marker).
+
+     <pre class="example">          phi = [0 : 15 : 360] * pi / 180;
+          feather (sin (phi), cos (phi))
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dquiver.html#doc_002dquiver">quiver</a>, <a href="doc_002dcompass.html#doc_002dcompass">compass</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/pcolor.m -->
+<p><a name="doc_002dpcolor"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>pcolor</b> (<var>x, y, c</var>)<var><a name="index-pcolor-933"></a></var><br>
+&mdash; Function File:  <b>pcolor</b> (<var>c</var>)<var><a name="index-pcolor-934"></a></var><br>
+<blockquote><p>Density plot for given matrices <var>x</var>, and <var>y</var> from <code>meshgrid</code> and
+a matrix <var>c</var> corresponding to the <var>x</var> and <var>y</var> coordinates of
+the mesh's vertices.  If <var>x</var> and <var>y</var> are vectors, then a typical vertex
+is (<var>x</var>(j), <var>y</var>(i), <var>c</var>(i,j)).  Thus, columns of <var>c</var>
+correspond to different <var>x</var> values and rows of <var>c</var> correspond
+to different <var>y</var> values.
+
+        <p>The <code>colormap</code> is scaled to the extents of <var>c</var>. 
+Limits may be placed on the color axis by the
+command <code>caxis</code>, or by setting the <code>clim</code> property of the
+parent axis.
+
+        <p>The face color of each cell of the mesh is determined by interpolating
+the values of <var>c</var> for the cell's vertices.  Contrast this with
+<code>imagesc</code> which renders one cell for each element of <var>c</var>.
+
+        <p><code>shading</code> modifies an attribute determining the manner by which the
+face color of each cell is interpolated from the values of <var>c</var>,
+and the visibility of the cells' edges.  By default the attribute is
+"faceted", which renders a single color for each cell's face with the edge
+visible.
+
+        <p><var>h</var> is the handle to the surface object.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dcaxis.html#doc_002dcaxis">caxis</a>, <a href="doc_002dcontour.html#doc_002dcontour">contour</a>, <a href="doc_002dmeshgrid.html#doc_002dmeshgrid">meshgrid</a>, <a href="doc_002dimagesc.html#doc_002dimagesc">imagesc</a>, <a href="doc_002dshading.html#doc_002dshading">shading</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/area.m -->
+<p><a name="doc_002darea"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>area</b> (<var>x, y</var>)<var><a name="index-area-935"></a></var><br>
+&mdash; Function File:  <b>area</b> (<var>x, y, lvl</var>)<var><a name="index-area-936"></a></var><br>
+&mdash; Function File:  <b>area</b> (<var><small class="dots">...</small>, prop, val, <small class="dots">...</small></var>)<var><a name="index-area-937"></a></var><br>
+&mdash; Function File:  <b>area</b> (<var>y, <small class="dots">...</small></var>)<var><a name="index-area-938"></a></var><br>
+&mdash; Function File:  <b>area</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-area-939"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>area</b> (<var><small class="dots">...</small></var>)<var><a name="index-area-940"></a></var><br>
+<blockquote><p>Area plot of cumulative sum of the columns of <var>y</var>.  This shows the
+contributions of a value to a sum, and is functionally similar to
+<code>plot (</code><var>x</var><code>, cumsum (</code><var>y</var><code>, 2))</code>, except that the area under
+the curve is shaded.
+
+        <p>If the <var>x</var> argument is omitted it is assumed to be given by
+<code>1 : rows (</code><var>y</var><code>)</code>.  A value <var>lvl</var> can be defined that determines
+where the base level of the shading under the curve should be defined.
+
+        <p>Additional arguments to the <code>area</code> function are passed to the
+<code>patch</code>.  The optional return value <var>h</var> provides a handle to
+area series object representing the patches of the areas. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dpatch.html#doc_002dpatch">patch</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/comet.m -->
+<p><a name="doc_002dcomet"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>comet</b> (<var>y</var>)<var><a name="index-comet-941"></a></var><br>
+&mdash; Function File:  <b>comet</b> (<var>x, y</var>)<var><a name="index-comet-942"></a></var><br>
+&mdash; Function File:  <b>comet</b> (<var>x, y, p</var>)<var><a name="index-comet-943"></a></var><br>
+&mdash; Function File:  <b>comet</b> (<var>ax, <small class="dots">...</small></var>)<var><a name="index-comet-944"></a></var><br>
+<blockquote><p>Produce a simple comet style animation along the trajectory provided by
+the input coordinate vectors (<var>x</var>, <var>y</var>), where <var>x</var> will default
+to the indices of <var>y</var>.
+
+        <p>The speed of the comet may be controlled by <var>p</var>, which represents the
+time which passes as the animation passes from one point to the next.  The
+default for <var>p</var> is 0.1 seconds.
+
+        <p>If <var>ax</var> is specified the animation is produced in that axis rather than
+the <code>gca</code>. 
+</p></blockquote></div>
+
+   <p>The axis function may be used to change the axis limits of an existing
+plot and various other axis properties, such as the aspect ratio and the
+appearance of tic marks.
+
+<!-- ./plot/axis.m -->
+<p><a name="doc_002daxis"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>axis</b> (<var>limits</var>)<var><a name="index-axis-945"></a></var><br>
+<blockquote><p>Set axis limits for plots.
+
+        <p>The argument <var>limits</var> should be a 2, 4, or 6 element vector.  The
+first and second elements specify the lower and upper limits for the x
+axis.  The third and fourth specify the limits for the y-axis, and the
+fifth and sixth specify the limits for the z-axis.
+
+        <p>Without any arguments, <code>axis</code> turns autoscaling on.
+
+        <p>With one output argument, <code>x = axis</code> returns the current axes
+
+        <p>The vector argument specifying limits is optional, and additional
+string arguments may be used to specify various axis properties.  For
+example,
+
+     <pre class="example">          axis ([1, 2, 3, 4], "square");
+     </pre>
+        <p class="noindent">forces a square aspect ratio, and
+
+     <pre class="example">          axis ("labely", "tic");
+     </pre>
+        <p class="noindent">turns tic marks on for all axes and tic mark labels on for the y-axis
+only.
+
+     <p class="noindent">The following options control the aspect ratio of the axes.
+
+          <dl>
+<dt><code>"square"</code><dd>Force a square aspect ratio. 
+<br><dt><code>"equal"</code><dd>Force x distance to equal y-distance. 
+<br><dt><code>"normal"</code><dd>Restore the balance. 
+</dl>
+
+     <p class="noindent">The following options control the way axis limits are interpreted.
+
+          <dl>
+<dt><code>"auto"</code><dd>Set the specified axes to have nice limits around the data
+or all if no axes are specified. 
+<br><dt><code>"manual"</code><dd>Fix the current axes limits. 
+<br><dt><code>"tight"</code><dd>Fix axes to the limits of the data. 
+</dl>
+
+     <p class="noindent">The option <code>"image"</code> is equivalent to <code>"tight"</code> and
+<code>"equal"</code>.
+
+     <p class="noindent">The following options affect the appearance of tic marks.
+
+          <dl>
+<dt><code>"on"</code><dd>Turn tic marks and labels on for all axes. 
+<br><dt><code>"off"</code><dd>Turn tic marks off for all axes. 
+<br><dt><code>"tic[xyz]"</code><dd>Turn tic marks on for all axes, or turn them on for the
+specified axes and off for the remainder. 
+<br><dt><code>"label[xyz]"</code><dd>Turn tic labels on for all axes, or turn them on for the
+specified axes and off for the remainder. 
+<br><dt><code>"nolabel"</code><dd>Turn tic labels off for all axes. 
+</dl>
+        Note, if there are no tic marks for an axis, there can be no labels.
+
+     <p class="noindent">The following options affect the direction of increasing values on
+the axes.
+
+          <dl>
+<dt><code>"ij"</code><dd>Reverse y-axis, so lower values are nearer the top. 
+<br><dt><code>"xy"</code><dd>Restore y-axis, so higher values are nearer the top. 
+</dl>
+
+        <p>If an axes handle is passed as the first argument, then operate on
+this axes rather than the current axes. 
+</p></blockquote></div>
+
+   <p>Similarly the axis limits of the colormap can be changed with the caxis
+function.
+
+<!-- ./plot/caxis.m -->
+<p><a name="doc_002dcaxis"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>caxis</b> (<var>limits</var>)<var><a name="index-caxis-946"></a></var><br>
+&mdash; Function File:  <b>caxis</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-caxis-947"></a></var><br>
+<blockquote><p>Set color axis limits for plots.
+
+        <p>The argument <var>limits</var> should be a 2 element vector specifying the
+lower and upper limits to assign to the first and last value in the
+colormap.  Values outside this range are clamped to the first and last
+colormap entries.
+
+        <p>If <var>limits</var> is 'auto', then automatic colormap scaling is applied,
+whereas if <var>limits</var> is 'manual' the colormap scaling is set to manual.
+
+        <p>Called without any arguments to current color axis limits are returned.
+
+        <p>If an axes handle is passed as the first argument, then operate on
+this axes rather than the current axes. 
+</p></blockquote></div>
+
+   <p>The <code>xlim</code>, <code>ylim</code>, and <code>zlim</code> functions may be used to
+get or set individual axis limits.  Each has the same form.
+
+   <p><a name="doc_002dylim"></a>
+<a name="doc_002dzlim"></a>
+<!-- ./plot/xlim.m -->
+<a name="doc_002dxlim"></a>
+
+<div class="defun">
+&mdash; Function File: <var>xl</var> = <b>xlim</b> ()<var><a name="index-xlim-948"></a></var><br>
+&mdash; Function File:  <b>xlim</b> (<var>xl</var>)<var><a name="index-xlim-949"></a></var><br>
+&mdash; Function File: <var>m</var> = <b>xlim</b> (<var>'mode'</var>)<var><a name="index-xlim-950"></a></var><br>
+&mdash; Function File:  <b>xlim</b> (<var>m</var>)<var><a name="index-xlim-951"></a></var><br>
+&mdash; Function File:  <b>xlim</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-xlim-952"></a></var><br>
+<blockquote><p>Get or set the limits of the x-axis of the current plot.  Called without
+arguments <code>xlim</code> returns the x-axis limits of the current plot. 
+If passed a two element vector <var>xl</var>, the limits of the x-axis are set
+to this value.
+
+        <p>The current mode for calculation of the x-axis can be returned with a
+call <code>xlim ('mode')</code>, and can be either 'auto' or 'manual'.  The
+current plotting mode can be set by passing either 'auto' or 'manual'
+as the argument.
+
+        <p>If passed an handle as the first argument, then operate on this handle
+rather than the current axes handle. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dylim.html#doc_002dylim">ylim</a>, <a href="doc_002dzlim.html#doc_002dzlim">zlim</a>, <a href="doc_002dset.html#doc_002dset">set</a>, <a href="doc_002dget.html#doc_002dget">get</a>, <a href="doc_002dgca.html#doc_002dgca">gca</a>. 
+</p></blockquote></div>
+
+<ul class="menu">
+<li><a accesskey="1" href="Two_002ddimensional-Function-Plotting.html#Two_002ddimensional-Function-Plotting">Two-dimensional Function Plotting</a>
+</ul>
+
+   </body></html>
+

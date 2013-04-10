@@ -1,0 +1,58 @@
+<html lang="en">
+<head>
+<title>String Input Conversions - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="C_002dStyle-I_002fO-Functions.html#C_002dStyle-I_002fO-Functions" title="C-Style I/O Functions">
+<link rel="prev" href="Numeric-Input-Conversions.html#Numeric-Input-Conversions" title="Numeric Input Conversions">
+<link rel="next" href="Binary-I_002fO.html#Binary-I_002fO" title="Binary I/O">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="String-Input-Conversions"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Binary-I_002fO.html#Binary-I_002fO">Binary I/O</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Numeric-Input-Conversions.html#Numeric-Input-Conversions">Numeric Input Conversions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="C_002dStyle-I_002fO-Functions.html#C_002dStyle-I_002fO-Functions">C-Style I/O Functions</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">14.2.15 String Input Conversions</h4>
+
+<p>This section describes the <code>scanf</code> input conversions for reading
+string and character values: <span class="samp">%s</span> and <span class="samp">%c</span>.
+
+   <p>The <span class="samp">%c</span> conversion is the simplest: it matches a fixed number of
+characters, always.  The maximum field with says how many characters to
+read; if you don't specify the maximum, the default is 1.  This
+conversion does not skip over initial whitespace characters.  It reads
+precisely the next <var>n</var> characters, and fails if it cannot get that
+many.
+
+   <p>The <span class="samp">%s</span> conversion matches a string of non-whitespace characters. 
+It skips and discards initial whitespace, but stops when it encounters
+more whitespace after having read something.
+
+   <p>For example, reading the input:
+
+<pre class="example">      hello, world
+</pre>
+   <p class="noindent">with the conversion <span class="samp">%10c</span> produces <code>" hello, wo"</code>, but
+reading the same input with the conversion <span class="samp">%10s</span> produces
+<code>"hello,"</code>.
+
+   </body></html>
+

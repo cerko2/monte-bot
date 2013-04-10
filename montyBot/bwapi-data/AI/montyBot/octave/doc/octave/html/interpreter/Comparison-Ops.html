@@ -1,0 +1,98 @@
+<html lang="en">
+<head>
+<title>Comparison Ops - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Expressions.html#Expressions" title="Expressions">
+<link rel="prev" href="Arithmetic-Ops.html#Arithmetic-Ops" title="Arithmetic Ops">
+<link rel="next" href="Boolean-Expressions.html#Boolean-Expressions" title="Boolean Expressions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Comparison-Ops"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Boolean-Expressions.html#Boolean-Expressions">Boolean Expressions</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Arithmetic-Ops.html#Arithmetic-Ops">Arithmetic Ops</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Expressions.html#Expressions">Expressions</a>
+<hr><br>
+</div>
+
+<h3 class="section">8.4 Comparison Operators</h3>
+
+<p><a name="index-comparison-expressions-489"></a><a name="index-expressions_002c-comparison-490"></a><a name="index-relational-operators-491"></a><a name="index-operators_002c-relational-492"></a><a name="index-less-than-operator-493"></a><a name="index-greater-than-operator-494"></a><a name="index-equality-operator-495"></a><a name="index-tests-for-equality-496"></a><a name="index-equality_002c-tests-for-497"></a>
+<dfn>Comparison operators</dfn> compare numeric values for relationships
+such as equality.  They are written using
+<em>relational operators</em>.
+
+   <p>All of Octave's comparison operators return a value of 1 if the
+comparison is true, or 0 if it is false.  For matrix values, they all
+work on an element-by-element basis.  For example,
+
+<pre class="example">     [1, 2; 3, 4] == [1, 3; 2, 4]
+          =&gt;  1  0
+              0  1
+</pre>
+   <p>If one operand is a scalar and the other is a matrix, the scalar is
+compared to each element of the matrix in turn, and the result is the
+same size as the matrix.
+
+     <dl>
+<dt><var>x</var><code> &lt; </code><var>y</var><dd><a name="index-_003c-498"></a>True if <var>x</var> is less than <var>y</var>.
+
+     <br><dt><var>x</var><code> &lt;= </code><var>y</var><dd><a name="index-_003c_003d-499"></a>True if <var>x</var> is less than or equal to <var>y</var>.
+
+     <br><dt><var>x</var><code> == </code><var>y</var><dd><a name="index-_003d_003d-500"></a>True if <var>x</var> is equal to <var>y</var>.
+
+     <br><dt><var>x</var><code> &gt;= </code><var>y</var><dd><a name="index-_003e_003d-501"></a>True if <var>x</var> is greater than or equal to <var>y</var>.
+
+     <br><dt><var>x</var><code> &gt; </code><var>y</var><dd><a name="index-_003e-502"></a>True if <var>x</var> is greater than <var>y</var>.
+
+     <br><dt><var>x</var><code> != </code><var>y</var><dt><var>x</var><code> ~= </code><var>y</var><dd><a name="index-_0021_003d-503"></a><a name="index-_007e_003d-504"></a>True if <var>x</var> is not equal to <var>y</var>. 
+</dl>
+
+   <p>String comparisons may also be performed with the <code>strcmp</code>
+function, not with the comparison operators listed above. 
+See <a href="Strings.html#Strings">Strings</a>.
+
+<!-- ./general/isequal.m -->
+<p><a name="doc_002disequal"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>isequal</b> (<var>x1, x2, <small class="dots">...</small></var>)<var><a name="index-isequal-505"></a></var><br>
+<blockquote><p>Return true if all of <var>x1</var>, <var>x2</var>, <small class="dots">...</small> are equal. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002disequalwithequalnans.html#doc_002disequalwithequalnans">isequalwithequalnans</a>. 
+</p></blockquote></div>
+
+<!-- ./general/isequalwithequalnans.m -->
+<p><a name="doc_002disequalwithequalnans"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>isequalwithequalnans</b> (<var>x1, x2, <small class="dots">...</small></var>)<var><a name="index-isequalwithequalnans-506"></a></var><br>
+<blockquote><p>Assuming NaN == NaN, return true if all of <var>x1</var>, <var>x2</var>, <small class="dots">...</small>
+are equal. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002disequal.html#doc_002disequal">isequal</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

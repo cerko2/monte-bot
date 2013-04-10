@@ -1,0 +1,151 @@
+<html lang="en">
+<head>
+<title>Delaunay Triangulation - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Geometry.html#Geometry" title="Geometry">
+<link rel="next" href="Voronoi-Diagrams.html#Voronoi-Diagrams" title="Voronoi Diagrams">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Delaunay-Triangulation"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Voronoi-Diagrams.html#Voronoi-Diagrams">Voronoi Diagrams</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Geometry.html#Geometry">Geometry</a>
+<hr><br>
+</div>
+
+<h3 class="section">29.1 Delaunay Triangulation</h3>
+
+<p>The Delaunay triangulation is constructed from a set of
+circum-circles.  These circum-circles are chosen so that there are at
+least three of the points in the set to triangulation on the
+circumference of the circum-circle.  None of the points in the set of
+points falls within any of the circum-circles.
+
+   <p>In general there are only three points on the circumference of any
+circum-circle.  However, in some cases, and in particular for the
+case of a regular grid, 4 or more points can be on a single
+circum-circle.  In this case the Delaunay triangulation is not unique.
+
+<!-- ./geometry/delaunay.m -->
+<p><a name="doc_002ddelaunay"></a>
+
+<div class="defun">
+&mdash; Function File: <var>tri</var> = <b>delaunay</b> (<var>x, y</var>)<var><a name="index-delaunay-2084"></a></var><br>
+&mdash; Function File: <var>tri</var> = <b>delaunay</b> (<var>x, y, opt</var>)<var><a name="index-delaunay-2085"></a></var><br>
+<blockquote><p>The return matrix of size [n, 3] contains a set triangles which are
+described by the indices to the data point x and y vector. 
+The triangulation satisfies the Delaunay circum-circle criterion. 
+No other data point is in the circum-circle of the defining triangle.
+
+        <p>A third optional argument, which must be a string, contains extra options
+passed to the underlying qhull command.  See the documentation for the
+Qhull library for details.
+
+     <pre class="example">          x = rand (1, 10);
+          y = rand (size (x));
+          T = delaunay (x, y);
+          X = [x(T(:,1)); x(T(:,2)); x(T(:,3)); x(T(:,1))];
+          Y = [y(T(:,1)); y(T(:,2)); y(T(:,3)); y(T(:,1))];
+          axis ([0,1,0,1]);
+          plot (X, Y, "b", x, y, "r*");
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dvoronoi.html#doc_002dvoronoi">voronoi</a>, <a href="doc_002ddelaunay3.html#doc_002ddelaunay3">delaunay3</a>, <a href="doc_002ddelaunayn.html#doc_002ddelaunayn">delaunayn</a>. 
+</p></blockquote></div>
+
+   <p>The 3- and N-dimensional extension of the Delaunay triangulation are
+given by <code>delaunay3</code> and <code>delaunayn</code> respectively. 
+<code>delaunay3</code> returns a set of tetrahedra that satisfy the
+Delaunay circum-circle criteria.  Similarly, <code>delaunayn</code> returns the
+N-dimensional simplex satisfying the Delaunay circum-circle criteria. 
+The N-dimensional extension of a triangulation is called a tessellation.
+
+<!-- ./geometry/delaunay3.m -->
+<p><a name="doc_002ddelaunay3"></a>
+
+<div class="defun">
+&mdash; Function File: <var>T</var> = <b>delaunay3</b> (<var>x, y, z</var>)<var><a name="index-delaunay3-2086"></a></var><br>
+&mdash; Function File: <var>T</var> = <b>delaunay3</b> (<var>x, y, z, opt</var>)<var><a name="index-delaunay3-2087"></a></var><br>
+<blockquote><p>A matrix of size [n, 4] is returned.  Each row contains a
+set of tetrahedron which are
+described by the indices to the data point vectors (x,y,z).
+
+        <p>A fourth optional argument, which must be a string or cell array of strings,
+contains extra options passed to the underlying qhull command.  See the
+documentation for the Qhull library for details. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002ddelaunay.html#doc_002ddelaunay">delaunay</a>, <a href="doc_002ddelaunayn.html#doc_002ddelaunayn">delaunayn</a>. 
+</p></blockquote></div>
+
+<!-- ./geometry/delaunayn.m -->
+<p><a name="doc_002ddelaunayn"></a>
+
+<div class="defun">
+&mdash; Function File: <var>T</var> = <b>delaunayn</b> (<var>P</var>)<var><a name="index-delaunayn-2088"></a></var><br>
+&mdash; Function File: <var>T</var> = <b>delaunayn</b> (<var>P, opt</var>)<var><a name="index-delaunayn-2089"></a></var><br>
+<blockquote><p>Form the Delaunay triangulation for a set of points. 
+The Delaunay triangulation is a tessellation of the convex hull of the
+points such that no n-sphere defined by the n-triangles contains
+any other points from the set. 
+The input matrix <var>P</var> of size <code>[n, dim]</code> contains <var>n</var>
+points in a space of dimension dim.  The return matrix <var>T</var> has the
+size <code>[m, dim+1]</code>.  It contains for each row a set of indices to
+the points, which describes a simplex of dimension dim.  For example,
+a 2d simplex is a triangle and 3d simplex is a tetrahedron.
+
+        <p>Extra options for the underlying Qhull command can be specified by the
+second argument.  This argument is a cell array of strings.  The default
+options depend on the dimension of the input:
+
+          <ul>
+<li>2D and 3D: <var>opt</var> = <code>{"Qt", "Qbb", "Qc"}</code>
+<li>4D and higher: <var>opt</var> = <code>{"Qt", "Qbb", "Qc", "Qz"}</code>
+</ul>
+
+        <p>If <var>opt</var> is [], then the default arguments are used.  If <var>opt</var>
+is <code>{"<!-- /@w -->"}</code>, then none of the default arguments are used by Qhull. 
+See the Qhull documentation for the available options.
+
+        <p>All options can also be specified as single string, for example
+<code>"Qt Qbb Qc Qz"</code>.
+
+        </blockquote></div>
+
+   <p>An example of a Delaunay triangulation of a set of points is
+
+<pre class="example">     rand ("state", 2);
+     x = rand (10, 1);
+     y = rand (10, 1);
+     T = delaunay (x, y);
+     X = [ x(T(:,1)); x(T(:,2)); x(T(:,3)); x(T(:,1)) ];
+     Y = [ y(T(:,1)); y(T(:,2)); y(T(:,3)); y(T(:,1)) ];
+     axis ([0, 1, 0, 1]);
+     plot(X, Y, "b", x, y, "r*");
+</pre>
+   <ul class="menu">
+<li><a accesskey="1" href="Plotting-the-Triangulation.html#Plotting-the-Triangulation">Plotting the Triangulation</a>
+<li><a accesskey="2" href="Identifying-points-in-Triangulation.html#Identifying-points-in-Triangulation">Identifying points in Triangulation</a>
+</ul>
+
+   </body></html>
+

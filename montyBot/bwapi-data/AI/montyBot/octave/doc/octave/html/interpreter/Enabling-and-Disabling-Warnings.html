@@ -1,0 +1,239 @@
+<html lang="en">
+<head>
+<title>Enabling and Disabling Warnings - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Handling-Warnings.html#Handling-Warnings" title="Handling Warnings">
+<link rel="prev" href="Issuing-Warnings.html#Issuing-Warnings" title="Issuing Warnings">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Enabling-and-Disabling-Warnings"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="Issuing-Warnings.html#Issuing-Warnings">Issuing Warnings</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Handling-Warnings.html#Handling-Warnings">Handling Warnings</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">12.2.2 Enabling and Disabling Warnings</h4>
+
+<p>The <code>warning</code> function also allows you to control which warnings
+are actually printed to the screen.  If the <code>warning</code> function
+is called with a string argument that is either <code>"on"</code> or <code>"off"</code>
+all warnings will be enabled or disabled.
+
+   <p>It is also possible to enable and disable individual warnings through
+their string identifications.  The following code will issue a warning
+
+<pre class="example">     warning ("non-negative-variable",
+              "'a' must be non-negative.  Setting 'a' to zero.");
+</pre>
+   <p class="noindent">while the following won't issue a warning
+
+<pre class="example">     warning ("off", "non-negative-variable");
+     warning ("non-negative-variable",
+              "'a' must be non-negative.  Setting 'a' to zero.");
+</pre>
+   <p>The functions distributed with Octave can issue one of the following
+warnings.
+
+<!-- ./miscellaneous/warning_ids.m -->
+<p><a name="doc_002dwarning_005fids"></a>
+     <dl>
+<dt><code>Octave:array-to-scalar</code><dd>If the <code>Octave:array-to-scalar</code> warning is enabled, Octave will
+warn when an implicit conversion from an array to a scalar value is
+attempted.  By default, the <code>Octave:array-to-scalar</code> warning is
+disabled.
+
+     <br><dt><code>Octave:array-to-vector</code><dd>If the <code>Octave:array-to-vector</code> warning is enabled, Octave will
+warn when an implicit conversion from an array to a vector value is
+attempted.  By default, the <code>Octave:array-to-vector</code> warning is
+disabled.
+
+     <br><dt><code>Octave:assign-as-truth-value</code><dd>If the <code>Octave:assign-as-truth-value</code> warning is
+enabled, a warning is issued for statements like
+
+     <pre class="example">          if (s = t)
+            ...
+     </pre>
+     <p class="noindent">since such statements are not common, and it is likely that the intent
+was to write
+
+     <pre class="example">          if (s == t)
+            ...
+     </pre>
+     <p class="noindent">instead.
+
+     <p>There are times when it is useful to write code that contains
+assignments within the condition of a <code>while</code> or <code>if</code>
+statement.  For example, statements like
+
+     <pre class="example">          while (c = getc())
+            ...
+     </pre>
+     <p class="noindent">are common in C programming.
+
+     <p>It is possible to avoid all warnings about such statements by
+disabling the <code>Octave:assign-as-truth-value</code> warning,
+but that may also let real errors like
+
+     <pre class="example">          if (x = 1)  # intended to test (x == 1)!
+            ...
+     </pre>
+     <p class="noindent">slip by.
+
+     <p>In such cases, it is possible suppress errors for specific statements by
+writing them with an extra set of parentheses.  For example, writing the
+previous example as
+
+     <pre class="example">          while ((c = getc()))
+            ...
+     </pre>
+     <p class="noindent">will prevent the warning from being printed for this statement, while
+allowing Octave to warn about other assignments used in conditional
+contexts.
+
+     <p>By default, the <code>Octave:assign-as-truth-value</code> warning is enabled.
+
+     <br><dt><code>Octave:associativity-change</code><dd>If the <code>Octave:associativity-change</code> warning is
+enabled, Octave will warn about possible changes in the meaning of
+some code due to changes in associativity for some operators. 
+Associativity changes have typically been made for <span class="sc">matlab</span>
+compatibility.  By default, the <code>Octave:associativity-change</code>
+warning is enabled.
+
+     <br><dt><code>Octave:divide-by-zero</code><dd>If the <code>Octave:divide-by-zero</code> warning is enabled, a
+warning is issued when Octave encounters a division by zero.  By
+default, the <code>Octave:divide-by-zero</code> warning is enabled.
+
+     <br><dt><code>Octave:empty-list-elements</code><dd>If the <code>Octave:empty-list-elements</code> warning is enabled, a
+warning is issued when an empty matrix is found in a matrix list. 
+For example,
+
+     <pre class="example">          a = [1, [], 3, [], 5]
+     </pre>
+     <p class="noindent">By default, the <code>Octave:empty-list-elements</code> warning is enabled.
+
+     <br><dt><code>Octave:fortran-indexing</code><dd>If the <code>Octave:fortran-indexing</code> warning is enabled, a warning is
+printed for expressions which select elements of a two-dimensional matrix
+using a single index.  By default, the <code>Octave:fortran-indexing</code>
+warning is disabled.
+
+     <br><dt><code>Octave:function-name-clash</code><dd>If the <code>Octave:function-name-clash</code> warning is enabled, a
+warning is issued when Octave finds that the name of a function
+defined in a function file differs from the name of the file.  (If
+the names disagree, the name declared inside the file is ignored.) 
+By default, the <code>Octave:function-name-clash</code> warning is enabled.
+
+     <br><dt><code>Octave:future-time-stamp</code><dd>If the <code>Octave:future-time-stamp</code> warning is enabled, Octave
+will print a warning if it finds a function file with a time stamp
+that is in the future.  By default, the
+<code>Octave:future-time-stamp</code> warning is enabled.
+
+     <br><dt><code>Octave:imag-to-real</code><dd>If the <code>Octave:imag-to-real</code> warning is enabled, a warning is
+printed for implicit conversions of complex numbers to real numbers. 
+By default, the <code>Octave:imag-to-real</code> warning is disabled.
+
+     <br><dt><code>Octave:matlab-incompatible</code><dd>Print warnings for Octave language features that may cause
+compatibility problems with <span class="sc">matlab</span>.
+
+     <br><dt><code>Octave:missing-semicolon</code><dd>If the <code>Octave:missing-semicolon</code> warning is enabled, Octave
+will warn when statements in function definitions don't end in
+semicolons.  By default the <code>Octave:missing-semicolon</code> warning
+is disabled.
+
+     <br><dt><code>Octave:neg-dim-as-zero</code><dd>If the <code>Octave:neg-dim-as-zero</code> warning is enabled, print a warning
+for expressions like
+
+     <pre class="example">          eye (-1)
+     </pre>
+     <p class="noindent">By default, the <code>Octave:neg-dim-as-zero</code> warning is disabled.
+
+     <br><dt><code>Octave:num-to-str</code><dd>If the <code>Octave:num-to-str</code> warning is enable, a warning is
+printed for implicit conversions of numbers to their ASCII character
+equivalents when strings are constructed using a mixture of strings and
+numbers in matrix notation.  For example,
+
+     <pre class="example">          [ "f", 111, 111 ]
+               =&gt; "foo"
+     </pre>
+     <p>elicits a warning if the <code>Octave:num-to-str</code> warning is
+enabled.  By default, the <code>Octave:num-to-str</code> warning is enabled.
+
+     <br><dt><code>Octave:precedence-change</code><dd>If the <code>Octave:precedence-change</code> warning is enabled, Octave
+will warn about possible changes in the meaning of some code due to
+changes in precedence for some operators.  Precedence changes have
+typically been made for <span class="sc">matlab</span> compatibility.  By default, the
+<code>Octave:precedence-change</code> warning is enabled.
+
+     <br><dt><code>Octave:reload-forces-clear</code><dd>If several functions have been loaded from the same file, Octave must
+clear all the functions before any one of them can be reloaded.  If
+the <code>Octave:reload-forces-clear</code> warning is enabled, Octave will
+warn you when this happens, and print a list of the additional
+functions that it is forced to clear.  By default, the
+<code>Octave:reload-forces-clear</code> warning is enabled.
+
+     <br><dt><code>Octave:resize-on-range-error</code><dd>If the <code>Octave:resize-on-range-error</code> warning is enabled, print a
+warning when a matrix is resized by an indexed assignment with
+indices outside the current bounds.  By default, the
+<code>Octave:resize-on-range-error</code> warning is disabled.
+
+     <br><dt><code>Octave:separator-insert</code><dd>Print warning if commas or semicolons might be inserted
+automatically in literal matrices.
+
+     <br><dt><code>Octave:single-quote-string</code><dd>Print warning if a single quote character is used to introduce a
+string constant.
+
+     <br><dt><code>Octave:str-to-num</code><dd>If the <code>Octave:str-to-num</code> warning is enabled, a warning is printed
+for implicit conversions of strings to their numeric ASCII equivalents. 
+For example,
+     <pre class="example">          "abc" + 0
+               =&gt; 97 98 99
+     </pre>
+     <p>elicits a warning if the <code>Octave:str-to-num</code> warning is enabled. 
+By default, the <code>Octave:str-to-num</code> warning is disabled.
+
+     <br><dt><code>Octave:string-concat</code><dd>If the <code>Octave:string-concat</code> warning is enabled, print a
+warning when concatenating a mixture of double and single quoted strings. 
+By default, the <code>Octave:string-concat</code> warning is disabled.
+
+     <br><dt><code>Octave:undefined-return-values</code><dd>If the <code>Octave:undefined-return-values</code> warning is disabled,
+print a warning if a function does not define all the values in
+the return list which are expected.  By default, the
+<code>Octave:undefined-return-values</code> warning is enabled.
+
+     <br><dt><code>Octave:variable-switch-label</code><dd>If the <code>Octave:variable-switch-label</code> warning is enabled, Octave
+will print a warning if a switch label is not a constant or constant
+expression.  By default, the <code>Octave:variable-switch-label</code>
+warning is disabled. 
+</dl>
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 1996, 1997, 2007, 2008, 2009 John W. Eaton -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

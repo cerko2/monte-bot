@@ -1,0 +1,104 @@
+<html lang="en">
+<head>
+<title>Short-circuit Boolean Operators - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Boolean-Expressions.html#Boolean-Expressions" title="Boolean Expressions">
+<link rel="prev" href="Element_002dby_002delement-Boolean-Operators.html#Element_002dby_002delement-Boolean-Operators" title="Element-by-element Boolean Operators">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Short_002dcircuit-Boolean-Operators"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="Element_002dby_002delement-Boolean-Operators.html#Element_002dby_002delement-Boolean-Operators">Element-by-element Boolean Operators</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Boolean-Expressions.html#Boolean-Expressions">Boolean Expressions</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">8.5.2 Short-circuit Boolean Operators</h4>
+
+<p><a name="index-short_002dcircuit-evaluation-523"></a>
+Combined with the implicit conversion to scalar values in <code>if</code> and
+<code>while</code> conditions, Octave's element-by-element boolean operators
+are often sufficient for performing most logical operations.  However,
+it is sometimes desirable to stop evaluating a boolean expression as
+soon as the overall truth value can be determined.  Octave's
+<dfn>short-circuit</dfn> boolean operators work this way.
+
+     <dl>
+<dt><var>boolean1</var><code> &amp;&amp; </code><var>boolean2</var><dd><a name="index-_0026_0026-524"></a>The expression <var>boolean1</var> is evaluated and converted to a scalar
+using the equivalent of the operation <code>all (</code><var>boolean1</var><code>(:))</code>. 
+If it is false, the result of the overall expression is 0.  If it is
+true, the expression <var>boolean2</var> is evaluated and converted to a
+scalar using the equivalent of the operation <code>all
+(</code><var>boolean1</var><code>(:))</code>.  If it is true, the result of the overall expression
+is 1.  Otherwise, the result of the overall expression is 0.
+
+     <p><strong>Warning:</strong> there is one exception to the rule of evaluating
+<code>all (</code><var>boolean1</var><code>(:))</code>, which is when <code>boolean1</code> is the
+empty matrix.  The truth value of an empty matrix is always <code>false</code>
+so <code>[] &amp;&amp; true</code> evaluates to <code>false</code> even though
+<code>all ([])</code> is <code>true</code>.
+
+     <br><dt><var>boolean1</var><code> || </code><var>boolean2</var><dd><a name="index-_007c_007c-525"></a>The expression <var>boolean1</var> is evaluated and converted to a scalar
+using the equivalent of the operation <code>all (</code><var>boolean1</var><code>(:))</code>. 
+If it is true, the result of the overall expression is 1.  If it is
+false, the expression <var>boolean2</var> is evaluated and converted to a
+scalar using the equivalent of the operation <code>all
+(</code><var>boolean1</var><code>(:))</code>.  If it is true, the result of the overall expression
+is 1.  Otherwise, the result of the overall expression is 0.
+
+     <p><strong>Warning:</strong> the truth value of an empty matrix is always <code>false</code>,
+see the previous list item for details. 
+</dl>
+
+   <p>The fact that both operands may not be evaluated before determining the
+overall truth value of the expression can be important.  For example, in
+the expression
+
+<pre class="example">     a &amp;&amp; b++
+</pre>
+   <p class="noindent">the value of the variable <var>b</var> is only incremented if the variable
+<var>a</var> is nonzero.
+
+   <p>This can be used to write somewhat more concise code.  For example, it
+is possible write
+
+<pre class="example">     function f (a, b, c)
+       if (nargin &gt; 2 &amp;&amp; ischar (c))
+         ...
+</pre>
+   <p class="noindent">instead of having to use two <code>if</code> statements to avoid attempting to
+evaluate an argument that doesn't exist.  For example, without the
+short-circuit feature, it would be necessary to write
+
+<pre class="example">     function f (a, b, c)
+       if (nargin &gt; 2)
+         if (ischar (c))
+           ...
+</pre>
+   <p class="noindent">Writing
+
+<pre class="example">     function f (a, b, c)
+       if (nargin &gt; 2 &amp; ischar (c))
+         ...
+</pre>
+   <p class="noindent">would result in an error if <code>f</code> were called with one or two
+arguments because Octave would be forced to try to evaluate both of the
+operands for the operator <span class="samp">&amp;</span>.
+
+   </body></html>
+

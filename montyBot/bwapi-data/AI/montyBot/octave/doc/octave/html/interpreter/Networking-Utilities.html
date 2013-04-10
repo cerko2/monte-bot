@@ -1,0 +1,115 @@
+<html lang="en">
+<head>
+<title>Networking Utilities - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="System-Utilities.html#System-Utilities" title="System Utilities">
+<link rel="prev" href="File-Archiving-Utilities.html#File-Archiving-Utilities" title="File Archiving Utilities">
+<link rel="next" href="Controlling-Subprocesses.html#Controlling-Subprocesses" title="Controlling Subprocesses">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Networking-Utilities"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Controlling-Subprocesses.html#Controlling-Subprocesses">Controlling Subprocesses</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="File-Archiving-Utilities.html#File-Archiving-Utilities">File Archiving Utilities</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="System-Utilities.html#System-Utilities">System Utilities</a>
+<hr><br>
+</div>
+
+<h3 class="section">34.4 Networking Utilities</h3>
+
+<!-- ./DLD-FUNCTIONS/urlwrite.cc -->
+<p><a name="doc_002durlread"></a>
+
+<div class="defun">
+&mdash; Loadable Function: <var>s</var> = <b>urlread</b> (<var>url</var>)<var><a name="index-urlread-2363"></a></var><br>
+&mdash; Loadable Function: [<var>s</var>, <var>success</var>] = <b>urlread</b> (<var>url</var>)<var><a name="index-urlread-2364"></a></var><br>
+&mdash; Loadable Function: [<var>s</var>, <var>success</var>, <var>message</var>] = <b>urlread</b> (<var>url</var>)<var><a name="index-urlread-2365"></a></var><br>
+&mdash; Loadable Function: [<small class="dots">...</small>] = <b>urlread</b> (<var>url, method, param</var>)<var><a name="index-urlread-2366"></a></var><br>
+<blockquote><p>Download a remote file specified by its <var>URL</var> and return its content
+in string <var>s</var>.  For example,
+
+     <pre class="example">          s = urlread ("ftp://ftp.octave.org/pub/octave/README");
+     </pre>
+        <p>The variable <var>success</var> is 1 if the download was successful,
+otherwise it is 0 in which case <var>message</var> contains an error
+message.  If no output argument is specified and if an error occurs,
+then the error is signaled through Octave's error handling mechanism.
+
+        <p>This function uses libcurl.  Curl supports, among others, the HTTP,
+FTP and FILE protocols.  Username and password may be specified in the
+URL.  For example,
+
+     <pre class="example">          s = urlread ("http://user:password@example.com/file.txt");
+     </pre>
+        <p>GET and POST requests can be specified by <var>method</var> and <var>param</var>. 
+The parameter <var>method</var> is either <span class="samp">get</span> or <span class="samp">post</span>
+and <var>param</var> is a cell array of parameter and value pairs. 
+For example,
+
+     <pre class="example">          s = urlread ("http://www.google.com/search", "get",
+                       {"query", "octave"});
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002durlwrite.html#doc_002durlwrite">urlwrite</a>. 
+</p></blockquote></div>
+
+<!-- ./DLD-FUNCTIONS/urlwrite.cc -->
+<p><a name="doc_002durlwrite"></a>
+
+<div class="defun">
+&mdash; Loadable Function:  <b>urlwrite</b> (<var>URL, localfile</var>)<var><a name="index-urlwrite-2367"></a></var><br>
+&mdash; Loadable Function: <var>f</var> = <b>urlwrite</b> (<var>url, localfile</var>)<var><a name="index-urlwrite-2368"></a></var><br>
+&mdash; Loadable Function: [<var>f</var>, <var>success</var>] = <b>urlwrite</b> (<var>url, localfile</var>)<var><a name="index-urlwrite-2369"></a></var><br>
+&mdash; Loadable Function: [<var>f</var>, <var>success</var>, <var>message</var>] = <b>urlwrite</b> (<var>url, localfile</var>)<var><a name="index-urlwrite-2370"></a></var><br>
+<blockquote><p>Download a remote file specified by its <var>URL</var> and save it as
+<var>localfile</var>.  For example,
+
+     <pre class="example">          urlwrite ("ftp://ftp.octave.org/pub/octave/README",
+                    "README.txt");
+     </pre>
+        <p>The full path of the downloaded file is returned in <var>f</var>.  The
+variable <var>success</var> is 1 if the download was successful,
+otherwise it is 0 in which case <var>message</var> contains an error
+message.  If no output argument is specified and if an error occurs,
+then the error is signaled through Octave's error handling mechanism.
+
+        <p>This function uses libcurl.  Curl supports, among others, the HTTP,
+FTP and FILE protocols.  Username and password may be specified in
+the URL, for example:
+
+     <pre class="example">          urlwrite ("http://username:password@example.com/file.txt",
+                    "file.txt");
+     </pre>
+        <p>GET and POST requests can be specified by <var>method</var> and <var>param</var>. 
+The parameter <var>method</var> is either <span class="samp">get</span> or <span class="samp">post</span>
+and <var>param</var> is a cell array of parameter and value pairs. 
+For example:
+
+     <pre class="example">          urlwrite ("http://www.google.com/search", "search.html",
+                    "get", {"query", "octave"});
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002durlread.html#doc_002durlread">urlread</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

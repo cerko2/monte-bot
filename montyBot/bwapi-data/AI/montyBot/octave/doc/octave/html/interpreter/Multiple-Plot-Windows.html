@@ -1,0 +1,60 @@
+<html lang="en">
+<head>
+<title>Multiple Plot Windows - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Plotting-Basics.html#Plotting-Basics" title="Plotting Basics">
+<link rel="prev" href="Multiple-Plots-on-One-Page.html#Multiple-Plots-on-One-Page" title="Multiple Plots on One Page">
+<link rel="next" href="Printing-Plots.html#Printing-Plots" title="Printing Plots">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Multiple-Plot-Windows"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Printing-Plots.html#Printing-Plots">Printing Plots</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Multiple-Plots-on-One-Page.html#Multiple-Plots-on-One-Page">Multiple Plots on One Page</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Plotting-Basics.html#Plotting-Basics">Plotting Basics</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">15.1.5 Multiple Plot Windows</h4>
+
+<p>You can open multiple plot windows using the <code>figure</code> function. 
+For example
+
+<pre class="example">     figure (1);
+     fplot (@sin, [-10, 10]);
+     figure (2);
+     fplot (@cos, [-10, 10]);
+</pre>
+   <p class="noindent">creates two figures, with the first displaying a sine wave and
+the second a cosine wave.  Figure numbers must be positive integers.
+
+<!-- ./plot/figure.m -->
+<p><a name="doc_002dfigure"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>figure</b> (<var>n</var>)<var><a name="index-figure-1092"></a></var><br>
+&mdash; Function File:  <b>figure</b> (<var>n, property, value, <small class="dots">...</small></var>)<var><a name="index-figure-1093"></a></var><br>
+<blockquote><p>Set the current plot window to plot window <var>n</var>.  If no arguments are
+specified, the next available window number is chosen.
+
+        <p>Multiple property-value pairs may be specified for the figure, but they
+must appear in pairs. 
+</p></blockquote></div>
+
+   </body></html>
+

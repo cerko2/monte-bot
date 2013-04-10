@@ -1,0 +1,220 @@
+<html lang="en">
+<head>
+<title>Character Class Functions - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Strings.html#Strings" title="Strings">
+<link rel="prev" href="String-Conversions.html#String-Conversions" title="String Conversions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Character-Class-Functions"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="String-Conversions.html#String-Conversions">String Conversions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Strings.html#Strings">Strings</a>
+<hr><br>
+</div>
+
+<h3 class="section">5.7 Character Class Functions</h3>
+
+<p>Octave also provides the following character class test functions
+patterned after the functions in the standard C library.  They all
+operate on string arrays and return matrices of zeros and ones. 
+Elements that are nonzero indicate that the condition was true for the
+corresponding character in the string array.  For example,
+
+<pre class="example">     isalpha ("!Q@WERT^Y&amp;")
+          =&gt; [ 0, 1, 0, 1, 1, 1, 1, 0, 1, 0 ]
+</pre>
+   <!-- mappers.cc -->
+<p><a name="doc_002disalnum"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isalnum</b> (<var>s</var>)<var><a name="index-isalnum-353"></a></var><br>
+<blockquote><p>Return 1 for characters that are letters or digits (<code>isalpha
+(</code><var>s</var><code>)</code> or <code>isdigit (</code><var>s</var><code>)</code> is true). 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002disalpha"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isalpha</b> (<var>s</var>)<var><a name="index-isalpha-354"></a></var><br>
+&mdash; Mapping Function:  <b>isletter</b> (<var>s</var>)<var><a name="index-isletter-355"></a></var><br>
+<blockquote><p>Return true for characters that are letters (<code>isupper (</code><var>s</var><code>)</code>
+or <code>islower (</code><var>s</var><code>)</code> is true). 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002disascii"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isascii</b> (<var>s</var>)<var><a name="index-isascii-356"></a></var><br>
+<blockquote><p>Return 1 for characters that are ASCII (in the range 0 to 127 decimal). 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002discntrl"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>iscntrl</b> (<var>s</var>)<var><a name="index-iscntrl-357"></a></var><br>
+<blockquote><p>Return 1 for control characters. 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002disdigit"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isdigit</b> (<var>s</var>)<var><a name="index-isdigit-358"></a></var><br>
+<blockquote><p>Return 1 for characters that are decimal digits. 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002disgraph"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isgraph</b> (<var>s</var>)<var><a name="index-isgraph-359"></a></var><br>
+<blockquote><p>Return 1 for printable characters (but not the space character). 
+</p></blockquote></div>
+
+<!-- ./strings/isletter.m -->
+<p><a name="doc_002disletter"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>isletter</b> (<var>s</var>)<var><a name="index-isletter-360"></a></var><br>
+<blockquote><p>Returns true if <var>s</var> is a letter, false otherwise. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002disalpha.html#doc_002disalpha">isalpha</a>. 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002dislower"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>islower</b> (<var>s</var>)<var><a name="index-islower-361"></a></var><br>
+<blockquote><p>Return 1 for characters that are lower case letters. 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002disprint"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isprint</b> (<var>s</var>)<var><a name="index-isprint-362"></a></var><br>
+<blockquote><p>Return 1 for printable characters (including the space character). 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002dispunct"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>ispunct</b> (<var>s</var>)<var><a name="index-ispunct-363"></a></var><br>
+<blockquote><p>Return 1 for punctuation characters. 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002disspace"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isspace</b> (<var>s</var>)<var><a name="index-isspace-364"></a></var><br>
+<blockquote><p>Return 1 for whitespace characters (space, formfeed, newline,
+carriage return, tab, and vertical tab). 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002disupper"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isupper</b> (<var>s</var>)<var><a name="index-isupper-365"></a></var><br>
+<blockquote><p>Return 1 for upper case letters. 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002disxdigit"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isxdigit</b> (<var>s</var>)<var><a name="index-isxdigit-366"></a></var><br>
+<blockquote><p>Return 1 for characters that are hexadecimal digits. 
+</p></blockquote></div>
+
+<!-- ./strings/isstrprop.m -->
+<p><a name="doc_002disstrprop"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>isstrprop</b> (<var>str, pred</var>)<var><a name="index-isstrprop-367"></a></var><br>
+<blockquote><p>Test character string properties.  For example,
+
+     <pre class="example">          isstrprop ("abc123", "alpha")
+          =&gt; [1, 1, 1, 0, 0, 0]
+     </pre>
+        <p>If <var>str</var> is a cell array, <code>isstrpop</code> is applied recursively
+to each element of the cell array.
+
+        <p>Numeric arrays are converted to character strings.
+
+        <p>The second argument <var>pred</var> may be one of
+
+          <dl>
+<dt><code>"alpha"</code><dd>True for characters that are alphabetic
+
+          <br><dt><code>"alnum"</code><dt><code>"alphanum"</code><dd>True for characters that are alphabetic or digits.
+
+          <br><dt><code>"ascii"</code><dd>True for characters that are in the range of ASCII encoding.
+
+          <br><dt><code>"cntrl"</code><dd>True for control characters.
+
+          <br><dt><code>"digit"</code><dd>True for decimal digits.
+
+          <br><dt><code>"graph"</code><dt><code>"graphic"</code><dd>True for printing characters except space.
+
+          <br><dt><code>"lower"</code><dd>True for lower-case letters.
+
+          <br><dt><code>"print"</code><dd>True for printing characters including space.
+
+          <br><dt><code>"punct"</code><dd>True for printing characters except space or letter or digit.
+
+          <br><dt><code>"space"</code><dt><code>"wspace"</code><dd>True for whitespace characters (space, formfeed, newline, carriage
+return, tab, vertical tab).
+
+          <br><dt><code>"upper"</code><dd>True for upper-case letters.
+
+          <br><dt><code>"xdigit"</code><dd>True for hexadecimal digits. 
+</dl>
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002disalnum.html#doc_002disalnum">isalnum</a>, <a href="doc_002disalpha.html#doc_002disalpha">isalpha</a>, <a href="doc_002disascii.html#doc_002disascii">isascii</a>, <a href="doc_002discntrl.html#doc_002discntrl">iscntrl</a>, <a href="doc_002disdigit.html#doc_002disdigit">isdigit</a>, <a href="doc_002disgraph.html#doc_002disgraph">isgraph</a>, <a href="doc_002dislower.html#doc_002dislower">islower</a>, <a href="doc_002disprint.html#doc_002disprint">isprint</a>, <a href="doc_002dispunct.html#doc_002dispunct">ispunct</a>, <a href="doc_002disspace.html#doc_002disspace">isspace</a>, <a href="doc_002disupper.html#doc_002disupper">isupper</a>, <a href="doc_002disxdigit.html#doc_002disxdigit">isxdigit</a>. 
+</p></blockquote></div>
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 1996, 1997, 2007, 2008, 2009 John W. Eaton -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

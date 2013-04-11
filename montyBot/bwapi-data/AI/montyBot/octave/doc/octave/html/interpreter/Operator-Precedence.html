@@ -1,0 +1,103 @@
+<html lang="en">
+<head>
+<title>Operator Precedence - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Expressions.html#Expressions" title="Expressions">
+<link rel="prev" href="Increment-Ops.html#Increment-Ops" title="Increment Ops">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Operator-Precedence"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="Increment-Ops.html#Increment-Ops">Increment Ops</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Expressions.html#Expressions">Expressions</a>
+<hr><br>
+</div>
+
+<h3 class="section">8.8 Operator Precedence</h3>
+
+<p><a name="index-operator-precedence-545"></a>
+<dfn>Operator precedence</dfn> determines how operators are grouped, when
+different operators appear close by in one expression.  For example,
+<span class="samp">*</span> has higher precedence than <span class="samp">+</span>.  Thus, the expression
+<code>a + b * c</code> means to multiply <code>b</code> and <code>c</code>, and then add
+<code>a</code> to the product (i.e., <code>a + (b * c)</code>).
+
+   <p>You can overrule the precedence of the operators by using parentheses. 
+You can think of the precedence rules as saying where the parentheses
+are assumed if you do not write parentheses yourself.  In fact, it is
+wise to use parentheses whenever you have an unusual combination of
+operators, because other people who read the program may not remember
+what the precedence is in this case.  You might forget as well, and then
+you too could make a mistake.  Explicit parentheses will help prevent
+any such mistake.
+
+   <p>When operators of equal precedence are used together, the leftmost
+operator groups first, except for the assignment and exponentiation
+operators, which group in the opposite order.  Thus, the expression
+<code>a - b + c</code> groups as <code>(a - b) + c</code>, but the expression
+<code>a = b = c</code> groups as <code>a = (b = c)</code>.
+
+   <p>The precedence of prefix unary operators is important when another
+operator follows the operand.  For example, <code>-x^2</code> means
+<code>-(x^2)</code>, because <span class="samp">-</span> has lower precedence than <span class="samp">^</span>.
+
+   <p>Here is a table of the operators in Octave, in order of increasing
+precedence.
+
+     <dl>
+<dt><code>statement separators</code><dd><span class="samp">;</span>, <span class="samp">,</span>.
+
+     <br><dt><code>assignment</code><dd><span class="samp">=</span>, <span class="samp">+=</span>, <span class="samp">-=</span>, <span class="samp">*=</span>,<span class="samp">/=</span>.  This operator
+groups right to left.
+
+     <br><dt><code>logical "or" and "and"</code><dd><span class="samp">||</span>, <span class="samp">&amp;&amp;</span>.
+
+     <br><dt><code>element-wise "or" and "and"</code><dd><span class="samp">|</span>, <span class="samp">&amp;</span>.
+
+     <br><dt><code>relational</code><dd><span class="samp">&lt;</span>, <span class="samp">&lt;=</span>, <span class="samp">==</span>, <span class="samp">&gt;=</span>, <span class="samp">&gt;</span>, <span class="samp">!=</span>,
+<span class="samp">~=</span>.
+
+     <br><dt><code>colon</code><dd><span class="samp">:</span>.
+
+     <br><dt><code>add, subtract</code><dd><span class="samp">+</span>, <span class="samp">-</span>.
+
+     <br><dt><code>multiply, divide</code><dd><span class="samp">*</span>, <span class="samp">/</span>, <span class="samp">\</span>, <span class="samp">.\</span>, <span class="samp">.*</span>, <span class="samp">./</span>.
+
+     <br><dt><code>transpose</code><dd><span class="samp">'</span>, <span class="samp">.'</span>
+
+     <br><dt><code>unary plus, minus, increment, decrement, and ``not''</code><dd><span class="samp">+</span>, <span class="samp">-</span>, <span class="samp">++</span>, <span class="samp">--</span>, <span class="samp">!</span>, <span class="samp">~</span>.
+
+     <br><dt><code>exponentiation</code><dd><span class="samp">^</span>, <span class="samp">**</span>, <span class="samp">.^</span>, <span class="samp">.**</span>. 
+</dl>
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 1996, 1997, 2007, 2008, 2009 John W. Eaton -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

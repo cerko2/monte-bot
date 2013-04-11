@@ -1,0 +1,53 @@
+<html lang="en">
+<head>
+<title>Block Comments - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Comments.html#Comments" title="Comments">
+<link rel="prev" href="Single-Line-Comments.html#Single-Line-Comments" title="Single Line Comments">
+<link rel="next" href="Comments-and-the-Help-System.html#Comments-and-the-Help-System" title="Comments and the Help System">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Block-Comments"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Comments-and-the-Help-System.html#Comments-and-the-Help-System">Comments and the Help System</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Single-Line-Comments.html#Single-Line-Comments">Single Line Comments</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Comments.html#Comments">Comments</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">2.7.2 Block Comments</h4>
+
+<p><a name="index-block-comments-164"></a><a name="index-multi_002dline-comments-165"></a><a name="index-_0040samp_007b_0023_0040_007b_007d-166"></a><a name="index-_0040samp_007b_0025_0040_007b_007d-167"></a>
+Entire blocks of code can be commented by enclosing the code between
+matching <span class="samp">#{</span> and <span class="samp">#}</span> or <span class="samp">%{</span> and <span class="samp">%}</span> markers. 
+For example,
+<pre class="example">     function quick_countdown
+       # Count down for main rocket engines
+       disp(3);
+      #{
+       disp(2);
+       disp(1);
+      #}
+       disp("Blast Off!");  # Rocket leaves pad
+     endfunction
+</pre>
+   <p class="noindent">will produce a very quick countdown from '3' to 'Blast Off' as the
+lines "<code>disp(2);</code>" and "<code>disp(1);</code>" won't be executed.
+
+   </body></html>
+

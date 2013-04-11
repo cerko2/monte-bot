@@ -1,0 +1,80 @@
+<html lang="en">
+<head>
+<title>Quadratic Programming - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Optimization.html#Optimization" title="Optimization">
+<link rel="prev" href="Linear-Programming.html#Linear-Programming" title="Linear Programming">
+<link rel="next" href="Nonlinear-Programming.html#Nonlinear-Programming" title="Nonlinear Programming">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Quadratic-Programming"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Nonlinear-Programming.html#Nonlinear-Programming">Nonlinear Programming</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Linear-Programming.html#Linear-Programming">Linear Programming</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Optimization.html#Optimization">Optimization</a>
+<hr><br>
+</div>
+
+<h3 class="section">24.2 Quadratic Programming</h3>
+
+<p>Octave can also solve Quadratic Programming problems, this is
+<pre class="example">     min 0.5 x'*H*x + x'*q
+</pre>
+   <p>subject to
+<pre class="example">          A*x = b
+          lb &lt;= x &lt;= ub
+          A_lb &lt;= A_in*x &lt;= A_ub
+</pre>
+   <!-- ./optimization/qp.m -->
+<p><a name="doc_002dqp"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>x</var>, <var>obj</var>, <var>info</var>, <var>lambda</var>] = <b>qp</b> (<var>x0, H, q, A, b, lb, ub, A_lb, A_in, A_ub</var>)<var><a name="index-qp-1802"></a></var><br>
+<blockquote><p>Solve the quadratic program
+
+     <pre class="example">               min 0.5 x'*H*x + x'*q
+                x
+     </pre>
+        <p>subject to
+
+     <pre class="example">               A*x = b
+               lb &lt;= x &lt;= ub
+               A_lb &lt;= A_in*x &lt;= A_ub
+     </pre>
+        <p class="noindent">using a null-space active-set method.
+
+        <p>Any bound (<var>A</var>, <var>b</var>, <var>lb</var>, <var>ub</var>, <var>A_lb</var>,
+<var>A_ub</var>) may be set to the empty matrix (<code>[]</code>) if not
+present.  If the initial guess is feasible the algorithm is faster.
+
+        <p>The value <var>info</var> is a structure with the following fields:
+          <dl>
+<dt><code>solveiter</code><dd>The number of iterations required to find the solution. 
+<br><dt><code>info</code><dd>An integer indicating the status of the solution, as follows:
+               <dl>
+<dt>0<dd>The problem is feasible and convex.  Global solution found. 
+<br><dt>1<dd>The problem is not convex.  Local solution found. 
+<br><dt>2<dd>The problem is not convex and unbounded. 
+<br><dt>3<dd>Maximum number of iterations reached. 
+<br><dt>6<dd>The problem is infeasible. 
+</dl>
+          </dl>
+        </p></blockquote></div>
+
+   </body></html>
+

@@ -1,0 +1,80 @@
+.\" Copyright (C) 2003, 2004, 2005, 2006, 2007 Dirk Eddelbuettel
+.\"
+.\" This file is part of Octave.
+.\"
+.\" Octave is free software; you can redistribute it and/or modify it
+.\" under the terms of the GNU General Public License as published by the
+.\" Free Software Foundation; either version 3 of the License, or (at
+.\" your option) any later version.
+.\"
+.\" Octave is distributed in the hope that it will be useful, but WITHOUT
+.\" ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+.\" FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+.\" for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with Octave; see the file COPYING.  If not, see
+.\" <http://www.gnu.org/licenses/>.
+.\"
+.\" This page was contributed by Dirk Eddelbuettel <edd@debian.org>.
+.\" 
+.TH OCTAVE-CONFIG 1 "19 February 2003" "GNU Octave"
+.SH NAME
+octave-config - GNU Octave component and library information retrieval
+.SH SYNOPSIS
+.B octave-config
+.RI [ options ]
+.SH DESCRIPTION
+.PP
+.B octave-config
+is a tool to obtain directory information for 
+.I .oct
+and 
+.I .m
+files for
+.BR octave (1).
+.SH OPTIONS
+.B octave-config
+accepts the following options:
+.TP 8
+.B \--m-site-dir
+Display the main directory for local, or site-specific, .m script files.
+.TP 8
+.B \--oct-site-dir
+Display the main directory for local, or site-specific, .oct dynamic-link libraries.
+.TP 8
+.B \-p|\-\-print VAR
+Print the default value of the Octave configuration variable VAR.
+Recognized variables are:
+.RS
+    CANONICAL_HOST_TYPE    LOCALFCNFILEDIR    
+    DEFAULT_PAGER          LOCALFCNFILEPATH
+    ARCHLIBDIR             LOCALOCTFILEDIR
+    BINDIR                 LOCALOCTFILEPATH
+    DATADIR                LOCALSTARTUPFILEDIR
+    EXEC_PREFIX            LOCALVERARCHLIBDIR
+    FCNFILEDIR             LOCALVERFCNFILEDIR
+    FCNFILEPATH            LOCALVEROCTFILEDIR
+    IMAGEDIR               MAN1DIR
+    IMAGE_PATH             MAN1EXT
+    INCLUDEDIR             MANDIR
+    INFODIR                OCTFILEDIR
+    INFOFILE               OCTINCLUDEDIR
+    LIBDIR                 OCTLIBDIR
+    LIBEXECDIR             PREFIX
+    LIBEXECDIR             STARTUPFILEDIR
+    LOCALARCHLIBDIR        VERSION
+.RE
+.TP 8
+.B \-v|\-\-version
+Display the version number of 
+.BR octave (1).
+.TP 8
+.B \-h|-?|--help
+Display a help page about
+.B octave-config
+.SH AUTHOR
+John W. Eaton <jwe@octave.org>
+
+This manual page was contributed by Dirk Eddelbuettel <edd@debian.org> 
+for the Debian GNU/Linux distribution but may be used by others.

@@ -1,0 +1,84 @@
+<html lang="en">
+<head>
+<title>Interacting with plots - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Plotting-Basics.html#Plotting-Basics" title="Plotting Basics">
+<link rel="prev" href="Printing-Plots.html#Printing-Plots" title="Printing Plots">
+<link rel="next" href="Test-Plotting-Functions.html#Test-Plotting-Functions" title="Test Plotting Functions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Interacting-with-plots"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Test-Plotting-Functions.html#Test-Plotting-Functions">Test Plotting Functions</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Printing-Plots.html#Printing-Plots">Printing Plots</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Plotting-Basics.html#Plotting-Basics">Plotting Basics</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">15.1.7 Interacting with plots</h4>
+
+<p>The user can select points on a plot with the <code>ginput</code> function or
+selection the position at which to place text on the plot with the
+<code>gtext</code> function using the mouse.
+
+<!-- ./plot/ginput.m -->
+<p><a name="doc_002dginput"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>x</var>, <var>y</var>, <var>buttons</var>] = <b>ginput</b> (<var>n</var>)<var><a name="index-ginput-1099"></a></var><br>
+<blockquote><p>Return which mouse buttons were pressed and keys were hit on the current
+figure.  If <var>n</var> is defined, then wait for <var>n</var> mouse clicks
+before returning.  If <var>n</var> is not defined, then <code>ginput</code> will
+loop until the return key is pressed. 
+</p></blockquote></div>
+
+<!-- ./plot/waitforbuttonpress.m -->
+<p><a name="doc_002dwaitforbuttonpress"></a>
+
+<div class="defun">
+&mdash; Function File: <var>b</var> = <b>waitforbuttonpress</b> ()<var><a name="index-waitforbuttonpress-1100"></a></var><br>
+<blockquote><p>Wait for button or mouse press.over a figure window.  The value of
+<var>b</var> returns 0 if a mouse button was pressed or 1 is a key was
+pressed. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dginput.html#doc_002dginput">ginput</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/gtext.m -->
+<p><a name="doc_002dgtext"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>gtext</b> (<var>s</var>)<var><a name="index-gtext-1101"></a></var><br>
+&mdash; Function File:  <b>gtext</b> (<var>{s1; s2; <small class="dots">...</small>}</var>)<var><a name="index-gtext-1102"></a></var><br>
+&mdash; Function File:  <b>gtext</b> (<var><small class="dots">...</small>, prop, val</var>)<var><a name="index-gtext-1103"></a></var><br>
+<blockquote><p>Place text on the current figure using the mouse.  The text is defined
+by the string <var>s</var>.  If <var>s</var> is a cell array, each element of the cell
+array is written to a separate line.  Additional arguments are passed to
+the underlying text object as properties. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dginput.html#doc_002dginput">ginput</a>, <a href="doc_002dtext.html#doc_002dtext">text</a>. 
+</p></blockquote></div>
+
+   </body></html>
+

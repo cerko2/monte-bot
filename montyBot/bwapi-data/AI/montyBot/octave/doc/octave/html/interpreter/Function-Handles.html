@@ -1,0 +1,91 @@
+<html lang="en">
+<head>
+<title>Function Handles - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Function-Handles-Inline-Functions-and-Anonymous-Functions.html#Function-Handles-Inline-Functions-and-Anonymous-Functions" title="Function Handles Inline Functions and Anonymous Functions">
+<link rel="next" href="Anonymous-Functions.html#Anonymous-Functions" title="Anonymous Functions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Function-Handles"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Anonymous-Functions.html#Anonymous-Functions">Anonymous Functions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Function-Handles-Inline-Functions-and-Anonymous-Functions.html#Function-Handles-Inline-Functions-and-Anonymous-Functions">Function Handles Inline Functions and Anonymous Functions</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">11.9.1 Function Handles</h4>
+
+<p>A function handle is a pointer to another function and is defined with
+the syntax
+
+<pre class="example">     @<var>function-name</var>
+</pre>
+   <p class="noindent">For example
+
+<pre class="example">     f = @sin;
+</pre>
+   <p class="noindent">Creates a function handle called <code>f</code> that refers to the
+function <code>sin</code>.
+
+   <p>Function handles are used to call other functions indirectly, or to pass
+a function as an argument to another function like <code>quad</code> or
+<code>fsolve</code>.  For example
+
+<pre class="example">     f = @sin;
+     quad (f, 0, pi)
+         =&gt; 2
+</pre>
+   <p>You may use <code>feval</code> to call a function using function handle, or
+simply write the name of the function handle followed by an argument
+list.  If there are no arguments, you must use an empty argument list
+<span class="samp">()</span>.  For example
+
+<pre class="example">     f = @sin;
+     feval (f, pi/4)
+         =&gt; 0.70711
+     f (pi/4)
+         =&gt; 0.70711
+</pre>
+   <!-- ov-fcn-handle.cc -->
+<p><a name="doc_002dfunctions"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>functions</b> (<var>fcn_handle</var>)<var><a name="index-functions-646"></a></var><br>
+<blockquote><p>Return a struct containing information about the function handle
+<var>fcn_handle</var>. 
+</p></blockquote></div>
+
+<!-- ov-fcn-handle.cc -->
+<p><a name="doc_002dfunc2str"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>func2str</b> (<var>fcn_handle</var>)<var><a name="index-func2str-647"></a></var><br>
+<blockquote><p>Return a string containing the name of the function referenced by
+the function handle <var>fcn_handle</var>. 
+</p></blockquote></div>
+
+<!-- ov-fcn-handle.cc -->
+<p><a name="doc_002dstr2func"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>str2func</b> (<var>fcn_name</var>)<var><a name="index-str2func-648"></a></var><br>
+<blockquote><p>Return a function handle constructed from the string <var>fcn_name</var>. 
+</p></blockquote></div>
+
+   </body></html>
+

@@ -1,0 +1,32 @@
+
+Known Issues with octave/mingw32 3.2.4:
+--------------------------------------
+
+*) The command "clear all" results in a segfault.
+   This is currently triggered by the following octave-forge packages:
+      windows
+      octcdf
+      communications
+      ga (depends on communications)
+      
+   The error occurs only if any of these packages is marked "-auto" 
+   i.e. is loaded at startup.
+   
+*) Installing octave respectively running octave from a path which contains
+   spaces breaks the installation of octave-forge packages using octave's
+   package manager pkg.m.
+   It this therefore highly recommended to install octave to a path WITHOUT
+   spaces. Octave will work if installed to a path including spaces, and all 
+   packages added at the installation will work if installed into a path 
+   containing spaces, HOWEVER you will currently NOT be able to install 
+   packages using octave's package manager at a later time if Octave was 
+   installed to a directory containing spaces.
+
+*) "make check" results:
+
+   Summary:
+   
+    PASS   5754
+    FAIL      3
+   
+   octave-3.2.4\src\data.cc  PASS  506/509  FAIL 3

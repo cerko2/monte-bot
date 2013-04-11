@@ -1,0 +1,276 @@
+<html lang="en">
+<head>
+<title>Famous Matrices - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Matrix-Manipulation.html#Matrix-Manipulation" title="Matrix Manipulation">
+<link rel="prev" href="Special-Utility-Matrices.html#Special-Utility-Matrices" title="Special Utility Matrices">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Famous-Matrices"></a>Previous:&nbsp;<a rel="previous" accesskey="p" href="Special-Utility-Matrices.html#Special-Utility-Matrices">Special Utility Matrices</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Matrix-Manipulation.html#Matrix-Manipulation">Matrix Manipulation</a>
+<hr><br>
+</div>
+
+<h3 class="section">16.5 Famous Matrices</h3>
+
+<p>The following functions return famous matrix forms.
+
+<!-- ./special-matrix/hadamard.m -->
+<p><a name="doc_002dhadamard"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>hadamard</b> (<var>n</var>)<var><a name="index-hadamard-1350"></a></var><br>
+<blockquote><p>Construct a Hadamard matrix <var>Hn</var> of size <var>n</var>-by-<var>n</var>.  The
+size <var>n</var> must be of the form <code>2 ^ </code><var>k</var><code> * </code><var>p</var> in which
+<var>p</var> is one of 1, 12, 20 or 28.  The returned matrix is normalized,
+meaning <code>Hn(:,1) == 1</code> and <code>H(1,:) == 1</code>.
+
+        <p>Some of the properties of Hadamard matrices are:
+
+          <ul>
+<li><code>kron (</code><var>Hm</var><code>, </code><var>Hn</var><code>)</code> is a Hadamard matrix of size
+<var>m</var>-by-<var>n</var>. 
+<li><code>Hn * Hn' == </code><var>n</var><code> * eye (</code><var>n</var><code>)</code>. 
+<li>The rows of <var>Hn</var> are orthogonal. 
+<li><code>det (</code><var>A</var><code>) &lt;= abs(det (</code><var>Hn</var><code>))</code> for all <var>A</var> with
+<code>abs (</code><var>A</var><code> (</code><var>i</var><code>, </code><var>j</var><code>)) &lt;= 1</code>. 
+<li>Multiply any row or column by -1 and still have a Hadamard matrix. 
+</ul>
+
+        </blockquote></div>
+
+<!-- ./special-matrix/hankel.m -->
+<p><a name="doc_002dhankel"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>hankel</b> (<var>c, r</var>)<var><a name="index-hankel-1351"></a></var><br>
+<blockquote><p>Return the Hankel matrix constructed given the first column <var>c</var>, and
+(optionally) the last row <var>r</var>.  If the last element of <var>c</var> is
+not the same as the first element of <var>r</var>, the last element of
+<var>c</var> is used.  If the second argument is omitted, it is assumed to
+be a vector of zeros with the same size as <var>c</var>.
+
+        <p>A Hankel matrix formed from an m-vector <var>c</var>, and an n-vector
+<var>r</var>, has the elements
+
+     <pre class="example">          H(i,j) = c(i+j-1),  i+j-1 &lt;= m;
+          H(i,j) = r(i+j-m),  otherwise
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dvander.html#doc_002dvander">vander</a>, <a href="doc_002dsylvester_005fmatrix.html#doc_002dsylvester_005fmatrix">sylvester_matrix</a>, <a href="doc_002dhilb.html#doc_002dhilb">hilb</a>, <a href="doc_002dinvhilb.html#doc_002dinvhilb">invhilb</a>, <a href="doc_002dtoeplitz.html#doc_002dtoeplitz">toeplitz</a>. 
+</p></blockquote></div>
+
+<!-- ./special-matrix/hilb.m -->
+<p><a name="doc_002dhilb"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>hilb</b> (<var>n</var>)<var><a name="index-hilb-1352"></a></var><br>
+<blockquote><p>Return the Hilbert matrix of order <var>n</var>.  The
+i, j
+element of a Hilbert matrix is defined as
+
+     <pre class="example">          H (i, j) = 1 / (i + j - 1)
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dhankel.html#doc_002dhankel">hankel</a>, <a href="doc_002dvander.html#doc_002dvander">vander</a>, <a href="doc_002dsylvester_005fmatrix.html#doc_002dsylvester_005fmatrix">sylvester_matrix</a>, <a href="doc_002dinvhilb.html#doc_002dinvhilb">invhilb</a>, <a href="doc_002dtoeplitz.html#doc_002dtoeplitz">toeplitz</a>. 
+</p></blockquote></div>
+
+<!-- ./special-matrix/invhilb.m -->
+<p><a name="doc_002dinvhilb"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>invhilb</b> (<var>n</var>)<var><a name="index-invhilb-1353"></a></var><br>
+<blockquote><p>Return the inverse of a Hilbert matrix of order <var>n</var>.  This can be
+computed exactly using
+     <pre class="example">          
+                      (i+j)         /n+i-1\  /n+j-1\   /i+j-2\ 2
+           A(i,j) = -1      (i+j-1)(       )(       ) (       )
+                                    \ n-j /  \ n-i /   \ i-2 /
+          
+                  = p(i) p(j) / (i+j-1)
+     </pre>
+        <p>where
+     <pre class="example">                       k  /k+n-1\   /n\
+              p(k) = -1  (       ) (   )
+                          \ k-1 /   \k/
+     </pre>
+        <p>The validity of this formula can easily be checked by expanding
+the binomial coefficients in both formulas as factorials.  It can
+be derived more directly via the theory of Cauchy matrices:
+see J. W. Demmel, Applied Numerical Linear Algebra, page 92.
+
+        <p>Compare this with the numerical calculation of <code>inverse (hilb (n))</code>,
+which suffers from the ill-conditioning of the Hilbert matrix, and the
+finite precision of your computer's floating point arithmetic. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dhankel.html#doc_002dhankel">hankel</a>, <a href="doc_002dvander.html#doc_002dvander">vander</a>, <a href="doc_002dsylvester_005fmatrix.html#doc_002dsylvester_005fmatrix">sylvester_matrix</a>, <a href="doc_002dhilb.html#doc_002dhilb">hilb</a>, <a href="doc_002dtoeplitz.html#doc_002dtoeplitz">toeplitz</a>. 
+</p></blockquote></div>
+
+<!-- ./special-matrix/magic.m -->
+<p><a name="doc_002dmagic"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>magic</b> (<var>n</var>)<var><a name="index-magic-1354"></a></var><br>
+<blockquote>
+<p>Create an <var>n</var>-by-<var>n</var> magic square.  Note that <code>magic
+(</code><var>2</var><code>)</code> is undefined since there is no 2-by-2 magic square.
+
+        </blockquote></div>
+
+<!-- ./special-matrix/pascal.m -->
+<p><a name="doc_002dpascal"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>pascal</b> (<var>n, t</var>)<var><a name="index-pascal-1355"></a></var><br>
+<blockquote>
+<p>Return the Pascal matrix of order <var>n</var> if <var>t</var><code> = 0</code>. 
+<var>t</var> defaults to 0. Return lower triangular Cholesky factor of
+the Pascal matrix if <var>t</var><code> = 1</code>.  This matrix is its own
+inverse, that is <code>pascal (</code><var>n</var><code>, 1) ^ 2 == eye (</code><var>n</var><code>)</code>. 
+If <var>t</var><code> = -1</code>, return its absolute value.  This is the
+standard pascal triangle as a lower-triangular matrix. 
+If <var>t</var><code> = 2</code>, return a transposed and permuted version of
+<code>pascal (</code><var>n</var><code>, 1)</code>, which is the cube-root of the identity
+matrix.  That is <code>pascal (</code><var>n</var><code>, 2) ^ 3 == eye (</code><var>n</var><code>)</code>.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dhankel.html#doc_002dhankel">hankel</a>, <a href="doc_002dvander.html#doc_002dvander">vander</a>, <a href="doc_002dsylvester_005fmatrix.html#doc_002dsylvester_005fmatrix">sylvester_matrix</a>, <a href="doc_002dhilb.html#doc_002dhilb">hilb</a>, <a href="doc_002dinvhilb.html#doc_002dinvhilb">invhilb</a>, <a href="doc_002dtoeplitz.html#doc_002dtoeplitz">toeplitz</a>, <a href="doc_002dhadamard.html#doc_002dhadamard">hadamard</a>, <a href="doc_002dwilkinson.html#doc_002dwilkinson">wilkinson</a>, <a href="doc_002dcompan.html#doc_002dcompan">compan</a>, <a href="doc_002drosser.html#doc_002drosser">rosser</a>. 
+</p></blockquote></div>
+
+<!-- ./special-matrix/rosser.m -->
+<p><a name="doc_002drosser"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>rosser</b> ()<var><a name="index-rosser-1356"></a></var><br>
+<blockquote>
+<p>Returns the Rosser matrix.  This is a difficult test case used to test
+eigenvalue algorithms.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dhankel.html#doc_002dhankel">hankel</a>, <a href="doc_002dvander.html#doc_002dvander">vander</a>, <a href="doc_002dsylvester_005fmatrix.html#doc_002dsylvester_005fmatrix">sylvester_matrix</a>, <a href="doc_002dhilb.html#doc_002dhilb">hilb</a>, <a href="doc_002dinvhilb.html#doc_002dinvhilb">invhilb</a>, <a href="doc_002dtoeplitz.html#doc_002dtoeplitz">toeplitz</a>, <a href="doc_002dhadamard.html#doc_002dhadamard">hadamard</a>, <a href="doc_002dwilkinson.html#doc_002dwilkinson">wilkinson</a>, <a href="doc_002dcompan.html#doc_002dcompan">compan</a>, <a href="doc_002dpascal.html#doc_002dpascal">pascal</a>. 
+</p></blockquote></div>
+
+<!-- ./special-matrix/sylvester_matrix.m -->
+<p><a name="doc_002dsylvester_005fmatrix"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>sylvester_matrix</b> (<var>k</var>)<var><a name="index-sylvester_005fmatrix-1357"></a></var><br>
+<blockquote><p>Return the Sylvester matrix of order
+n = 2^k. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dhankel.html#doc_002dhankel">hankel</a>, <a href="doc_002dvander.html#doc_002dvander">vander</a>, <a href="doc_002dhilb.html#doc_002dhilb">hilb</a>, <a href="doc_002dinvhilb.html#doc_002dinvhilb">invhilb</a>, <a href="doc_002dtoeplitz.html#doc_002dtoeplitz">toeplitz</a>. 
+</p></blockquote></div>
+
+<!-- ./special-matrix/toeplitz.m -->
+<p><a name="doc_002dtoeplitz"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>toeplitz</b> (<var>c, r</var>)<var><a name="index-toeplitz-1358"></a></var><br>
+<blockquote><p>Return the Toeplitz matrix constructed given the first column <var>c</var>,
+and (optionally) the first row <var>r</var>.  If the first element of <var>c</var>
+is not the same as the first element of <var>r</var>, the first element of
+<var>c</var> is used.  If the second argument is omitted, the first row is
+taken to be the same as the first column.
+
+        <p>A square Toeplitz matrix has the form:
+
+     <pre class="example">          c(0)  r(1)   r(2)  ...  r(n)
+          c(1)  c(0)   r(1)  ... r(n-1)
+          c(2)  c(1)   c(0)  ... r(n-2)
+           .     ,      ,   .      .
+           .     ,      ,     .    .
+           .     ,      ,       .  .
+          c(n) c(n-1) c(n-2) ...  c(0)
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dhankel.html#doc_002dhankel">hankel</a>, <a href="doc_002dvander.html#doc_002dvander">vander</a>, <a href="doc_002dsylvester_005fmatrix.html#doc_002dsylvester_005fmatrix">sylvester_matrix</a>, <a href="doc_002dhilb.html#doc_002dhilb">hilb</a>, <a href="doc_002dinvhilb.html#doc_002dinvhilb">invhilb</a>. 
+</p></blockquote></div>
+
+<!-- ./special-matrix/vander.m -->
+<p><a name="doc_002dvander"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>vander</b> (<var>c, n</var>)<var><a name="index-vander-1359"></a></var><br>
+<blockquote><p>Return the Vandermonde matrix whose next to last column is <var>c</var>. 
+If <var>n</var> is specified, it determines the number of columns;
+otherwise, <var>n</var> is taken to be equal to the length of <var>c</var>.
+
+        <p>A Vandermonde matrix has the form:
+
+     <pre class="example">          c(1)^(n-1) ... c(1)^2  c(1)  1
+          c(2)^(n-1) ... c(2)^2  c(2)  1
+              .     .      .      .    .
+              .       .    .      .    .
+              .         .  .      .    .
+          c(n)^(n-1) ... c(n)^2  c(n)  1
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dhankel.html#doc_002dhankel">hankel</a>, <a href="doc_002dsylvester_005fmatrix.html#doc_002dsylvester_005fmatrix">sylvester_matrix</a>, <a href="doc_002dhilb.html#doc_002dhilb">hilb</a>, <a href="doc_002dinvhilb.html#doc_002dinvhilb">invhilb</a>, <a href="doc_002dtoeplitz.html#doc_002dtoeplitz">toeplitz</a>. 
+</p></blockquote></div>
+
+<!-- ./special-matrix/wilkinson.m -->
+<p><a name="doc_002dwilkinson"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>wilkinson</b> (<var>n</var>)<var><a name="index-wilkinson-1360"></a></var><br>
+<blockquote>
+<p>Return the Wilkinson matrix of order <var>n</var>.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dhankel.html#doc_002dhankel">hankel</a>, <a href="doc_002dvander.html#doc_002dvander">vander</a>, <a href="doc_002dsylvester_005fmatrix.html#doc_002dsylvester_005fmatrix">sylvester_matrix</a>, <a href="doc_002dhilb.html#doc_002dhilb">hilb</a>, <a href="doc_002dinvhilb.html#doc_002dinvhilb">invhilb</a>, <a href="doc_002dtoeplitz.html#doc_002dtoeplitz">toeplitz</a>, <a href="doc_002dhadamard.html#doc_002dhadamard">hadamard</a>, <a href="doc_002drosser.html#doc_002drosser">rosser</a>, <a href="doc_002dcompan.html#doc_002dcompan">compan</a>, <a href="doc_002dpascal.html#doc_002dpascal">pascal</a>. 
+</p></blockquote></div>
+
+<!-- DO NOT EDIT!  Generated automatically by munge-texi. -->
+<!-- Copyright (C) 1996, 1997, 1999, 2000, 2001, 2002, 2007, 2008, -->
+<!-- 2009 John W. Eaton -->
+<!-- This file is part of Octave. -->
+<!-- Octave is free software; you can redistribute it and/or modify it -->
+<!-- under the terms of the GNU General Public License as published by the -->
+<!-- Free Software Foundation; either version 3 of the License, or (at -->
+<!-- your option) any later version. -->
+<!-- Octave is distributed in the hope that it will be useful, but WITHOUT -->
+<!-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or -->
+<!-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License -->
+<!-- for more details. -->
+<!-- You should have received a copy of the GNU General Public License -->
+<!-- along with Octave; see the file COPYING.  If not, see -->
+<!-- <http://www.gnu.org/licenses/>. -->
+</body></html>
+

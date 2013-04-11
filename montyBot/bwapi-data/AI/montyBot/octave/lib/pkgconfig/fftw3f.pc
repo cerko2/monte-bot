@@ -1,0 +1,10 @@
+prefix=/usr/local/octmgw32_gcc-4.4.0-dw2
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: FFTW
+Description: fast Fourier transform library
+Version: 3.2.2
+Libs: -L${libdir} -lfftw3f -lm
+Cflags: -I${includedir}

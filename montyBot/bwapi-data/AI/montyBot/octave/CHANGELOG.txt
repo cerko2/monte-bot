@@ -1,0 +1,129 @@
+Octave/mingw32 3.2.4 new features, changes and bugfixes (from 3.2.3-2)
+====================================================================
+
+*) CHG: add the following packages from octave forge to the installer:
+            jhandles-0.3.5+   (noauto)
+            java-1.2.7+       (noauto)
+            video-1.0.2
+            msh-1.0.0
+            fpl-1.0.0
+            actuarial-1.1.0
+            bim-1.0.10
+            fenv-0.1.0
+            generate_html-0.1.2
+            gnuplot-1.0.1
+            gpc-0.1.7
+            nlwing2-1.1.1
+            nurbs-1.0.3
+            ocs-0.0.4
+            oct2mat-1.0.7
+            octgpr-1.1.5
+            simp-1.1.0
+            spline-gcvspl-1.0.8
+            symband-1.0.10
+
+*) NOTE: The following packages are marked "noauto" as they require a Java
+         Runtime Environment (JRE) installed when loaded.
+            java
+            jhandles
+         To use these packages execute "pkg load java". Make sure to have a JRE 
+         installed.
+         To mark them as autoload execute "pkg rebuild -auto java"
+
+*) CHG: updated the following octave forge packages
+            windows  1.0.8  -> 1.0.8+    (noauto)
+            octcdf   1.0.13 -> 1.0.17+   (noauto)
+            optim    1.0.6  -> 1.0.12
+            general  1.1.3  -> 1.2.0
+            io       1.0.9  -> 1.0.11
+            odepkg   0.6.7  -> 0.6.10
+        
+*) CHG: update gnuplot to 4.4.0
+*) CHG: revert PS1 to octave's default (of not including the pwd)
+*) CHG: add necessary jars for ods/xls support in the io package
+
+*) NOTE: for reading/writing xls files you can use either:
+           - Execl/COM Interface: requires the windows package and Excel 
+                                  installed on your cmputer
+           - Java Interface: requires the java package and a JRE > 1.6.0 
+                             installed on your computer
+
+*) NOTE: reading/writing ods files uses a:
+           - Java Interface: requires the java package and a JRE > 1.6.0 
+                             installed on your computer
+
+*) NOTE: The JRE is *not* included in the octave/mingw32 installer. You can get 
+        a JRE for windows at http://www.java.com.
+
+
+Octave/mingw32 3.2.3-2 new features, changes and bugfixes (from 3.2.3)
+====================================================================
+
+*) CHG: Remove SSE3 ATLAS libraries from installer as they reportedly
+        segfault on complex arithmetic. No solution available yet.
+*) FIX: Fix a bug in patch of jpeg-7 which caused loading jpeg images to fail
+*) FIX: Fix a bug in installer setting wrong shortcuts to octave documentation
+*) FIX: Fix missing gnuplot documentation in installer
+
+
+Octave/mingw32 3.2.3 new features, changes and bugfixes (from 3.2.2)
+====================================================================
+
+*) CHG: Build with gcc-4.4.0 from http://www.mingw.org
+*) CHG: Update to gnuplot 4.3.0-2009-07-08 CVS snapshot
+*) FIX: for gnuplot, add a workaround patch to SF#2848002
+*) CHG: build gnuplot with support for wxwidgets terminal. To use it, set the
+        environment variable GNUTERM to "wxt", e.g. from within octave execute
+            putenv("GNUTERM","wxt")
+*) CHG: Build Graphicsmagick as relocatable dll and remove dependency on 
+        environment variable defining installation location
+*) CHG: Update several dependency libraries
+*) CHG: Add SSE/SSE2-enabled fftw3 library
+*) CHG: add the fixed-0.7.10 octave forge package to installer
+*) FIX: Printing to pdf no longer yields spurious empty pages using gnuplot
+*) FIX: Pressing CTRL-C within octave should no longer crash gnuplot
+*) FIX: the command "clear all" no longer segfaults after calling eigs()
+
+
+Octave/mingw32 3.2.0 new features, changes and bugfixes (from 3.2.0)
+====================================================================
+
+*) CHG: The 3.2.2 installer includes the following post-3.2.2 changesets in 
+	addition to the octave-3.2.2 sources
+   
+      http://hg.tw-math.de/release-3-2-x/rev/cd95695a0a89  ("dir" crashes)
+      http://hg.tw-math.de/release-3-2-x/rev/b308b2e12f04  (16bit images)
+      http://hg.tw-math.de/release-3-2-x/rev/9107c882f193  (speed up "plot")
+      
+   These adress bugfixes relevant to mingw32 platform.
+   These will be included by default in succeeding versions of octave/mingw32.
+
+*) CHG: The installer includes a Q16 GraphicsMagick build (configured 
+        with --quantum-depth=16) to enable lossless reading/writing of
+        16bit images.
+
+*) CHG: The following octave-forge packages have been marked as "-noauto":
+      windows-1.0.8
+      octcdf-1.0.13
+      communications-1.0.10
+      ga-0.9.7
+   
+   This is done to avoid the "clear all" crash if any of these packages
+   is selected during the installation. If you require them to be loaded 
+   automatically you have to manually set them to, by executing the 
+   command(s)
+   
+      pkg rebuild -auto windows
+      pkg rebuild -auto octcdf
+      pkg rebuild -auto communications
+      pkg rebuild -auto ga
+   
+   from the octave prompt.
+   
+   Be advised that this will trigger the "clear all" segfault!
+
+*) FIX: The command "dir" should no longer crash on Windows Vista and Windows 
+        Server
+*) FIX: Reading/writing images using GraphicsMagick no longer fails with 
+        GraphicsMagick complaining about missing configuration files.
+*) FIX: Reading/writing 16bit images works without loss of precision

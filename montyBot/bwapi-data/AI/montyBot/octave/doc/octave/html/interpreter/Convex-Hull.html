@@ -1,0 +1,91 @@
+<html lang="en">
+<head>
+<title>Convex Hull - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Geometry.html#Geometry" title="Geometry">
+<link rel="prev" href="Voronoi-Diagrams.html#Voronoi-Diagrams" title="Voronoi Diagrams">
+<link rel="next" href="Interpolation-on-Scattered-Data.html#Interpolation-on-Scattered-Data" title="Interpolation on Scattered Data">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Convex-Hull"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Interpolation-on-Scattered-Data.html#Interpolation-on-Scattered-Data">Interpolation on Scattered Data</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Voronoi-Diagrams.html#Voronoi-Diagrams">Voronoi Diagrams</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Geometry.html#Geometry">Geometry</a>
+<hr><br>
+</div>
+
+<h3 class="section">29.3 Convex Hull</h3>
+
+<p>The convex hull of a set of points is the minimum convex envelope
+containing all of the points.  Octave has the functions <code>convhull</code>
+and <code>convhulln</code> to calculate the convex hull of 2-dimensional and
+N-dimensional sets of points.
+
+<!-- ./geometry/convhull.m -->
+<p><a name="doc_002dconvhull"></a>
+
+<div class="defun">
+&mdash; Function File: <var>H</var> = <b>convhull</b> (<var>x, y</var>)<var><a name="index-convhull-2113"></a></var><br>
+&mdash; Function File: <var>H</var> = <b>convhull</b> (<var>x, y, opt</var>)<var><a name="index-convhull-2114"></a></var><br>
+<blockquote><p>Returns the index vector to the points of the enclosing convex hull.  The
+data points are defined by the x and y vectors.
+
+        <p>A third optional argument, which must be a string, contains extra options
+passed to the underlying qhull command.  See the documentation for the
+Qhull library for details.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002ddelaunay.html#doc_002ddelaunay">delaunay</a>, <a href="doc_002dconvhulln.html#doc_002dconvhulln">convhulln</a>. 
+</p></blockquote></div>
+
+<!-- ./DLD-FUNCTIONS/convhulln.cc -->
+<p><a name="doc_002dconvhulln"></a>
+
+<div class="defun">
+&mdash; Loadable Function: <var>h</var> = <b>convhulln</b> (<var>p</var>)<var><a name="index-convhulln-2115"></a></var><br>
+&mdash; Loadable Function: <var>h</var> = <b>convhulln</b> (<var>p, opt</var>)<var><a name="index-convhulln-2116"></a></var><br>
+&mdash; Loadable Function: [<var>h</var>, <var>v</var>] = <b>convhulln</b> (<var><small class="dots">...</small></var>)<var><a name="index-convhulln-2117"></a></var><br>
+<blockquote><p>Return an index vector to the points of the enclosing convex hull. 
+The input matrix of size [n, dim] contains n points of dimension dim.
+
+        <p>If a second optional argument is given, it must be a string or cell array
+of strings containing options for the underlying qhull command.  (See
+the Qhull documentation for the available options.)  The default options
+are "s Qci Tcv". 
+If the second output <var>V</var> is requested the volume of the convex hull is
+calculated.
+
+     <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dconvhull.html#doc_002dconvhull">convhull</a>, <a href="doc_002ddelaunayn.html#doc_002ddelaunayn">delaunayn</a>. 
+</p></blockquote></div>
+
+   <p>An example of the use of <code>convhull</code> is
+
+<pre class="example">     x = -3:0.05:3;
+     y = abs (sin (x));
+     k = convhull (x, y);
+     plot (x(k), y(k), "r-", x, y, "b+");
+     axis ([-3.05, 3.05, -0.05, 1.05]);
+</pre>
+   </body></html>
+

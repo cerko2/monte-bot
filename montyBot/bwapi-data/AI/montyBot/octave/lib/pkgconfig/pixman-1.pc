@@ -1,0 +1,11 @@
+prefix=/usr/local/octmgw32_gcc-4.4.0-dw2
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Pixman
+Description: The pixman library (version 1)
+Version: 0.17.2
+Cflags: -I${includedir} 
+Libs: -L${libdir} -lpixman-1 
+

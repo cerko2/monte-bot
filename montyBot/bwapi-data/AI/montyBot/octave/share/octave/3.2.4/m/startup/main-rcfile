@@ -1,0 +1,66 @@
+## System-wide startup file for Octave.
+##
+## This file should contain any commands that should be executed each
+## time Octave starts for every user at this site.
+
+## Configure readline using the file inputrc in the Octave startup
+## directory.
+
+read_readline_init_file (sprintf ("%s%s%s",
+				  octave_config_info ("startupfiledir"),
+				  filesep, "inputrc"));
+
+## Check for PAGER in distribution tree
+if( exist( fullfile( octave_config_info("bindir"), "less.exe") ) )
+  PAGER( fullfile( octave_config_info("bindir"), "less.exe") );
+  
+  if( isempty(getenv("LESS")) )
+     PAGER_FLAGS ("-P\"?ltlines %lt-%lb?L/%L. ?e(END). -- (f)orward, (b)ack, (q)uit$\"");
+  endif
+  
+  page_screen_output(1);
+endif
+
+if (strcmp (PAGER (), "less") && isempty (getenv ("LESS")))
+  PAGER_FLAGS ('-e -X -P"-- less ?pB(%pB\\%):--. (f)orward, (b)ack, (q)uit$"');
+endif
+
+## This appears here instead of in the pkg/PKG_ADD file so that --norc
+## will also skip automatic loading of packages.
+
+pkg ("load", "auto");
+
+## check for notepad++ editor
+
+npp_path = fullfile( octave_config_info("prefix"), "tools", "notepad++" );
+if( exist(npp_path,"dir") )
+   EDITOR( fullfile( npp_path, "notepad++.exe" ) );
+   edit("mode","async");
+endif
+clear npp_path
+
+## check for MSYS environment
+
+msys_path = fullfile( octave_config_info("prefix"), "MSYS" );
+if( exist( msys_path, "dir" ) )
+   msys_path = cat(2, msys_path, filesep, "bin", ";", EXEC_PATH );
+   EXEC_PATH( msys_path );
+endif
+clear msys_path
+
+## check for mingw32
+
+mingw_path = fullfile( octave_config_info("prefix"), "MINGW32" );
+if( exist(mingw_path, "dir") )
+   mingw_path = cat(2, mingw_path, filesep, "bin", ";", EXEC_PATH );
+   EXEC_PATH( mingw_path );
+endif
+clear mingw_path
+
+## check for gnuplot in bundle
+
+if( exist( fullfile( octave_config_info("bindir"),"gnuplot.exe") ) )
+   gnuplot_binary( fullfile( octave_config_info("bindir"),"gnuplot.exe") );
+endif
+
+atexit ("__finish__");

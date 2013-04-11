@@ -1,0 +1,246 @@
+<html lang="en">
+<head>
+<title>Finding Elements and Checking Conditions - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Matrix-Manipulation.html#Matrix-Manipulation" title="Matrix Manipulation">
+<link rel="next" href="Rearranging-Matrices.html#Rearranging-Matrices" title="Rearranging Matrices">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Finding-Elements-and-Checking-Conditions"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Rearranging-Matrices.html#Rearranging-Matrices">Rearranging Matrices</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Matrix-Manipulation.html#Matrix-Manipulation">Matrix Manipulation</a>
+<hr><br>
+</div>
+
+<h3 class="section">16.1 Finding Elements and Checking Conditions</h3>
+
+<p>The functions <code>any</code> and <code>all</code> are useful for determining
+whether any or all of the elements of a matrix satisfy some condition. 
+The <code>find</code> function is also useful in determining which elements of
+a matrix meet a specified condition.
+
+<!-- data.cc -->
+<p><a name="doc_002dany"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>any</b> (<var>x, dim</var>)<var><a name="index-any-1260"></a></var><br>
+<blockquote><p>For a vector argument, return 1 if any element of the vector is
+nonzero.
+
+        <p>For a matrix argument, return a row vector of ones and
+zeros with each element indicating whether any of the elements of the
+corresponding column of the matrix are nonzero.  For example,
+
+     <pre class="example">          any (eye (2, 4))
+               =&gt; [ 1, 1, 0, 0 ]
+     </pre>
+        <p>If the optional argument <var>dim</var> is supplied, work along dimension
+<var>dim</var>.  For example,
+
+     <pre class="example">          any (eye (2, 4), 2)
+               =&gt; [ 1; 1 ]
+     </pre>
+        </blockquote></div>
+
+<!-- data.cc -->
+<p><a name="doc_002dall"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>all</b> (<var>x, dim</var>)<var><a name="index-all-1261"></a></var><br>
+<blockquote><p>The function <code>all</code> behaves like the function <code>any</code>, except
+that it returns true only if all the elements of a vector, or all the
+elements along dimension <var>dim</var> of a matrix, are nonzero. 
+</p></blockquote></div>
+
+   <p>Since the comparison operators (see <a href="Comparison-Ops.html#Comparison-Ops">Comparison Ops</a>) return matrices
+of ones and zeros, it is easy to test a matrix for many things, not just
+whether the elements are nonzero.  For example,
+
+<pre class="example">     all (all (rand (5) &lt; 0.9))
+          =&gt; 0
+</pre>
+   <p class="noindent">tests a random 5 by 5 matrix to see if all of its elements are less
+than 0.9.
+
+   <p>Note that in conditional contexts (like the test clause of <code>if</code> and
+<code>while</code> statements) Octave treats the test as if you had typed
+<code>all (all (condition))</code>.
+
+<!-- ./miscellaneous/xor.m -->
+<p><a name="doc_002dxor"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>xor</b> (<var>x, y</var>)<var><a name="index-xor-1262"></a></var><br>
+<blockquote><p>Return the `exclusive or' of the entries of <var>x</var> and <var>y</var>. 
+For boolean expressions <var>x</var> and <var>y</var>,
+<code>xor (</code><var>x</var><code>, </code><var>y</var><code>)</code> is true if and only if <var>x</var> or <var>y</var>
+is true, but not if both <var>x</var> and <var>y</var> are true. 
+</p></blockquote></div>
+
+<!-- ./general/is_duplicate_entry.m -->
+<p><a name="doc_002dis_005fduplicate_005fentry"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>is_duplicate_entry</b> (<var>x</var>)<var><a name="index-is_005fduplicate_005fentry-1263"></a></var><br>
+<blockquote><p>Return non-zero if any entries in <var>x</var> are duplicates of one
+another. 
+</p></blockquote></div>
+
+<!-- ./general/diff.m -->
+<p><a name="doc_002ddiff"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>diff</b> (<var>x, k, dim</var>)<var><a name="index-diff-1264"></a></var><br>
+<blockquote><p>If <var>x</var> is a vector of length <var>n</var>, <code>diff (</code><var>x</var><code>)</code> is the
+vector of first differences
+<var>x</var>(2) - <var>x</var>(1), <small class="dots">...</small>, <var>x</var>(n) - <var>x</var>(n-1).
+
+        <p>If <var>x</var> is a matrix, <code>diff (</code><var>x</var><code>)</code> is the matrix of column
+differences along the first non-singleton dimension.
+
+        <p>The second argument is optional.  If supplied, <code>diff (</code><var>x</var><code>,
+</code><var>k</var><code>)</code>, where <var>k</var> is a non-negative integer, returns the
+<var>k</var>-th differences.  It is possible that <var>k</var> is larger than
+then first non-singleton dimension of the matrix.  In this case,
+<code>diff</code> continues to take the differences along the next
+non-singleton dimension.
+
+        <p>The dimension along which to take the difference can be explicitly
+stated with the optional variable <var>dim</var>.  In this case the
+<var>k</var>-th order differences are calculated along this dimension. 
+In the case where <var>k</var> exceeds <code>size (</code><var>x</var><code>, </code><var>dim</var><code>)</code>
+then an empty matrix is returned. 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002disinf"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isinf</b> (<var>x</var>)<var><a name="index-isinf-1265"></a></var><br>
+<blockquote><p>Return 1 for elements of <var>x</var> that are infinite and zero
+otherwise.  For example,
+
+     <pre class="example">          isinf ([13, Inf, NA, NaN])
+               =&gt; [ 0, 1, 0, 0 ]
+     </pre>
+        </blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002disnan"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>isnan</b> (<var>x</var>)<var><a name="index-isnan-1266"></a></var><br>
+<blockquote><p>Return 1 for elements of <var>x</var> that are NaN values and zero
+otherwise.  NA values are also considered NaN values.  For example,
+
+     <pre class="example">          isnan ([13, Inf, NA, NaN])
+               =&gt; [ 0, 0, 1, 1 ]
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002disna.html#doc_002disna">isna</a>. 
+</p></blockquote></div>
+
+<!-- mappers.cc -->
+<p><a name="doc_002dfinite"></a>
+
+<div class="defun">
+&mdash; Mapping Function:  <b>finite</b> (<var>x</var>)<var><a name="index-finite-1267"></a></var><br>
+<blockquote><p>Return 1 for elements of <var>x</var> that are finite values and zero
+otherwise.  For example,
+
+     <pre class="example">          finite ([13, Inf, NA, NaN])
+               =&gt; [ 1, 0, 0, 0 ]
+     </pre>
+        </blockquote></div>
+
+<!-- ./DLD-FUNCTIONS/find.cc -->
+<p><a name="doc_002dfind"></a>
+
+<div class="defun">
+&mdash; Loadable Function:  <b>find</b> (<var>x</var>)<var><a name="index-find-1268"></a></var><br>
+&mdash; Loadable Function:  <b>find</b> (<var>x, n</var>)<var><a name="index-find-1269"></a></var><br>
+&mdash; Loadable Function:  <b>find</b> (<var>x, n, direction</var>)<var><a name="index-find-1270"></a></var><br>
+<blockquote><p>Return a vector of indices of nonzero elements of a matrix, as a row if
+<var>x</var> is a row or as a column otherwise.  To obtain a single index for
+each matrix element, Octave pretends that the columns of a matrix form one
+long vector (like Fortran arrays are stored).  For example,
+
+     <pre class="example">          find (eye (2))
+               =&gt; [ 1; 4 ]
+     </pre>
+        <p>If two outputs are requested, <code>find</code> returns the row and column
+indices of nonzero elements of a matrix.  For example,
+
+     <pre class="example">          [i, j] = find (2 * eye (2))
+               =&gt; i = [ 1; 2 ]
+               =&gt; j = [ 1; 2 ]
+     </pre>
+        <p>If three outputs are requested, <code>find</code> also returns a vector
+containing the nonzero values.  For example,
+
+     <pre class="example">          [i, j, v] = find (3 * eye (2))
+               =&gt; i = [ 1; 2 ]
+               =&gt; j = [ 1; 2 ]
+               =&gt; v = [ 3; 3 ]
+     </pre>
+        <p>If two inputs are given, <var>n</var> indicates the maximum number of
+elements to find from the beginning of the matrix or vector.
+
+        <p>If three inputs are given, <var>direction</var> should be one of "first" or
+"last", requesting only the first or last <var>n</var> indices, respectively. 
+However, the indices are always returned in ascending order.
+
+        <p>Note that this function is particularly useful for sparse matrices, as
+it extracts the non-zero elements as vectors, which can then be used to
+create the original matrix.  For example,
+
+     <pre class="example">          sz = size(a);
+          [i, j, v] = find (a);
+          b = sparse(i, j, v, sz(1), sz(2));
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dsparse.html#doc_002dsparse">sparse</a>. 
+</p></blockquote></div>
+
+<!-- ./general/common_size.m -->
+<p><a name="doc_002dcommon_005fsize"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>err</var>, <var>y1</var>, <small class="dots">...</small>] = <b>common_size</b> (<var>x1, <small class="dots">...</small></var>)<var><a name="index-common_005fsize-1271"></a></var><br>
+<blockquote><p>Determine if all input arguments are either scalar or of common
+size.  If so, <var>err</var> is zero, and <var>yi</var> is a matrix of the
+common size with all entries equal to <var>xi</var> if this is a scalar or
+<var>xi</var> otherwise.  If the inputs cannot be brought to a common size,
+errorcode is 1, and <var>yi</var> is <var>xi</var>.  For example,
+
+     <pre class="example">          [errorcode, a, b] = common_size ([1 2; 3 4], 5)
+               =&gt; errorcode = 0
+               =&gt; a = [ 1, 2; 3, 4 ]
+               =&gt; b = [ 5, 5; 5, 5 ]
+     </pre>
+        <p class="noindent">This is useful for implementing functions where arguments can either
+be scalars or of common size. 
+</p></blockquote></div>
+
+   </body></html>
+

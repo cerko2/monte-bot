@@ -1,0 +1,175 @@
+<html lang="en">
+<head>
+<title>Multiple Return Values - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Functions-and-Scripts.html#Functions-and-Scripts" title="Functions and Scripts">
+<link rel="prev" href="Defining-Functions.html#Defining-Functions" title="Defining Functions">
+<link rel="next" href="Variable_002dlength-Argument-Lists.html#Variable_002dlength-Argument-Lists" title="Variable-length Argument Lists">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Multiple-Return-Values"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Variable_002dlength-Argument-Lists.html#Variable_002dlength-Argument-Lists">Variable-length Argument Lists</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Defining-Functions.html#Defining-Functions">Defining Functions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Functions-and-Scripts.html#Functions-and-Scripts">Functions and Scripts</a>
+<hr><br>
+</div>
+
+<h3 class="section">11.2 Multiple Return Values</h3>
+
+<p>Unlike many other computer languages, Octave allows you to define
+functions that return more than one value.  The syntax for defining
+functions that return multiple values is
+
+<pre class="example">     function [<var>ret-list</var>] = <var>name</var> (<var>arg-list</var>)
+       <var>body</var>
+     endfunction
+</pre>
+   <p class="noindent">where <var>name</var>, <var>arg-list</var>, and <var>body</var> have the same meaning
+as before, and <var>ret-list</var> is a comma-separated list of variable
+names that will hold the values returned from the function.  The list of
+return values must have at least one element.  If <var>ret-list</var> has
+only one element, this form of the <code>function</code> statement is
+equivalent to the form described in the previous section.
+
+   <p>Here is an example of a function that returns two values, the maximum
+element of a vector and the index of its first occurrence in the vector.
+
+<pre class="example">     function [max, idx] = vmax (v)
+       idx = 1;
+       max = v (idx);
+       for i = 2:length (v)
+         if (v (i) &gt; max)
+           max = v (i);
+           idx = i;
+         endif
+       endfor
+     endfunction
+</pre>
+   <p>In this particular case, the two values could have been returned as
+elements of a single array, but that is not always possible or
+convenient.  The values to be returned may not have compatible
+dimensions, and it is often desirable to give the individual return
+values distinct names.
+
+   <p>In addition to setting <code>nargin</code> each time a function is called,
+Octave also automatically initializes <code>nargout</code> to the number of
+values that are expected to be returned.  This allows you to write
+functions that behave differently depending on the number of values that
+the user of the function has requested.  The implicit assignment to the
+built-in variable <code>ans</code> does not figure in the count of output
+arguments, so the value of <code>nargout</code> may be zero.
+
+   <p>The <code>svd</code> and <code>lu</code> functions are examples of built-in
+functions that behave differently depending on the value of
+<code>nargout</code>.
+
+   <p>It is possible to write functions that only set some return values.  For
+example, calling the function
+
+<pre class="example">     function [x, y, z] = f ()
+       x = 1;
+       z = 2;
+     endfunction
+</pre>
+   <p class="noindent">as
+
+<pre class="example">     [a, b, c] = f ()
+</pre>
+   <p class="noindent">produces:
+
+<pre class="example">     a = 1
+     
+     b = [](0x0)
+     
+     c = 2
+</pre>
+   <p class="noindent">along with a warning.
+
+<!-- ov-usr-fcn.cc -->
+<p><a name="doc_002dnargout"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>nargout</b> ()<var><a name="index-nargout-595"></a></var><br>
+&mdash; Built-in Function:  <b>nargout</b> (<var>fcn_name</var>)<var><a name="index-nargout-596"></a></var><br>
+<blockquote><p>Within a function, return the number of values the caller expects to
+receive.  If called with the optional argument <var>fcn_name</var>, return the
+maximum number of values the named function can produce, or -1 if the
+function can produce a variable number of values.
+
+        <p>For example,
+
+     <pre class="example">          f ()
+     </pre>
+        <p class="noindent">will cause <code>nargout</code> to return 0 inside the function <code>f</code> and
+
+     <pre class="example">          [s, t] = f ()
+     </pre>
+        <p class="noindent">will cause <code>nargout</code> to return 2 inside the function
+<code>f</code>.
+
+        <p>At the top level, <code>nargout</code> is undefined. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dnargin.html#doc_002dnargin">nargin</a>, <a href="doc_002dvarargin.html#doc_002dvarargin">varargin</a>, <a href="doc_002dvarargout.html#doc_002dvarargout">varargout</a>. 
+</p></blockquote></div>
+
+<!-- ./general/nargchk.m -->
+<p><a name="doc_002dnargchk"></a>
+
+<div class="defun">
+&mdash; Function File: <var>msgstr</var> = <b>nargchk</b> (<var>minargs, maxargs, nargs</var>)<var><a name="index-nargchk-597"></a></var><br>
+&mdash; Function File: <var>msgstr</var> = <b>nargchk</b> (<var>minargs, maxargs, nargs, "string"</var>)<var><a name="index-nargchk-598"></a></var><br>
+&mdash; Function File: <var>msgstruct</var> = <b>nargchk</b> (<var>minargs, maxargs, nargs, "struct"</var>)<var><a name="index-nargchk-599"></a></var><br>
+<blockquote><p>Return an appropriate error message string (or structure) if the
+number of inputs requested is invalid.
+
+        <p>This is useful for checking to see that the number of input arguments
+supplied to a function is within an acceptable range. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dnargoutchk.html#doc_002dnargoutchk">nargoutchk</a>, <a href="doc_002derror.html#doc_002derror">error</a>, <a href="doc_002dnargin.html#doc_002dnargin">nargin</a>, <a href="doc_002dnargout.html#doc_002dnargout">nargout</a>. 
+</p></blockquote></div>
+
+<!-- ./general/nargoutchk.m -->
+<p><a name="doc_002dnargoutchk"></a>
+
+<div class="defun">
+&mdash; Function File: <var>msgstr</var> = <b>nargoutchk</b> (<var>minargs, maxargs, nargs</var>)<var><a name="index-nargoutchk-600"></a></var><br>
+&mdash; Function File: <var>msgstr</var> = <b>nargoutchk</b> (<var>minargs, maxargs, nargs, "string"</var>)<var><a name="index-nargoutchk-601"></a></var><br>
+&mdash; Function File: <var>msgstruct</var> = <b>nargoutchk</b> (<var>minargs, maxargs, nargs, "struct"</var>)<var><a name="index-nargoutchk-602"></a></var><br>
+<blockquote><p>Return an appropriate error message string (or structure) if the
+number of outputs requested is invalid.
+
+        <p>This is useful for checking to see that the number of output
+arguments supplied to a function is within an acceptable range. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dnargchk.html#doc_002dnargchk">nargchk</a>, <a href="doc_002derror.html#doc_002derror">error</a>, <a href="doc_002dnargout.html#doc_002dnargout">nargout</a>, <a href="doc_002dnargin.html#doc_002dnargin">nargin</a>. 
+</p></blockquote></div>
+
+   <p><a name="doc_002dvarargin"></a> <a name="doc_002dvarargout"></a>
+
+   </body></html>
+

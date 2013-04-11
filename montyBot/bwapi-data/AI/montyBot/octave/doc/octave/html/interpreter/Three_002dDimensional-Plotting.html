@@ -1,0 +1,498 @@
+<html lang="en">
+<head>
+<title>Three-Dimensional Plotting - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Plotting-Basics.html#Plotting-Basics" title="Plotting Basics">
+<link rel="prev" href="Two_002dDimensional-Plots.html#Two_002dDimensional-Plots" title="Two-Dimensional Plots">
+<link rel="next" href="Plot-Annotations.html#Plot-Annotations" title="Plot Annotations">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Three_002dDimensional-Plotting"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Plot-Annotations.html#Plot-Annotations">Plot Annotations</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Two_002dDimensional-Plots.html#Two_002dDimensional-Plots">Two-Dimensional Plots</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Plotting-Basics.html#Plotting-Basics">Plotting Basics</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">15.1.2 Three-Dimensional Plotting</h4>
+
+<p>The function <code>mesh</code> produces mesh surface plots.  For example,
+
+<pre class="example">     tx = ty = linspace (-8, 8, 41)';
+     [xx, yy] = meshgrid (tx, ty);
+     r = sqrt (xx .^ 2 + yy .^ 2) + eps;
+     tz = sin (r) ./ r;
+     mesh (tx, ty, tz);
+</pre>
+   <p class="noindent">produces the familiar &ldquo;sombrero&rdquo; plot shown in <a href="fig_003amesh.html#fig_003amesh">fig:mesh</a>.  Note
+the use of the function <code>meshgrid</code> to create matrices of X and Y
+coordinates to use for plotting the Z data.  The <code>ndgrid</code> function
+is similar to <code>meshgrid</code>, but works for N-dimensional matrices.
+
+   <div class="float">
+<a name="fig_003amesh"></a><div align="center"><img src="mesh.png" alt="mesh.png"></div>
+   <p><strong class="float-caption">Figure 15.5: Mesh plot.</strong></p></div>
+
+   <p>The <code>meshc</code> function is similar to <code>mesh</code>, but also produces a
+plot of contours for the surface.
+
+   <p>The <code>plot3</code> function displays arbitrary three-dimensional data,
+without requiring it to form a surface.  For example
+
+<pre class="example">     t = 0:0.1:10*pi;
+     r = linspace (0, 1, numel (t));
+     z = linspace (0, 1, numel (t));
+     plot3 (r.*sin(t), r.*cos(t), z);
+</pre>
+   <p class="noindent">displays the spiral in three dimensions shown in <a href="fig_003aplot3.html#fig_003aplot3">fig:plot3</a>.
+
+   <div class="float">
+<a name="fig_003aplot3"></a><div align="center"><img src="plot3.png" alt="plot3.png"></div>
+   <p><strong class="float-caption">Figure 15.6: Three dimensional spiral.</strong></p></div>
+
+   <p>Finally, the <code>view</code> function changes the viewpoint for
+three-dimensional plots.
+
+<!-- ./plot/mesh.m -->
+<p><a name="doc_002dmesh"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>mesh</b> (<var>x, y, z</var>)<var><a name="index-mesh-978"></a></var><br>
+<blockquote><p>Plot a mesh given matrices <var>x</var>, and <var>y</var> from <code>meshgrid</code> and
+a matrix <var>z</var> corresponding to the <var>x</var> and <var>y</var> coordinates of
+the mesh.  If <var>x</var> and <var>y</var> are vectors, then a typical vertex
+is (<var>x</var>(j), <var>y</var>(i), <var>z</var>(i,j)).  Thus, columns of <var>z</var>
+correspond to different <var>x</var> values and rows of <var>z</var> correspond
+to different <var>y</var> values. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dmeshgrid.html#doc_002dmeshgrid">meshgrid</a>, <a href="doc_002dcontour.html#doc_002dcontour">contour</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/meshc.m -->
+<p><a name="doc_002dmeshc"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>meshc</b> (<var>x, y, z</var>)<var><a name="index-meshc-979"></a></var><br>
+<blockquote><p>Plot a mesh and contour given matrices <var>x</var>, and <var>y</var> from
+<code>meshgrid</code> and a matrix <var>z</var> corresponding to the <var>x</var> and
+<var>y</var> coordinates of the mesh.  If <var>x</var> and <var>y</var> are vectors,
+then a typical vertex is (<var>x</var>(j), <var>y</var>(i), <var>z</var>(i,j)).  Thus,
+columns of <var>z</var> correspond to different <var>x</var> values and rows of
+<var>z</var> correspond to different <var>y</var> values. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dmeshgrid.html#doc_002dmeshgrid">meshgrid</a>, <a href="doc_002dmesh.html#doc_002dmesh">mesh</a>, <a href="doc_002dcontour.html#doc_002dcontour">contour</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/meshz.m -->
+<p><a name="doc_002dmeshz"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>meshz</b> (<var>x, y, z</var>)<var><a name="index-meshz-980"></a></var><br>
+<blockquote><p>Plot a curtain mesh given matrices <var>x</var>, and <var>y</var> from
+<code>meshgrid</code> and a matrix <var>z</var> corresponding to the <var>x</var> and
+<var>y</var> coordinates of the mesh.  If <var>x</var> and <var>y</var> are vectors,
+then a typical vertex is (<var>x</var>(j), <var>y</var>(i), <var>z</var>(i,j)).  Thus,
+columns of <var>z</var> correspond to different <var>x</var> values and rows of
+<var>z</var> correspond to different <var>y</var> values. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dmeshgrid.html#doc_002dmeshgrid">meshgrid</a>, <a href="doc_002dmesh.html#doc_002dmesh">mesh</a>, <a href="doc_002dcontour.html#doc_002dcontour">contour</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/hidden.m -->
+<p><a name="doc_002dhidden"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>hidden</b> (<var>mode</var>)<var><a name="index-hidden-981"></a></var><br>
+&mdash; Function File:  <b>hidden</b> ()<var><a name="index-hidden-982"></a></var><br>
+<blockquote><p>Manipulation the mesh hidden line removal.  Called with no argument
+the hidden line removal is toggled.  The argument <var>mode</var> can be either
+'on' or 'off' and the set of the hidden line removal is set accordingly. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dmesh.html#doc_002dmesh">mesh</a>, <a href="doc_002dmeshc.html#doc_002dmeshc">meshc</a>, <a href="doc_002dsurf.html#doc_002dsurf">surf</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/surf.m -->
+<p><a name="doc_002dsurf"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>surf</b> (<var>x, y, z</var>)<var><a name="index-surf-983"></a></var><br>
+<blockquote><p>Plot a surface given matrices <var>x</var>, and <var>y</var> from <code>meshgrid</code> and
+a matrix <var>z</var> corresponding to the <var>x</var> and <var>y</var> coordinates of
+the mesh.  If <var>x</var> and <var>y</var> are vectors, then a typical vertex
+is (<var>x</var>(j), <var>y</var>(i), <var>z</var>(i,j)).  Thus, columns of <var>z</var>
+correspond to different <var>x</var> values and rows of <var>z</var> correspond
+to different <var>y</var> values. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dmesh.html#doc_002dmesh">mesh</a>, <a href="doc_002dsurface.html#doc_002dsurface">surface</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/surfc.m -->
+<p><a name="doc_002dsurfc"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>surfc</b> (<var>x, y, z</var>)<var><a name="index-surfc-984"></a></var><br>
+<blockquote><p>Plot a surface and contour given matrices <var>x</var>, and <var>y</var> from
+<code>meshgrid</code> and a matrix <var>z</var> corresponding to the <var>x</var> and
+<var>y</var> coordinates of the mesh.  If <var>x</var> and <var>y</var> are vectors,
+then a typical vertex is (<var>x</var>(j), <var>y</var>(i), <var>z</var>(i,j)).  Thus,
+columns of <var>z</var> correspond to different <var>x</var> values and rows of
+<var>z</var> correspond to different <var>y</var> values. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dmeshgrid.html#doc_002dmeshgrid">meshgrid</a>, <a href="doc_002dsurf.html#doc_002dsurf">surf</a>, <a href="doc_002dcontour.html#doc_002dcontour">contour</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/surfl.m -->
+<p><a name="doc_002dsurfl"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>surfl</b> (<var>x, y, z</var>)<var><a name="index-surfl-985"></a></var><br>
+&mdash; Function File:  <b>surfl</b> (<var>z</var>)<var><a name="index-surfl-986"></a></var><br>
+&mdash; Function File:  <b>surfl</b> (<var>x, y, z, L</var>)<var><a name="index-surfl-987"></a></var><br>
+&mdash; Function File:  <b>surfl</b> (<var>x, y, z, L, P</var>)<var><a name="index-surfl-988"></a></var><br>
+&mdash; Function File:  <b>surfl</b> (<var><small class="dots">...</small>,"light"</var>)<var><a name="index-surfl-989"></a></var><br>
+<blockquote><p>Plot a lighted surface given matrices <var>x</var>, and <var>y</var> from <code>meshgrid</code> and
+a matrix <var>z</var> corresponding to the <var>x</var> and <var>y</var> coordinates of
+the mesh.  If <var>x</var> and <var>y</var> are vectors, then a typical vertex
+is (<var>x</var>(j), <var>y</var>(i), <var>z</var>(i,j)).  Thus, columns of <var>z</var>
+correspond to different <var>x</var> values and rows of <var>z</var> correspond
+to different <var>y</var> values.
+
+        <p>The light direction can be specified using <var>L</var>.  It can be
+given as 2-element vector [azimuth, elevation] in degrees or as 3-element vector [lx, ly, lz]. 
+The default value is rotated 45° counter-clockwise from the current view.
+
+        <p>The material properties of the surface can specified using a 4-element vector
+<var>P</var> = [<var>AM</var> <var>D</var> <var>SP</var> <var>exp</var>] which defaults to
+<var>p</var> = [0.55 0.6 0.4 10].
+          <dl>
+<dt><code>"AM" strength of ambient light</code><br><dt><code>"D" strength of diffuse reflection</code><br><dt><code>"SP" strength of specular reflection</code><br><dt><code>"EXP" specular exponent</code><dd></dl>
+
+        <p>The default lighting mode "cdata", changes the cdata property to give the impression
+of a lighted surface.  Please note: the alternative "light" mode, which creates a light
+object to illuminate the surface is not implemented (yet).
+
+        <p>Example:
+
+     <pre class="example">          colormap(bone);
+          surfl(peaks);
+          shading interp;
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dsurf.html#doc_002dsurf">surf</a>, <a href="doc_002ddiffuse.html#doc_002ddiffuse">diffuse</a>, <a href="doc_002dspecular.html#doc_002dspecular">specular</a>, <a href="doc_002dsurface.html#doc_002dsurface">surface</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/surfnorm.m -->
+<p><a name="doc_002dsurfnorm"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>surfnorm</b> (<var>x, y, z</var>)<var><a name="index-surfnorm-990"></a></var><br>
+&mdash; Function File:  <b>surfnorm</b> (<var>z</var>)<var><a name="index-surfnorm-991"></a></var><br>
+&mdash; Function File: [<var>nx</var>, <var>ny</var>, <var>nz</var>] = <b>surfnorm</b> (<var><small class="dots">...</small></var>)<var><a name="index-surfnorm-992"></a></var><br>
+&mdash; Function File:  <b>surfnorm</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-surfnorm-993"></a></var><br>
+<blockquote><p>Find the vectors normal to a meshgridded surface.  The meshed gridded
+surface is defined by <var>x</var>, <var>y</var>, and <var>z</var>.  If <var>x</var> and
+<var>y</var> are not defined, then it is assumed that they are given by
+
+     <pre class="example">          [<var>x</var>, <var>y</var>] = meshgrid (1:size(<var>z</var>, 1),
+                               1:size(<var>z</var>, 2));
+     </pre>
+        <p>If no return arguments are requested, a surface plot with the normal
+vectors to the surface is plotted.  Otherwise the components of the normal
+vectors at the mesh gridded points are returned in <var>nx</var>, <var>ny</var>,
+and <var>nz</var>.
+
+        <p>The normal vectors are calculated by taking the cross product of the
+diagonals of each of the quadrilaterals in the meshgrid to find the
+normal vectors of the centers of these quadrilaterals.  The four nearest
+normal vectors to the meshgrid points are then averaged to obtain the
+normal to the surface at the meshgridded points.
+
+        <p>An example of the use of <code>surfnorm</code> is
+
+     <pre class="example">          surfnorm (peaks (25));
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dsurf.html#doc_002dsurf">surf</a>, <a href="doc_002dquiver3.html#doc_002dquiver3">quiver3</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/diffuse.m -->
+<p><a name="doc_002ddiffuse"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>diffuse</b> (<var>sx, sy, sz, l</var>)<var><a name="index-diffuse-994"></a></var><br>
+<blockquote><p>Calculate diffuse reflection strength of a surface defined by the normal
+vector elements <var>sx</var>, <var>sy</var>, <var>sz</var>. 
+The light vector can be specified using parameter <var>L</var>.  It can be
+given as 2-element vector [azimuth, elevation] in degrees or as 3-element
+vector [lx, ly, lz]. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dspecular.html#doc_002dspecular">specular</a>, <a href="doc_002dsurfl.html#doc_002dsurfl">surfl</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/specular.m -->
+<p><a name="doc_002dspecular"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>specular</b> (<var>sx, sy, sz, l, v</var>)<var><a name="index-specular-995"></a></var><br>
+&mdash; Function File:  <b>specular</b> (<var>sx, sy, sz, l, v, se</var>)<var><a name="index-specular-996"></a></var><br>
+<blockquote><p>Calculate specular reflection strength of a surface defined by the normal
+vector elements <var>sx</var>, <var>sy</var>, <var>sz</var> using Phong's approximation. 
+The light and view vectors can be specified using parameter <var>L</var> and <var>V</var> respectively. 
+Both can be given as 2-element vectors [azimuth, elevation] in degrees or as 3-element
+vector [x, y, z].  An optional 6th argument describes the specular exponent (spread) <var>se</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dsurfl.html#doc_002dsurfl">surfl</a>, <a href="doc_002ddiffuse.html#doc_002ddiffuse">diffuse</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/meshgrid.m -->
+<p><a name="doc_002dmeshgrid"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>xx</var>, <var>yy</var>, <var>zz</var>] = <b>meshgrid</b> (<var>x, y, z</var>)<var><a name="index-meshgrid-997"></a></var><br>
+&mdash; Function File: [<var>xx</var>, <var>yy</var>] = <b>meshgrid</b> (<var>x, y</var>)<var><a name="index-meshgrid-998"></a></var><br>
+&mdash; Function File: [<var>xx</var>, <var>yy</var>] = <b>meshgrid</b> (<var>x</var>)<var><a name="index-meshgrid-999"></a></var><br>
+<blockquote><p>Given vectors of <var>x</var> and <var>y</var> and <var>z</var> coordinates, and
+returning 3 arguments, return three-dimensional arrays corresponding
+to the <var>x</var>, <var>y</var>, and <var>z</var> coordinates of a mesh.  When
+returning only 2 arguments, return matrices corresponding to the
+<var>x</var> and <var>y</var> coordinates of a mesh.  The rows of <var>xx</var> are
+copies of <var>x</var>, and the columns of <var>yy</var> are copies of <var>y</var>. 
+If <var>y</var> is omitted, then it is assumed to be the same as <var>x</var>,
+and <var>z</var> is assumed the same as <var>y</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dmesh.html#doc_002dmesh">mesh</a>, <a href="doc_002dcontour.html#doc_002dcontour">contour</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/ndgrid.m -->
+<p><a name="doc_002dndgrid"></a>
+
+<div class="defun">
+&mdash; Function File: [<var>y1</var>, <var>y2</var>, <small class="dots">...</small>,  <var>y</var>n] = <b>ndgrid</b> (<var>x1, x2, <small class="dots">...</small>, xn</var>)<var><a name="index-ndgrid-1000"></a></var><br>
+&mdash; Function File: [<var>y1</var>, <var>y2</var>, <small class="dots">...</small>,  <var>y</var>n] = <b>ndgrid</b> (<var>x</var>)<var><a name="index-ndgrid-1001"></a></var><br>
+<blockquote><p>Given n vectors <var>x1</var>, <small class="dots">...</small> <var>x</var>n, <code>ndgrid</code> returns
+n arrays of dimension n. The elements of the i-th output argument
+contains the elements of the vector <var>x</var>i repeated over all
+dimensions different from the i-th dimension.  Calling ndgrid with
+only one input argument <var>x</var> is equivalent of calling ndgrid with
+all n input arguments equal to <var>x</var>:
+
+        <p>[<var>y1</var>, <var>y2</var>, <small class="dots">...</small>,  <var>y</var>n] = ndgrid (<var>x</var>, <small class="dots">...</small>, <var>x</var>)
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dmeshgrid.html#doc_002dmeshgrid">meshgrid</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/plot3.m -->
+<p><a name="doc_002dplot3"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>plot3</b> (<var>args</var>)<var><a name="index-plot3-1002"></a></var><br>
+<blockquote><p>Produce three-dimensional plots.  Many different combinations of
+arguments are possible.  The simplest form is
+
+     <pre class="example">          plot3 (<var>x</var>, <var>y</var>, <var>z</var>)
+     </pre>
+        <p class="noindent">in which the arguments are taken to be the vertices of the points to
+be plotted in three dimensions.  If all arguments are vectors of the
+same length, then a single continuous line is drawn.  If all arguments
+are matrices, then each column of the matrices is treated as a
+separate line.  No attempt is made to transpose the arguments to make
+the number of rows match.
+
+        <p>If only two arguments are given, as
+
+     <pre class="example">          plot3 (<var>x</var>, <var>c</var>)
+     </pre>
+        <p class="noindent">the real and imaginary parts of the second argument are used
+as the <var>y</var> and <var>z</var> coordinates, respectively.
+
+        <p>If only one argument is given, as
+
+     <pre class="example">          plot3 (<var>c</var>)
+     </pre>
+        <p class="noindent">the real and imaginary parts of the argument are used as the <var>y</var>
+and <var>z</var> values, and they are plotted versus their index.
+
+        <p>Arguments may also be given in groups of three as
+
+     <pre class="example">          plot3 (<var>x1</var>, <var>y1</var>, <var>z1</var>, <var>x2</var>, <var>y2</var>, <var>z2</var>, ...)
+     </pre>
+        <p class="noindent">in which each set of three arguments is treated as a separate line or
+set of lines in three dimensions.
+
+        <p>To plot multiple one- or two-argument groups, separate each group
+with an empty format string, as
+
+     <pre class="example">          plot3 (<var>x1</var>, <var>c1</var>, "", <var>c2</var>, "", ...)
+     </pre>
+        <p>An example of the use of <code>plot3</code> is
+
+     <pre class="example">             z = [0:0.05:5];
+             plot3 (cos(2*pi*z), sin(2*pi*z), z, ";helix;");
+             plot3 (z, exp(2i*pi*z), ";complex sinusoid;");
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dxlabel.html#doc_002dxlabel">xlabel</a>, <a href="doc_002dylabel.html#doc_002dylabel">ylabel</a>, <a href="doc_002dzlabel.html#doc_002dzlabel">zlabel</a>, <a href="doc_002dtitle.html#doc_002dtitle">title</a>, <a href="doc_002dprint.html#doc_002dprint">print</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/view.m -->
+<p><a name="doc_002dview"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>view</b> (<var>azimuth, elevation</var>)<var><a name="index-view-1003"></a></var><br>
+&mdash; Function File:  <b>view</b> (<var>dims</var>)<var><a name="index-view-1004"></a></var><br>
+&mdash; Function File: [<var>azimuth</var>, <var>elevation</var>] = <b>view</b> ()<var><a name="index-view-1005"></a></var><br>
+<blockquote><p>Set or get the viewpoint for the current axes. 
+</p></blockquote></div>
+
+<!-- ./plot/slice.m -->
+<p><a name="doc_002dslice"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>slice</b> (<var>x, y, z, v, sx, sy, sz</var>)<var><a name="index-slice-1006"></a></var><br>
+&mdash; Function File:  <b>slice</b> (<var>x, y, z, v, xi, yi, zi</var>)<var><a name="index-slice-1007"></a></var><br>
+&mdash; Function File:  <b>slice</b> (<var>v, sx, sy, sz</var>)<var><a name="index-slice-1008"></a></var><br>
+&mdash; Function File:  <b>slice</b> (<var>v, xi, yi, zi</var>)<var><a name="index-slice-1009"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>slice</b> (<var><small class="dots">...</small></var>)<var><a name="index-slice-1010"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>slice</b> (<var><small class="dots">...</small>, method</var>)<var><a name="index-slice-1011"></a></var><br>
+<blockquote><p>Plot slices of 3D data/scalar fields.  Each element of the 3-dimensional
+array <var>v</var> represents a scalar value at a location given by the
+parameters <var>x</var>, <var>y</var>, and <var>z</var>.  The parameters <var>x</var>,
+<var>x</var>, and <var>z</var> are either 3-dimensional arrays of the same size
+as the array <var>v</var> in the "meshgrid" format or vectors.  The
+parameters <var>xi</var>, etc. respect a similar format to <var>x</var>, etc.,
+and they represent the points at which the array <var>vi</var> is
+interpolated using interp3.  The vectors <var>sx</var>, <var>sy</var>, and
+<var>sz</var> contain points of orthogonal slices of the respective axes.
+
+        <p>If <var>x</var>, <var>y</var>, <var>z</var> are omitted, they are assumed to be
+<code>x = 1:size (</code><var>v</var><code>, 2)</code>, <code>y = 1:size (</code><var>v</var><code>, 1)</code> and
+<code>z = 1:size (</code><var>v</var><code>, 3)</code>.
+
+        <p><var>Method</var> is one of:
+
+          <dl>
+<dt><code>"nearest"</code><dd>Return the nearest neighbor. 
+<br><dt><code>"linear"</code><dd>Linear interpolation from nearest neighbors. 
+<br><dt><code>"cubic"</code><dd>Cubic interpolation from four nearest neighbors (not implemented yet). 
+<br><dt><code>"spline"</code><dd>Cubic spline interpolation&mdash;smooth first and second derivatives
+throughout the curve. 
+</dl>
+
+        <p>The default method is <code>"linear"</code>. 
+The optional return value <var>h</var> is a vector of handles to the
+surface graphic objects.
+
+        <p>Examples:
+     <pre class="example">          [x, y, z] = meshgrid (linspace (-8, 8, 32));
+          v = sin (sqrt (x.^2 + y.^2 + z.^2)) ./ (sqrt (x.^2 + y.^2 + z.^2));
+          slice (x, y, z, v, [], 0, []);
+          [xi, yi] = meshgrid (linspace (-7, 7));
+          zi = xi + yi;
+          slice (x, y, z, v, xi, yi, zi);
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dinterp3.html#doc_002dinterp3">interp3</a>, <a href="doc_002dsurface.html#doc_002dsurface">surface</a>, <a href="doc_002dpcolor.html#doc_002dpcolor">pcolor</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/ribbon.m -->
+<p><a name="doc_002dribbon"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>ribbon</b> (<var>x, y, width</var>)<var><a name="index-ribbon-1012"></a></var><br>
+&mdash; Function File:  <b>ribbon</b> (<var>y</var>)<var><a name="index-ribbon-1013"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>ribbon</b> (<var><small class="dots">...</small></var>)<var><a name="index-ribbon-1014"></a></var><br>
+<blockquote><p>Plot a ribbon plot for the columns of <var>y</var> vs.  <var>x</var>.  The
+optional parameter <var>width</var> specifies the width of a single ribbon
+(default is 0.75).  If <var>x</var> is omitted, a vector containing the
+row numbers is assumed (1:rows(Y)).  If requested, return a vector
+<var>h</var> of the handles to the surface objects. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dgca.html#doc_002dgca">gca</a>, <a href="doc_002dcolorbar.html#doc_002dcolorbar">colorbar</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/shading.m -->
+<p><a name="doc_002dshading"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>shading</b> (<var>type</var>)<var><a name="index-shading-1015"></a></var><br>
+&mdash; Function File:  <b>shading</b> (<var>ax, <small class="dots">...</small></var>)<var><a name="index-shading-1016"></a></var><br>
+<blockquote><p>Set the shading of surface or patch graphic objects.  Valid arguments
+for <var>type</var> are
+
+          <dl>
+<dt><code>"flat"</code><dd>Single colored patches with invisible edges.
+
+          <br><dt><code>"faceted"</code><dd>Single colored patches with visible edges.
+
+          <br><dt><code>"interp"</code><dd>Color between patch vertices are interpolated and the patch edges are
+invisible. 
+</dl>
+
+        <p>If <var>ax</var> is given the shading is applied to axis <var>ax</var> instead
+of the current axis. 
+</p></blockquote></div>
+
+<ul class="menu">
+<li><a accesskey="1" href="Three_002ddimensional-Function-Plotting.html#Three_002ddimensional-Function-Plotting">Three-dimensional Function Plotting</a>
+<li><a accesskey="2" href="Three_002ddimensional-Geometric-Shapes.html#Three_002ddimensional-Geometric-Shapes">Three-dimensional Geometric Shapes</a>
+</ul>
+
+   </body></html>
+

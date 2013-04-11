@@ -1,0 +1,10 @@
+prefix=/usr/local/octmgw32_gcc-4.4.0-dw2
+exec_prefix=/usr/local/octmgw32_gcc-4.4.0-dw2
+libdir=/usr/local/octmgw32_gcc-4.4.0-dw2/lib
+includedir=/usr/local/octmgw32_gcc-4.4.0-dw2/include
+
+Name: libpng
+Description: Loads and saves PNG files
+Version: 1.2.40
+Libs:  -lpng -lz -lm
+Cflags: 

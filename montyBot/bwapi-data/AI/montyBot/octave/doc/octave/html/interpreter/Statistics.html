@@ -1,0 +1,64 @@
+<html lang="en">
+<head>
+<title>Statistics - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="Optimization.html#Optimization" title="Optimization">
+<link rel="next" href="Sets.html#Sets" title="Sets">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Statistics"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Sets.html#Sets">Sets</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Optimization.html#Optimization">Optimization</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr><br>
+</div>
+
+<h2 class="chapter">25 Statistics</h2>
+
+<p>Octave has support for various statistical methods.  This includes
+basic descriptive statistics, statistical tests, random number generation,
+and much more.
+
+   <p>The functions that analyze data all assume that multidimensional data
+is arranged in a matrix where each row is an observation, and each
+column is a variable.  So, the matrix defined by
+
+<pre class="example">     a = [ 0.9, 0.7;
+           0.1, 0.1;
+           0.5, 0.4 ];
+</pre>
+   <p class="noindent">contains three observations from a two-dimensional distribution. 
+While this is the default data arrangement, most functions support
+different arrangements.
+
+   <p>It should be noted that the statistics functions don't test for data
+containing NaN, NA, or Inf.  Such values need to be handled explicitly.
+
+<ul class="menu">
+<li><a accesskey="1" href="Descriptive-Statistics.html#Descriptive-Statistics">Descriptive Statistics</a>
+<li><a accesskey="2" href="Basic-Statistical-Functions.html#Basic-Statistical-Functions">Basic Statistical Functions</a>
+<li><a accesskey="3" href="Statistical-Plots.html#Statistical-Plots">Statistical Plots</a>
+<li><a accesskey="4" href="Tests.html#Tests">Tests</a>
+<li><a accesskey="5" href="Models.html#Models">Models</a>
+<li><a accesskey="6" href="Distributions.html#Distributions">Distributions</a>
+<li><a accesskey="7" href="Random-Number-Generation.html#Random-Number-Generation">Random Number Generation</a>
+</ul>
+
+   </body></html>
+

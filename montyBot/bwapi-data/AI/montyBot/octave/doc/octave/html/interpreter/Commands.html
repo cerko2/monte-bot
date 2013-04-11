@@ -1,0 +1,123 @@
+<html lang="en">
+<head>
+<title>Commands - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Functions-and-Scripts.html#Functions-and-Scripts" title="Functions and Scripts">
+<link rel="prev" href="Function-Handles-Inline-Functions-and-Anonymous-Functions.html#Function-Handles-Inline-Functions-and-Anonymous-Functions" title="Function Handles Inline Functions and Anonymous Functions">
+<link rel="next" href="Organization-of-Functions.html#Organization-of-Functions" title="Organization of Functions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Commands"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Organization-of-Functions.html#Organization-of-Functions">Organization of Functions</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Function-Handles-Inline-Functions-and-Anonymous-Functions.html#Function-Handles-Inline-Functions-and-Anonymous-Functions">Function Handles Inline Functions and Anonymous Functions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Functions-and-Scripts.html#Functions-and-Scripts">Functions and Scripts</a>
+<hr><br>
+</div>
+
+<h3 class="section">11.10 Commands</h3>
+
+<p>Commands are a special class of functions that only accept string
+input arguments.  A command can be called as an ordinary function, but
+it can also be called without the parentheses like the following example
+shows
+
+<pre class="example">     my_command hello world
+</pre>
+   <p class="noindent">which is the same as
+
+<pre class="example">     my_command("hello", "world")
+</pre>
+   <p>The general form of a command call is
+
+<pre class="example">     <var>name</var> <var>arg1</var> <var>arg2</var> ...
+</pre>
+   <p class="noindent">which translates directly to
+
+<pre class="example">     <var>name</var> ("<var>arg1</var>", "<var>arg2</var>", ...)
+</pre>
+   <p>A function can be used as a command if it accepts string input arguments. 
+To do this, the function must be marked as a command, which can be done
+with the <code>mark_as_command</code> command like this
+
+<pre class="example">     mark_as_command name
+</pre>
+   <p class="noindent">where <code>name</code> is the function to be marked as a command.
+
+   <p>One difficulty of commands occurs when one of the string input arguments
+are stored in a variable.  Since Octave can't tell the difference between
+a variable name, and an ordinary string, it is not possible to pass a
+variable as input to a command.  In such a situation a command must be
+called as a function.
+
+<!-- ./deprecated/mark_as_command.m -->
+<p><a name="doc_002dmark_005fas_005fcommand"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>mark_as_command</b> (<var>name</var>)<var><a name="index-mark_005fas_005fcommand-656"></a></var><br>
+<blockquote><p>This function is obsolete and will be removed from a future
+version of Octave. 
+</p></blockquote></div>
+
+<!-- ./deprecated/unmark_command.m -->
+<p><a name="doc_002dunmark_005fcommand"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>unmark_command</b> (<var>name</var>)<var><a name="index-unmark_005fcommand-657"></a></var><br>
+<blockquote><p>This function is obsolete and will be removed from a future
+version of Octave. 
+</p></blockquote></div>
+
+<!-- ./deprecated/iscommand.m -->
+<p><a name="doc_002discommand"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>iscommand</b> (<var>name</var>)<var><a name="index-iscommand-658"></a></var><br>
+<blockquote><p>This function is obsolete and will be removed from a future
+version of Octave. 
+</p></blockquote></div>
+
+<!-- ./deprecated/mark_as_rawcommand.m -->
+<p><a name="doc_002dmark_005fas_005frawcommand"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>mark_as_rawcommand</b> (<var>name</var>)<var><a name="index-mark_005fas_005frawcommand-659"></a></var><br>
+<blockquote><p>This function is obsolete and will be removed from a future
+version of Octave. 
+</p></blockquote></div>
+
+<!-- ./deprecated/unmark_rawcommand.m -->
+<p><a name="doc_002dunmark_005frawcommand"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>unmark_rawcommand</b> (<var>name</var>)<var><a name="index-unmark_005frawcommand-660"></a></var><br>
+<blockquote><p>This function is obsolete and will be removed from a future
+version of Octave. 
+</p></blockquote></div>
+
+<!-- ./deprecated/israwcommand.m -->
+<p><a name="doc_002disrawcommand"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>israwcommand</b> (<var>name</var>)<var><a name="index-israwcommand-661"></a></var><br>
+<blockquote><p>This function is obsolete and will be removed from a future
+version of Octave. 
+</p></blockquote></div>
+
+   </body></html>
+

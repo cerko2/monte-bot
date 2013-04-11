@@ -1,0 +1,159 @@
+<html lang="en">
+<head>
+<title>Printing Plots - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Plotting-Basics.html#Plotting-Basics" title="Plotting Basics">
+<link rel="prev" href="Multiple-Plot-Windows.html#Multiple-Plot-Windows" title="Multiple Plot Windows">
+<link rel="next" href="Interacting-with-plots.html#Interacting-with-plots" title="Interacting with plots">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Printing-Plots"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Interacting-with-plots.html#Interacting-with-plots">Interacting with plots</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Multiple-Plot-Windows.html#Multiple-Plot-Windows">Multiple Plot Windows</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Plotting-Basics.html#Plotting-Basics">Plotting Basics</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">15.1.6 Printing Plots</h4>
+
+<p>The <code>print</code> command allows you to save plots in a variety of
+formats.  For example,
+
+<pre class="example">     print -deps foo.eps
+</pre>
+   <p class="noindent">writes the current figure to an encapsulated PostScript file called
+<span class="file">foo.eps</span>.
+
+<!-- ./plot/print.m -->
+<p><a name="doc_002dprint"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>print</b> ()<var><a name="index-print-1094"></a></var><br>
+&mdash; Function File:  <b>print</b> (<var>options</var>)<var><a name="index-print-1095"></a></var><br>
+&mdash; Function File:  <b>print</b> (<var>filename, options</var>)<var><a name="index-print-1096"></a></var><br>
+&mdash; Function File:  <b>print</b> (<var>h, filename, options</var>)<var><a name="index-print-1097"></a></var><br>
+<blockquote><p>Print a graph, or save it to a file
+
+        <p><var>filename</var> defines the file name of the output file.  If no
+filename is specified, the output is sent to the printer.
+
+        <p><var>h</var> specifies the figure handle.  If no handle is specified
+the handle for the current figure is used.
+
+        <p><var>options</var>:
+          <dl>
+<dt><code>-P</code><var>printer</var><dd>  Set the <var>printer</var> name to which the graph is sent if no
+<var>filename</var> is specified. 
+<br><dt><code>-G</code><var>ghostscript_command</var><dd>  Specify the command for calling Ghostscript.  For Unix and Windows,
+the defaults are 'gs' and 'gswin32c', respectively. 
+<br><dt><code>-color</code><dt><code>-mono</code><dd>  Monochrome or color lines. 
+<br><dt><code>-solid</code><dt><code>-dashed</code><dd>  Solid or dashed lines. 
+<br><dt><code>-portrait</code><dt><code>-landscape</code><dd>  Specify the orientation of the plot for printed output. 
+<br><dt><code>-d</code><var>device</var><dd>  Output device, where <var>device</var> is one of:
+               <dl>
+<dt><code>ps</code><dt><code>ps2</code><dt><code>psc</code><dt><code>psc2</code><dd>    Postscript (level 1 and 2, mono and color)
+<br><dt><code>eps</code><dt><code>eps2</code><dt><code>epsc</code><dt><code>epsc2</code><dd>    Encapsulated postscript (level 1 and 2, mono and color)
+<br><dt><code>tex</code><dt><code>epslatex</code><dt><code>epslatexstandalone</code><dt><code>pstex</code><dt><code>pslatex</code><dd>    Generate a LaTeX (or TeX) file for labels, and eps/ps for
+graphics.  The file produced by <code>epslatexstandalone</code> can be
+processed directly by LaTeX.  The other formats are intended to
+be included in a LaTeX (or TeX) document.  The <code>tex</code> device
+is the same as the <code>epslatex</code> device. 
+<br><dt><code>ill</code><dt><code>aifm</code><dd>    Adobe Illustrator
+<br><dt><code>cdr</code><dt><code>corel</code><dd>    CorelDraw
+<br><dt><code>dxf</code><dd>    AutoCAD
+<br><dt><code>emf</code><dt><code>meta</code><dd>    Microsoft Enhanced Metafile
+<br><dt><code>fig</code><dd>    XFig.  If this format is selected the additional options
+<code>-textspecial</code> or <code>-textnormal</code> can be used to control
+    whether the special flag should be set for the text in
+    the figure (default is <code>-textnormal</code>). 
+<br><dt><code>hpgl</code><dd>    HP plotter language
+<br><dt><code>mf</code><dd>    Metafont
+<br><dt><code>png</code><dd>    Portable network graphics
+<br><dt><code>jpg</code><dt><code>jpeg</code><dd>    JPEG image
+<br><dt><code>gif</code><dd>    GIF image
+<br><dt><code>pbm</code><dd>    PBMplus
+<br><dt><code>svg</code><dd>    Scalable vector graphics
+<br><dt><code>pdf</code><dd>    Portable document format
+</dl>
+
+          <p>If the device is omitted, it is inferred from the file extension,
+or if there is no filename it is sent to the printer as postscript.
+
+          <br><dt><code>-d</code><var>gs_device</var><dd>  Additional devices are supported by Ghostscript. 
+Some examples are;
+
+               <dl>
+<dt><code>ljet2p</code><dd>    HP LaserJet IIP
+<br><dt><code>ljet3</code><dd>    HP LaserJet III
+<br><dt><code>deskjet</code><dd>    HP DeskJet and DeskJet Plus
+<br><dt><code>cdj550</code><dd>    HP DeskJet 550C
+<br><dt><code>paintjet</code><dd>    HP PointJet
+<br><dt><code>pcx24b</code><dd>    24-bit color PCX file format
+<br><dt><code>ppm</code><dd>    Portable Pixel Map file format
+</dl>
+
+          <p>For a complete list, type `system ("gs -h")' to see what formats
+and devices are available.
+
+          <p>When the ghostscript is sent to a printer the size is determined
+by the figure's "papersize" property.  When the ghostscript output
+is sent to a file the size is determined by the figure's
+"paperposition" property.
+
+          <dt><code>-r</code><var>NUM</var><dd>  Resolution of bitmaps in pixels per inch.  For both metafiles and
+SVG the default is the screen resolution, for other it is 150 dpi. 
+To specify screen resolution, use "-r0".
+
+          <br><dt><code>-tight</code><dd>  Forces a tight bounding box for eps-files.  Since the ghostscript
+devices are conversion of an eps-file, this option works the those
+devices as well.
+
+          <dt><code>-S</code><var>xsize</var><code>,</code><var>ysize</var><dd>  Plot size in pixels for EMF, GIF, JPEG, PBM, PNG and SVG.  If
+using the command form of the print function, you must quote the
+<var>xsize</var>,<var>ysize</var> option.  For example, by writing
+<code>"-S640,480"</code><!-- /@w -->.  The size defaults to that specified by the
+figure's paperposition property.
+
+          <br><dt><code>-F</code><var>fontname</var><dt><code>-F</code><var>fontname</var><code>:</code><var>size</var><dt><code>-F:</code><var>size</var><dd><var>fontname</var> set the postscript font (for use with postscript,
+aifm, corel and fig).  By default, 'Helvetica' is set for PS/Aifm,
+and 'SwitzerlandLight' for Corel.  It can also be 'Times-Roman'. 
+<var>size</var> is given in points.  <var>fontname</var> is ignored for the
+fig device. 
+</dl>
+
+        <p>The filename and options can be given in any order. 
+</p></blockquote></div>
+
+<!-- ./plot/orient.m -->
+<p><a name="doc_002dorient"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>orient</b> (<var>orientation</var>)<var><a name="index-orient-1098"></a></var><br>
+<blockquote><p>Set the default print orientation.  Valid values for
+<var>orientation</var> include <code>"landscape"</code>, <code>"portrait"</code>,
+and <code>"tall"</code>.
+
+        <p>The <code>"tall"</code> option sets the orientation to portait and fills
+the page with the plot, while leaving a 0.25in border.
+
+        <p>If called with no arguments, return the default print orientation. 
+</p></blockquote></div>
+
+   </body></html>
+

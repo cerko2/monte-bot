@@ -1,0 +1,161 @@
+<html lang="en">
+<head>
+<title>Text Properties - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Graphics-Object-Properties.html#Graphics-Object-Properties" title="Graphics Object Properties">
+<link rel="prev" href="Line-Properties.html#Line-Properties" title="Line Properties">
+<link rel="next" href="Image-Properties.html#Image-Properties" title="Image Properties">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Text-Properties"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Image-Properties.html#Image-Properties">Image Properties</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Line-Properties.html#Line-Properties">Line Properties</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Graphics-Object-Properties.html#Graphics-Object-Properties">Graphics Object Properties</a>
+<hr><br>
+</div>
+
+<h5 class="subsubsection">15.2.2.5 Text Properties</h5>
+
+<p><a name="index-text-properties-1193"></a>
+     <dl>
+<dt><code>string</code><dd>The character string contained by the text object.
+
+     <br><dt><code>units</code><dd>May be <code>"normalized"</code> or <code>"graph"</code>.
+
+     <br><dt><code>position</code><dd>The coordinates of the text object.
+
+     <br><dt><code>rotation</code><dd>The angle of rotation for the displayed text, measured in degrees.
+
+     <br><dt><code>horizontalalignment</code><dd>May be <code>"left"</code>, <code>"center"</code>, or <code>"right"</code>.
+
+     <br><dt><code>color</code><dd>The color of the text.  See <a href="Colors.html#Colors">Colors</a>.
+
+     <br><dt><code>fontname</code><dd>The font used for the text.
+
+     <br><dt><code>fontsize</code><dd>The size of the font, in points to use.
+
+     <br><dt><code>fontangle</code><dd>Flag whether the font is italic or normal.  Valid values are 'normal',
+'italic' and 'oblique'.
+
+     <br><dt><code>fontweight</code><dd>Flag whether the font is bold, etc.  Valid values are 'normal', 'bold',
+'demi' or 'light'.
+
+     <br><dt><code>interpreter</code><dd>Determines how the text is rendered.  Valid values are 'none', 'tex' or
+'latex'. 
+</dl>
+
+   <p>All text objects, including titles, labels, legends, and text, include
+the property 'interpreter', this property determines the manner in which
+special control sequences in the text are rendered.  If the interpreter
+is set to 'none', then no rendering occurs.  At this point the 'latex'
+option is not implemented and so the 'latex' interpreter also does not
+interpret the text.
+
+   <p>The 'tex' option implements a subset of <span class="sc">TeX</span> functionality in the
+rendering of the text.  This allows the insertion of special characters
+such as Greek or mathematical symbols within the text.  The special
+characters are also inserted with a code starting with the back-slash
+(\) character, as in the table <a href="tab_003aextended.html#tab_003aextended">tab:extended</a>.
+
+   <p>In addition, the formatting of the text can be changed within the string
+with the codes
+
+   <p><table summary=""><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="20%">\bf </td><td valign="top" width="60%">Bold font </td><td valign="top" width="20%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="20%">\it </td><td valign="top" width="60%">Italic font </td><td valign="top" width="20%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="20%">\sl </td><td valign="top" width="60%">Oblique Font </td><td valign="top" width="20%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="20%">\rm </td><td valign="top" width="60%">Normal font </td><td valign="top" width="20%">
+   <br></td></tr></table>
+
+   <p>These are be used in conjunction with the { and } characters to limit
+the change in the font to part of the string.  For example
+
+<pre class="example">     xlabel ('{\bf H} = a {\bf V}')
+</pre>
+   <p>where the character 'a' will not appear in a bold font.  Note that to
+avoid having Octave interpret the backslash characters in the strings,
+the strings should be in single quotes.
+
+   <p>It is also possible to change the fontname and size within the text
+
+   <p><table summary=""><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="40%">\fontname{<var>fontname</var>} </td><td valign="top" width="60%">Specify the font to use </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="40%">\fontsize{<var>size</var>} </td><td valign="top" width="60%">Specify the size of the font to
+use </td><td valign="top" width="10%">
+   <br></td></tr></table>
+
+   <p>Finally, the superscript and subscripting can be controlled with the '^'
+and '_' characters.  If the '^' or '_' is followed by a { character,
+then all of the block surrounded by the { } pair is super- or
+sub-scripted.  Without the { } pair, only the character immediately
+following the '^' or '_' is super- or sub-scripted.
+
+   <div class="float">
+<a name="tab_003aextended"></a>
+   <p><table summary=""><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\forall     </td><td valign="top" width="25%">\exists     </td><td valign="top" width="25%">\ni      </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\cong       </td><td valign="top" width="25%">\Delta      </td><td valign="top" width="25%">\Phi     </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\Gamma      </td><td valign="top" width="25%">\vartheta   </td><td valign="top" width="25%">\Lambda  </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\Pi         </td><td valign="top" width="25%">\Theta      </td><td valign="top" width="25%">\Sigma   </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\varsigma   </td><td valign="top" width="25%">\Omega      </td><td valign="top" width="25%">\Xi      </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\Psi        </td><td valign="top" width="25%">\perp       </td><td valign="top" width="25%">\alpha   </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\beta       </td><td valign="top" width="25%">\chi        </td><td valign="top" width="25%">\delta   </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\epsilon    </td><td valign="top" width="25%">\phi        </td><td valign="top" width="25%">\gamma   </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\eta        </td><td valign="top" width="25%">\iota       </td><td valign="top" width="25%">\varphi  </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\kappa      </td><td valign="top" width="25%">\lambda     </td><td valign="top" width="25%">\mu      </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\nu         </td><td valign="top" width="25%">\o          </td><td valign="top" width="25%">\pi      </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\theta      </td><td valign="top" width="25%">\rho        </td><td valign="top" width="25%">\sigma   </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\tau        </td><td valign="top" width="25%">\upsilon    </td><td valign="top" width="25%">\varpi   </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\omega      </td><td valign="top" width="25%">\xi         </td><td valign="top" width="25%">\psi     </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\zeta       </td><td valign="top" width="25%">\sim        </td><td valign="top" width="25%">\Upsilon </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\prime      </td><td valign="top" width="25%">\leq        </td><td valign="top" width="25%">\infty   </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\clubsuit   </td><td valign="top" width="25%">\diamondsuit    </td><td valign="top" width="25%">\heartsuit  </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\spadesuit  </td><td valign="top" width="25%">\leftrightarrow </td><td valign="top" width="25%">\leftarrow  </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\uparrow    </td><td valign="top" width="25%">\rightarrow </td><td valign="top" width="25%">\downarrow </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\circ       </td><td valign="top" width="25%">\pm          </td><td valign="top" width="25%">\geq     </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\times      </td><td valign="top" width="25%">\propto     </td><td valign="top" width="25%">\partial </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\bullet     </td><td valign="top" width="25%">\div         </td><td valign="top" width="25%">\neq     </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\equiv      </td><td valign="top" width="25%">\approx     </td><td valign="top" width="25%">\ldots   </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\mid        </td><td valign="top" width="25%">\aleph      </td><td valign="top" width="25%">\Im      </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\Re         </td><td valign="top" width="25%">\wp          </td><td valign="top" width="25%">\otimes  </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\oplus      </td><td valign="top" width="25%">\oslash      </td><td valign="top" width="25%">\cap     </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\cup        </td><td valign="top" width="25%">\supset    </td><td valign="top" width="25%">\supseteq </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\subset     </td><td valign="top" width="25%">\subseteq    </td><td valign="top" width="25%">\in      </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\notin      </td><td valign="top" width="25%">\angle       </td><td valign="top" width="25%">\bigrightriangledown </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\langle     </td><td valign="top" width="25%">\rangle     </td><td valign="top" width="25%">\nabla   </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\prod       </td><td valign="top" width="25%">\surd        </td><td valign="top" width="25%">\cdot    </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\neg        </td><td valign="top" width="25%">\wedge      </td><td valign="top" width="25%">\vee      </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\Leftrightarrow </td><td valign="top" width="25%">\Leftarrow </td><td valign="top" width="25%">\Uparrow </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\Rightarrow </td><td valign="top" width="25%">\Downarrow   </td><td valign="top" width="25%">\diamond  </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\copyright  </td><td valign="top" width="25%">\lfloor     </td><td valign="top" width="25%">\lceil   </td><td valign="top" width="13%">
+<br></td></tr><tr align="left"><td valign="top" width="13%"></td><td valign="top" width="25%">\rfloor     </td><td valign="top" width="25%">\rceil      </td><td valign="top" width="25%">\int     </td><td valign="top" width="13%">
+   <br></td></tr></table>
+
+   <p><strong class="float-caption">Table 15.1: Available special characters in <span class="sc">TeX</span> mode</strong></p></div>
+
+   <p>A complete example showing the capabilities of the extended text is
+
+<pre class="example">     x = 0:0.01:3;
+     plot(x,erf(x));
+     hold on;
+     plot(x,x,"r");
+     axis([0, 3, 0, 1]);
+     text(0.65, 0.6175, strcat('\leftarrow x = {2/\surd\pi',
+     ' {\fontsize{16}\int_{\fontsize{8}0}^{\fontsize{8}x}}',
+     ' e^{-t^2} dt} = 0.6175'))
+</pre>
+   </body></html>
+

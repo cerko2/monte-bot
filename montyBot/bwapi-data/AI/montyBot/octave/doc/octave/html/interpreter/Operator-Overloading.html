@@ -1,0 +1,87 @@
+<html lang="en">
+<head>
+<title>Operator Overloading - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Overloading-Objects.html#Overloading-Objects" title="Overloading Objects">
+<link rel="prev" href="Function-Overloading.html#Function-Overloading" title="Function Overloading">
+<link rel="next" href="Precedence-of-Objects.html#Precedence-of-Objects" title="Precedence of Objects">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Operator-Overloading"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Precedence-of-Objects.html#Precedence-of-Objects">Precedence of Objects</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Function-Overloading.html#Function-Overloading">Function Overloading</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Overloading-Objects.html#Overloading-Objects">Overloading Objects</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">33.4.2 Operator Overloading</h4>
+
+<div class="float">
+<a name="tab_003aoverload_005fops"></a>
+<a name="doc_002drdivide"></a> <a name="doc_002dplus"></a> <a name="doc_002dminus"></a> <a name="doc_002duminus"></a>
+<a name="doc_002duplus"></a> <a name="doc_002dtimes"></a> <a name="doc_002dmtimes"></a> <a name="doc_002dmrdivide"></a>
+<a name="doc_002dldivide"></a> <a name="doc_002dmldivide"></a> <a name="doc_002dpower"></a>
+<a name="doc_002dmpower"></a> <a name="doc_002dlt"></a> <a name="doc_002dle"></a> <a name="doc_002dgt"></a>
+<a name="doc_002dge"></a> <a name="doc_002deq"></a> <a name="doc_002dne"></a> <a name="doc_002dand"></a>
+<a name="doc_002dor"></a> <a name="doc_002dnot"></a> <a name="doc_002dctranspose"></a> <a name="doc_002dtranspose"></a>
+
+   <p><table summary=""><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">Operation </td><td valign="top" width="20%">Method </td><td valign="top" width="40%">Description </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a + b </td><td valign="top" width="20%">plus (a, b) </td><td valign="top" width="40%">Binary addition </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a - b$ </td><td valign="top" width="20%">minus (a, b) </td><td valign="top" width="40%">Binary subtraction operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">+ a$ </td><td valign="top" width="20%">uplus (a) </td><td valign="top" width="40%">Unary addition operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">- a$ </td><td valign="top" width="20%">uminus (a) </td><td valign="top" width="40%">Unary subtraction operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a .* b$ </td><td valign="top" width="20%">times (a, b) </td><td valign="top" width="40%">Element-wise multiplication operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a * b$ </td><td valign="top" width="20%">mtimes (a, b) </td><td valign="top" width="40%">Matrix multiplication operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a ./ b$ </td><td valign="top" width="20%">rdivide (a, b) </td><td valign="top" width="40%">Element-wise right division operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a / b$ </td><td valign="top" width="20%">mrdivide (a, b) </td><td valign="top" width="40%">Matrix right division operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a .\ b$ </td><td valign="top" width="20%">ldivide (a, b) </td><td valign="top" width="40%">Element-wise left division operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a \ b$ </td><td valign="top" width="20%">mldivide (a, b) </td><td valign="top" width="40%">Matrix left division operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a .^ b$ </td><td valign="top" width="20%">ldivide (a, b) </td><td valign="top" width="40%">Element-wise power operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a ^ b$ </td><td valign="top" width="20%">mldivide (a, b) </td><td valign="top" width="40%">Matrix power operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a &lt; b$ </td><td valign="top" width="20%">lt (a, b) </td><td valign="top" width="40%">Less than operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a &lt;= b$ </td><td valign="top" width="20%">le (a, b) </td><td valign="top" width="40%">Less than or equal to operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a &gt; b$ </td><td valign="top" width="20%">gt (a, b) </td><td valign="top" width="40%">Greater than operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a &gt;= b$ </td><td valign="top" width="20%">ge (a, b) </td><td valign="top" width="40%">Greater than or equal to operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a == b$ </td><td valign="top" width="20%">eq (a, b) </td><td valign="top" width="40%">Equal to operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a != b$ </td><td valign="top" width="20%">ne (a, b) </td><td valign="top" width="40%">Not equal to operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a \&amp; b$ </td><td valign="top" width="20%">and (a, b) </td><td valign="top" width="40%">Logical and operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a | b$ </td><td valign="top" width="20%">or (a, b) </td><td valign="top" width="40%">Logical or operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">! b$ </td><td valign="top" width="20%">not (a) </td><td valign="top" width="40%">Logical not operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a'$ </td><td valign="top" width="20%">ctranspose (a) </td><td valign="top" width="40%">Complex conjugate transpose operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a.'$ </td><td valign="top" width="20%">transpose (a) </td><td valign="top" width="40%">Transpose operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a : b$ </td><td valign="top" width="20%">colon (a, b) </td><td valign="top" width="40%">Two element range operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a : b : c$ </td><td valign="top" width="20%">colon (a, b, c) </td><td valign="top" width="40%">Three element range operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">[a, b]$ </td><td valign="top" width="20%">horzcat (a, b) </td><td valign="top" width="40%">Horizontal concatenation operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">[a; b]$ </td><td valign="top" width="20%">vertcat (a, b) </td><td valign="top" width="40%">Vertical concatenation operator </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a(s_1, \ldots, s_n)$ </td><td valign="top" width="20%">subsref (a, s) </td><td valign="top" width="40%">Subscripted reference </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">a(s_1, \ldots, s_n) = b$ </td><td valign="top" width="20%">subsasgn (a, s, b) </td><td valign="top" width="40%">Subscripted assignment </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%">b (a)$ </td><td valign="top" width="20%">subsindex (a) </td><td valign="top" width="40%">Convert to zero-based index </td><td valign="top" width="10%">
+<br></td></tr><tr align="left"><td valign="top" width="10%"></td><td valign="top" width="20%"><dfn>display</dfn> </td><td valign="top" width="20%">display (a) </td><td valign="top" width="40%">Commandline display function </td><td valign="top" width="10%">
+   <br></td></tr></table>
+
+<p><strong class="float-caption">Table 33.1: Available overloaded operators and their corresponding class method</strong></p></div>
+
+   <p>An example <code>mtimes</code> method for our polynomial class might look like
+
+<pre class="example"><pre class="verbatim">     function y = mtimes (a, b)
+       y = polynomial (conv (double(a),double(b)));
+     endfunction</pre>
+</pre>
+   </body></html>
+

@@ -1,0 +1,253 @@
+<html lang="en">
+<head>
+<title>Plot Annotations - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Plotting-Basics.html#Plotting-Basics" title="Plotting Basics">
+<link rel="prev" href="Three_002dDimensional-Plotting.html#Three_002dDimensional-Plotting" title="Three-Dimensional Plotting">
+<link rel="next" href="Multiple-Plots-on-One-Page.html#Multiple-Plots-on-One-Page" title="Multiple Plots on One Page">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Plot-Annotations"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Multiple-Plots-on-One-Page.html#Multiple-Plots-on-One-Page">Multiple Plots on One Page</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Three_002dDimensional-Plotting.html#Three_002dDimensional-Plotting">Three-Dimensional Plotting</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Plotting-Basics.html#Plotting-Basics">Plotting Basics</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">15.1.3 Plot Annotations</h4>
+
+<p>You can add titles, axis labels, legends, and arbitrary text to an
+existing plot.  For example,
+
+<pre class="example">     x = -10:0.1:10;
+     plot (x, sin (x));
+     title ("sin(x) for x = -10:0.1:10");
+     xlabel ("x");
+     ylabel ("sin (x)");
+     text (pi, 0.7, "arbitrary text");
+     legend ("sin (x)");
+</pre>
+   <p>The functions <code>grid</code> and <code>box</code> may also be used to add grid
+and border lines to the plot.  By default, the grid is off and the
+border lines are on.
+
+<!-- ./plot/title.m -->
+<p><a name="doc_002dtitle"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>title</b> (<var>title</var>)<var><a name="index-title-1059"></a></var><br>
+&mdash; Function File:  <b>title</b> (<var>title, p1, v1, <small class="dots">...</small></var>)<var><a name="index-title-1060"></a></var><br>
+<blockquote><p>Create a title object and return a handle to it. 
+</p></blockquote></div>
+
+<!-- ./plot/legend.m -->
+<p><a name="doc_002dlegend"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>legend</b> (<var>st1, st2, <small class="dots">...</small></var>)<var><a name="index-legend-1061"></a></var><br>
+&mdash; Function File:  <b>legend</b> (<var>st1, st2, <small class="dots">...</small>, "location", pos</var>)<var><a name="index-legend-1062"></a></var><br>
+&mdash; Function File:  <b>legend</b> (<var>matstr</var>)<var><a name="index-legend-1063"></a></var><br>
+&mdash; Function File:  <b>legend</b> (<var>matstr, "location", pos</var>)<var><a name="index-legend-1064"></a></var><br>
+&mdash; Function File:  <b>legend</b> (<var>cell</var>)<var><a name="index-legend-1065"></a></var><br>
+&mdash; Function File:  <b>legend</b> (<var>cell, "location", pos</var>)<var><a name="index-legend-1066"></a></var><br>
+&mdash; Function File:  <b>legend</b> (<var>'func'</var>)<var><a name="index-legend-1067"></a></var><br>
+<blockquote>
+<p>Display a legend for the current axes using the specified strings
+as labels.  Legend entries may be specified as individual character
+string arguments, a character array, or a cell array of character
+strings.  Legend works on line graphs, bar graphs, etc.  A plot must
+exist before legend is called.
+
+        <p>The optional parameter <var>pos</var> specifies the location of the legend
+as follows:
+
+        <p><table summary=""><tr align="left"><td valign="top" width="6%"></td><td valign="top" width="14%">north </td><td valign="top" width="80%">
+  center top
+<br></td></tr><tr align="left"><td valign="top" width="6%"></td><td valign="top" width="14%">south </td><td valign="top" width="80%">
+  center bottom
+<br></td></tr><tr align="left"><td valign="top" width="6%"></td><td valign="top" width="14%">east </td><td valign="top" width="80%">
+  right center
+<br></td></tr><tr align="left"><td valign="top" width="6%"></td><td valign="top" width="14%">west </td><td valign="top" width="80%">
+  left center
+<br></td></tr><tr align="left"><td valign="top" width="6%"></td><td valign="top" width="14%">northeast </td><td valign="top" width="80%">
+  right top (default)
+<br></td></tr><tr align="left"><td valign="top" width="6%"></td><td valign="top" width="14%">northwest </td><td valign="top" width="80%">
+  left top
+<br></td></tr><tr align="left"><td valign="top" width="6%"></td><td valign="top" width="14%">southeast </td><td valign="top" width="80%">
+  right bottom
+<br></td></tr><tr align="left"><td valign="top" width="6%"></td><td valign="top" width="14%">southwest </td><td valign="top" width="80%">
+  left bottom
+<br></td></tr><tr align="left"><td valign="top" width="6%"><br></td></tr><tr align="left"><td valign="top" width="6%"></td><td valign="top" width="14%">outside </td><td valign="top" width="80%">
+  can be appended to any location string
+        <br></td></tr></table>
+
+        <p>Some specific functions are directly available using <var>func</var>:
+
+          <dl>
+<dt>"show"<dd>  Show legends from the plot
+<br><dt>"hide"<dt>"off"<dd>  Hide legends from the plot
+<br><dt>"boxon"<dd>  Draw a box around legends
+<br><dt>"boxoff"<dd>  Withdraw the box around legends
+<br><dt>"left"<dd>  Text is to the left of the keys
+<br><dt>"right"<dd>  Text is to the right of the keys
+</dl>
+        </p></blockquote></div>
+
+<!-- ./plot/text.m -->
+<p><a name="doc_002dtext"></a>
+
+<div class="defun">
+&mdash; Function File: <var>h</var> = <b>text</b> (<var>x, y, label</var>)<var><a name="index-text-1068"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>text</b> (<var>x, y, z, label</var>)<var><a name="index-text-1069"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>text</b> (<var>x, y, label, p1, v1, <small class="dots">...</small></var>)<var><a name="index-text-1070"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>text</b> (<var>x, y, z, label, p1, v1, <small class="dots">...</small></var>)<var><a name="index-text-1071"></a></var><br>
+<blockquote><p>Create a text object with text <var>label</var> at position <var>x</var>,
+<var>y</var>, <var>z</var> on the current axes.  Property-value pairs following
+<var>label</var> may be used to specify the appearance of the text. 
+</p></blockquote></div>
+
+   <p>See <a href="Text-Properties.html#Text-Properties">Text Properties</a> for the properties that you can set.
+
+   <p><a name="doc_002dylabel"></a>
+<a name="doc_002dzlabel"></a>
+<!-- ./plot/xlabel.m -->
+<a name="doc_002dxlabel"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>xlabel</b> (<var>string</var>)<var><a name="index-xlabel-1072"></a></var><br>
+&mdash; Function File:  <b>ylabel</b> (<var>string</var>)<var><a name="index-ylabel-1073"></a></var><br>
+&mdash; Function File:  <b>zlabel</b> (<var>string</var>)<var><a name="index-zlabel-1074"></a></var><br>
+&mdash; Function File:  <b>xlabel</b> (<var>h, string</var>)<var><a name="index-xlabel-1075"></a></var><br>
+<blockquote><p>Specify x, y, and z axis labels for the current figure.  If <var>h</var> is
+specified then label the axis defined by <var>h</var>. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>, <a href="doc_002dsemilogx.html#doc_002dsemilogx">semilogx</a>, <a href="doc_002dsemilogy.html#doc_002dsemilogy">semilogy</a>, <a href="doc_002dloglog.html#doc_002dloglog">loglog</a>, <a href="doc_002dpolar.html#doc_002dpolar">polar</a>, <a href="doc_002dmesh.html#doc_002dmesh">mesh</a>, <a href="doc_002dcontour.html#doc_002dcontour">contour</a>, <a href="doc_002dbar.html#doc_002dbar">bar</a>, <a href="doc_002dstairs.html#doc_002dstairs">stairs</a>, <a href="doc_002dtitle.html#doc_002dtitle">title</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/clabel.m -->
+<p><a name="doc_002dclabel"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>clabel</b> (<var>c, h</var>)<var><a name="index-clabel-1076"></a></var><br>
+&mdash; Function File:  <b>clabel</b> (<var>c, h, v</var>)<var><a name="index-clabel-1077"></a></var><br>
+&mdash; Function File:  <b>clabel</b> (<var>c, h, "manual"</var>)<var><a name="index-clabel-1078"></a></var><br>
+&mdash; Function File:  <b>clabel</b> (<var>c</var>)<var><a name="index-clabel-1079"></a></var><br>
+&mdash; Function File:  <b>clabel</b> (<var>c, h</var>)<var><a name="index-clabel-1080"></a></var><br>
+&mdash; Function File:  <b>clabel</b> (<var><small class="dots">...</small>, prop, val, <small class="dots">...</small></var>)<var><a name="index-clabel-1081"></a></var><br>
+&mdash; Function File: <var>h</var> = <b>clabel</b> (<var><small class="dots">...</small></var>)<var><a name="index-clabel-1082"></a></var><br>
+<blockquote><p>Adds labels to the contours of a contour plot.  The contour plot is specified
+by the contour matrix <var>c</var> and optionally the contourgroup object <var>h</var>
+that are returned by <code>contour</code>, <code>contourf</code> and <code>contour3</code>. 
+The contour labels are rotated and placed in the contour itself.
+
+        <p>By default, all contours are labelled.  However, the contours to label can be
+specified by the vector <var>v</var>.  If the "manual" argument is given then
+the contours to label can be selected with the mouse.
+
+        <p>Additional property/value pairs that are valid properties of text objects
+can be given and are passed to the underlying text objects.  Additionally,
+the property "LabelSpacing" is available allowing the spacing between labels
+on a contour (in points) to be specified.  The default is 144 points, or 2
+inches.
+
+        <p>The returned value <var>h</var> is the set of text object that represent the
+contour labels.  The "userdata" property of the text objects contains the
+numerical value of the contour label.
+
+        <p>An example of the use of <code>clabel</code> is
+
+     <pre class="example">          [c, h] = contour (peaks(), -4 : 6);
+          clabel (c, h, -4 : 2 : 6, 'fontsize', 12);
+     </pre>
+        <!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+<p class="noindent"><strong>See also:</strong> <a href="doc_002dcontour.html#doc_002dcontour">contour</a>, <a href="doc_002dcontourf.html#doc_002dcontourf">contourf</a>, <a href="doc_002dcontour3.html#doc_002dcontour3">contour3</a>, <a href="doc_002dmeshc.html#doc_002dmeshc">meshc</a>, <a href="doc_002dsurfc.html#doc_002dsurfc">surfc</a>, <a href="doc_002dtext.html#doc_002dtext">text</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/box.m -->
+<p><a name="doc_002dbox"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>box</b> (<var>arg</var>)<var><a name="index-box-1083"></a></var><br>
+&mdash; Function File:  <b>box</b> (<var>h, <small class="dots">...</small></var>)<var><a name="index-box-1084"></a></var><br>
+<blockquote><p>Control the display of a border around the plot. 
+The argument may be either <code>"on"</code> or <code>"off"</code>.  If it is
+omitted, the current box state is toggled. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dgrid.html#doc_002dgrid">grid</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/grid.m -->
+<p><a name="doc_002dgrid"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>grid</b> (<var>arg</var>)<var><a name="index-grid-1085"></a></var><br>
+&mdash; Function File:  <b>grid</b> (<var>"minor", arg2</var>)<var><a name="index-grid-1086"></a></var><br>
+&mdash; Function File:  <b>grid</b> (<var>hax, <small class="dots">...</small></var>)<var><a name="index-grid-1087"></a></var><br>
+<blockquote><p>Force the display of a grid on the plot. 
+The argument may be either <code>"on"</code>, or <code>"off"</code>. 
+If it is omitted, the current grid state is toggled.
+
+        <p>If <var>arg</var> is <code>"minor"</code> then the minor grid is toggled.  When
+using a minor grid a second argument <var>arg2</var> is allowed, which can
+be either <code>"on"</code> or <code>"off"</code> to explicitly set the state of
+the minor grid.
+
+        <p>If the first argument is an axis handle, <var>hax</var>, operate on the
+specified axis object. 
+<!-- Texinfo @sp should work but in practice produces ugly results for HTML. -->
+<!-- A simple blank line produces the correct behavior. -->
+<!-- @sp 1 -->
+
+     <p class="noindent"><strong>See also:</strong> <a href="doc_002dplot.html#doc_002dplot">plot</a>. 
+</p></blockquote></div>
+
+<!-- ./plot/colorbar.m -->
+<p><a name="doc_002dcolorbar"></a>
+
+<div class="defun">
+&mdash; Function File:  <b>colorbar</b> (<var>s</var>)<var><a name="index-colorbar-1088"></a></var><br>
+&mdash; Function File:  <b>colorbar</b> (<var>"peer", h, <small class="dots">...</small></var>)<var><a name="index-colorbar-1089"></a></var><br>
+<blockquote><p>Adds a colorbar to the current axes.  Valid values for <var>s</var> are
+
+          <dl>
+<dt>"EastOutside"<dd>Place the colorbar outside the plot to the right.  This is the default. 
+<br><dt>"East"<dd>Place the colorbar inside the plot to the right. 
+<br><dt>"WestOutside"<dd>Place the colorbar outside the plot to the left. 
+<br><dt>"West"<dd>Place the colorbar inside the plot to the left. 
+<br><dt>"NorthOutside"<dd>Place the colorbar above the plot. 
+<br><dt>"North"<dd>Place the colorbar at the top of the plot. 
+<br><dt>"SouthOutside"<dd>Place the colorbar under the plot. 
+<br><dt>"South"<dd>Place the colorbar at the bottom of the plot. 
+<br><dt>"Off", "None"<dd>Remove any existing colorbar from the plot. 
+</dl>
+
+        <p>If the argument "peer" is given, then the following argument is treated
+as the axes handle on which to add the colorbar. 
+</p></blockquote></div>
+
+   </body></html>
+

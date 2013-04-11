@@ -1,0 +1,11 @@
+prefix=/usr/local/octmgw32_gcc-4.4.0-dw2
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Fontconfig
+Description: Font configuration and customization library
+Version: 2.8.0
+Libs: -L${libdir} -lfontconfig
+Libs.private:  -lexpat -lfreetype -lz 
+Cflags: -I${includedir}

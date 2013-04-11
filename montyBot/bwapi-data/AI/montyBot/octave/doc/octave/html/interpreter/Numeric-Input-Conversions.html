@@ -1,0 +1,59 @@
+<html lang="en">
+<head>
+<title>Numeric Input Conversions - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="C_002dStyle-I_002fO-Functions.html#C_002dStyle-I_002fO-Functions" title="C-Style I/O Functions">
+<link rel="prev" href="Table-of-Input-Conversions.html#Table-of-Input-Conversions" title="Table of Input Conversions">
+<link rel="next" href="String-Input-Conversions.html#String-Input-Conversions" title="String Input Conversions">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Numeric-Input-Conversions"></a>Next:&nbsp;<a rel="next" accesskey="n" href="String-Input-Conversions.html#String-Input-Conversions">String Input Conversions</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Table-of-Input-Conversions.html#Table-of-Input-Conversions">Table of Input Conversions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="C_002dStyle-I_002fO-Functions.html#C_002dStyle-I_002fO-Functions">C-Style I/O Functions</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">14.2.14 Numeric Input Conversions</h4>
+
+<p>This section describes the <code>scanf</code> conversions for reading numeric
+values.
+
+   <p>The <span class="samp">%d</span> conversion matches an optionally signed integer in decimal
+radix.
+
+   <p>The <span class="samp">%i</span> conversion matches an optionally signed integer in any of
+the formats that the C language defines for specifying an integer
+constant.
+
+   <p>For example, any of the strings <span class="samp">10</span>, <span class="samp">0xa</span>, or <span class="samp">012</span>
+could be read in as integers under the <span class="samp">%i</span> conversion.  Each of
+these specifies a number with decimal value <code>10</code>.
+
+   <p>The <span class="samp">%o</span>, <span class="samp">%u</span>, and <span class="samp">%x</span> conversions match unsigned
+integers in octal, decimal, and hexadecimal radices, respectively.
+
+   <p>The <span class="samp">%X</span> conversion is identical to the <span class="samp">%x</span> conversion.  They
+both permit either uppercase or lowercase letters to be used as digits.
+
+   <p>Unlike the C language <code>scanf</code>, Octave ignores the <span class="samp">h</span>,
+<span class="samp">l</span>, and <span class="samp">L</span> modifiers.
+
+   </body></html>
+

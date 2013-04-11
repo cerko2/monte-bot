@@ -1,0 +1,74 @@
+<html lang="en">
+<head>
+<title>The @code{continue} Statement - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Statements.html#Statements" title="Statements">
+<link rel="prev" href="The-_0040code_007bbreak_007d-Statement.html#The-_0040code_007bbreak_007d-Statement" title="The @code{break} Statement">
+<link rel="next" href="The-_0040code_007bunwind_005fprotect_007d-Statement.html#The-_0040code_007bunwind_005fprotect_007d-Statement" title="The @code{unwind_protect} Statement">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="The-_003ccode_003econtinue_003c_002fcode_003e-Statement"></a>Next:&nbsp;<a rel="next" accesskey="n" href="The-_003ccode_003eunwind_005fprotect_003c_002fcode_003e-Statement.html#The-_003ccode_003eunwind_005fprotect_003c_002fcode_003e-Statement">The &lt;code&gt;unwind_protect&lt;/code&gt; Statement</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="The-_003ccode_003ebreak_003c_002fcode_003e-Statement.html#The-_003ccode_003ebreak_003c_002fcode_003e-Statement">The &lt;code&gt;break&lt;/code&gt; Statement</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Statements.html#Statements">Statements</a>
+<hr><br>
+</div>
+
+<h3 class="section">10.7 The <code>continue</code> Statement</h3>
+
+<p><a name="index-_0040code_007bcontinue_007d-statement-574"></a>
+The <code>continue</code> statement, like <code>break</code>, is used only inside
+<code>for</code> or <code>while</code> loops.  It skips over the rest of the loop
+body, causing the next cycle around the loop to begin immediately. 
+Contrast this with <code>break</code>, which jumps out of the loop altogether. 
+Here is an example:
+
+<pre class="example">     # print elements of a vector of random
+     # integers that are even.
+     
+     # first, create a row vector of 10 random
+     # integers with values between 0 and 100:
+     
+     vec = round (rand (1, 10) * 100);
+     
+     # print what we're interested in:
+     
+     for x = vec
+       if (rem (x, 2) != 0)
+         continue;
+       endif
+       printf ("%d\n", x);
+     endfor
+</pre>
+   <p>If one of the elements of <var>vec</var> is an odd number, this example skips
+the print statement for that element, and continues back to the first
+statement in the loop.
+
+   <p>This is not a practical example of the <code>continue</code> statement, but it
+should give you a clear understanding of how it works.  Normally, one
+would probably write the loop like this:
+
+<pre class="example">     for x = vec
+       if (rem (x, 2) == 0)
+         printf ("%d\n", x);
+       endif
+     endfor
+</pre>
+   </body></html>
+

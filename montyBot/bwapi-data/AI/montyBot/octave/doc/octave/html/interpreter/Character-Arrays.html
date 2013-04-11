@@ -1,0 +1,104 @@
+<html lang="en">
+<head>
+<title>Character Arrays - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Strings.html#Strings" title="Strings">
+<link rel="prev" href="Escape-Sequences-in-string-constants.html#Escape-Sequences-in-string-constants" title="Escape Sequences in string constants">
+<link rel="next" href="Creating-Strings.html#Creating-Strings" title="Creating Strings">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Character-Arrays"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Creating-Strings.html#Creating-Strings">Creating Strings</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Escape-Sequences-in-string-constants.html#Escape-Sequences-in-string-constants">Escape Sequences in string constants</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Strings.html#Strings">Strings</a>
+<hr><br>
+</div>
+
+<h3 class="section">5.2 Character Arrays</h3>
+
+<p>The string representation used by Octave is an array of characters, so
+internally the string "dddddddddd" is actually a row vector of length 10
+containing the value 100 in all places (100 is the ASCII code of "d").  This
+lends itself to the obvious generalization to character matrices.  Using a
+matrix of characters, it is possible to represent a collection of same-length
+strings in one variable.  The convention used in Octave is that each row in a
+character matrix is a separate string, but letting each column represent a
+string is equally possible.
+
+   <p>The easiest way to create a character matrix is to put several strings
+together into a matrix.
+
+<pre class="example">     collection = [ "String #1"; "String #2" ];
+</pre>
+   <p class="noindent">This creates a 2-by-9 character matrix.
+
+   <p>The function <code>ischar</code> can be used to test if an object is a character
+matrix.
+
+<!-- strfns.cc -->
+<p><a name="doc_002dischar"></a>
+
+<div class="defun">
+&mdash; Built-in Function:  <b>ischar</b> (<var>a</var>)<var><a name="index-ischar-284"></a></var><br>
+<blockquote><p>Return 1 if <var>a</var> is a character array.  Otherwise, return 0. 
+</p></blockquote></div>
+
+   <p>To test if an object is a string (i.e., a character vector and not a character
+matrix) you can use the <code>ischar</code> function in combination with the
+<code>isvector</code> function as in the following example:
+
+<pre class="example">     ischar(collection)
+          =&gt; ans = 1
+     
+     ischar(collection) &amp;&amp; isvector(collection)
+          =&gt; ans = 0
+     
+     ischar("my string") &amp;&amp; isvector("my string")
+          =&gt; ans = 1
+</pre>
+   <p>One relevant question is, what happens when a character matrix is
+created from strings of different length.  The answer is that Octave
+puts blank characters at the end of strings shorter than the longest
+string.  It is possible to use a different character than the
+blank character using the <code>string_fill_char</code> function.
+
+<!-- pt-mat.cc -->
+<p><a name="doc_002dstring_005ffill_005fchar"></a>
+
+<div class="defun">
+&mdash; Built-in Function: <var>val</var> = <b>string_fill_char</b> ()<var><a name="index-string_005ffill_005fchar-285"></a></var><br>
+&mdash; Built-in Function: <var>old_val</var> = <b>string_fill_char</b> (<var>new_val</var>)<var><a name="index-string_005ffill_005fchar-286"></a></var><br>
+<blockquote><p>Query or set the internal variable used to pad all rows of a character
+matrix to the same length.  It must be a single character.  The default
+value is <code>" "</code> (a single space).  For example,
+
+     <pre class="example">          string_fill_char ("X");
+          [ "these"; "are"; "strings" ]
+               =&gt; "theseXX"
+                  "areXXXX"
+                  "strings"
+     </pre>
+        </blockquote></div>
+
+   <p>This shows a problem with character matrices.  It simply isn't possible to
+represent strings of different lengths.  The solution is to use a cell array of
+strings, which is described in <a href="Cell-Arrays-of-Strings.html#Cell-Arrays-of-Strings">Cell Arrays of Strings</a>.
+
+   </body></html>
+

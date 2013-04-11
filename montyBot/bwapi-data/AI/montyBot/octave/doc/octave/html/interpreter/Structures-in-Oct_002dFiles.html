@@ -1,0 +1,102 @@
+<html lang="en">
+<head>
+<title>Structures in Oct-Files - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Oct_002dFiles.html#Oct_002dFiles" title="Oct-Files">
+<link rel="prev" href="Cell-Arrays-in-Oct_002dFiles.html#Cell-Arrays-in-Oct_002dFiles" title="Cell Arrays in Oct-Files">
+<link rel="next" href="Sparse-Matrices-in-Oct_002dFiles.html#Sparse-Matrices-in-Oct_002dFiles" title="Sparse Matrices in Oct-Files">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Structures-in-Oct_002dFiles"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Sparse-Matrices-in-Oct_002dFiles.html#Sparse-Matrices-in-Oct_002dFiles">Sparse Matrices in Oct-Files</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Cell-Arrays-in-Oct_002dFiles.html#Cell-Arrays-in-Oct_002dFiles">Cell Arrays in Oct-Files</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Oct_002dFiles.html#Oct_002dFiles">Oct-Files</a>
+<hr><br>
+</div>
+
+<h4 class="subsection">A.1.5 Structures in Oct-Files</h4>
+
+<p>A structure in Octave is map between a number of fields represented and
+their values.  The Standard Template Library <code>map</code> class is used,
+with the pair consisting of a <code>std::string</code> and an octave
+<code>Cell</code> variable.
+
+   <p>A simple example demonstrating the use of structures within oct-files is
+
+<pre class="example"><pre class="verbatim">     #include &lt;octave/oct.h>
+     #include &lt;octave/ov-struct.h>
+     
+     DEFUN_DLD (structdemo, args, , "Struct demo.")
+     {
+       int nargin = args.length ();
+       octave_value retval;
+     
+       if (nargin != 2)
+         print_usage ();
+       else
+         {
+           Octave_map arg0 = args(0).map_value ();
+           std::string arg1 = args(1).string_value ();
+     
+           if (! error_state &amp;&amp; arg0.contains (arg1))
+             {
+               // The following two lines might be written as
+               //    octave_value tmp;
+               //    for (Octave_map::iterator p0 = 
+     	  //        arg0.begin(); 
+               //        p0 != arg0.end(); p0++ )
+               //      if (arg0.key (p0) == arg1)
+               //        {
+               //          tmp = arg0.contents (p0) (0);
+               //          break;
+               //        }
+               // though using seek is more concise.
+               Octave_map::const_iterator p1 = arg0.seek (arg1);
+               octave_value tmp =  arg0.contents(p1)(0);
+               Octave_map st;
+               st.assign ("selected", tmp);
+               retval = octave_value (st);
+             }
+         }
+       return retval; 
+     }
+     
+</pre></pre>
+   <p>An example of its use is
+
+<pre class="example">     x.a = 1; x.b = "test"; x.c = [1, 2];
+     structdemo (x, "b")
+     =&gt; selected = test
+</pre>
+   <p>The commented code above demonstrates how to iterate over all of the
+fields of the structure, where as the following code demonstrates finding
+a particular field in a more concise manner.
+
+   <p>As can be seen the <code>contents</code> method of the <code>Octave_map</code> class
+returns a <code>Cell</code> which allows structure arrays to be represented. 
+Therefore, to obtain the underlying <code>octave_value</code> we write
+
+<pre class="example">     octave_value tmp = arg0.contents (p1) (0);
+</pre>
+   <p>where the trailing (0) is the () operator on the <code>Cell</code> object.  We
+can equally iterate of the elements of the Cell array to address the
+elements of the structure array.
+
+   </body></html>
+

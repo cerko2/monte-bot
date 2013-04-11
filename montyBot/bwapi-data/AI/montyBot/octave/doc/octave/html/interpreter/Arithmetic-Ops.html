@@ -1,0 +1,127 @@
+<html lang="en">
+<head>
+<title>Arithmetic Ops - Untitled</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Untitled">
+<meta name="generator" content="makeinfo 4.7">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="Expressions.html#Expressions" title="Expressions">
+<link rel="prev" href="Calling-Functions.html#Calling-Functions" title="Calling Functions">
+<link rel="next" href="Comparison-Ops.html#Comparison-Ops" title="Comparison Ops">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc { font-variant:small-caps }
+  span.roman { font-family: serif; font-weight: normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Arithmetic-Ops"></a>Next:&nbsp;<a rel="next" accesskey="n" href="Comparison-Ops.html#Comparison-Ops">Comparison Ops</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Calling-Functions.html#Calling-Functions">Calling Functions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="Expressions.html#Expressions">Expressions</a>
+<hr><br>
+</div>
+
+<h3 class="section">8.3 Arithmetic Operators</h3>
+
+<p><a name="index-arithmetic-operators-457"></a><a name="index-operators_002c-arithmetic-458"></a><a name="index-addition-459"></a><a name="index-subtraction-460"></a><a name="index-multiplication-461"></a><a name="index-matrix-multiplication-462"></a><a name="index-division-463"></a><a name="index-quotient-464"></a><a name="index-negation-465"></a><a name="index-unary-minus-466"></a><a name="index-exponentiation-467"></a><a name="index-transpose-468"></a><a name="index-Hermitian-operator-469"></a><a name="index-transpose_002c-complex_002dconjugate-470"></a><a name="index-complex_002dconjugate-transpose-471"></a>
+The following arithmetic operators are available, and work on scalars
+and matrices.
+
+     <dl>
+<dt><var>x</var><code> + </code><var>y</var><dd><a name="index-_002b-472"></a>Addition.  If both operands are matrices, the number of rows and columns
+must both agree.  If one operand is a scalar, its value is added to
+all the elements of the other operand.
+
+     <br><dt><var>x</var><code> .+ </code><var>y</var><dd><a name="index-_002e_002b-473"></a>Element by element addition.  This operator is equivalent to <code>+</code>.
+
+     <br><dt><var>x</var><code> - </code><var>y</var><dd><a name="index-_002d-474"></a>Subtraction.  If both operands are matrices, the number of rows and
+columns of both must agree.
+
+     <br><dt><var>x</var><code> .- </code><var>y</var><dd>Element by element subtraction.  This operator is equivalent to <code>-</code>.
+
+     <br><dt><var>x</var><code> * </code><var>y</var><dd><a name="index-_002a-475"></a>Matrix multiplication.  The number of columns of <var>x</var> must agree
+with the number of rows of <var>y</var>.
+
+     <br><dt><var>x</var><code> .* </code><var>y</var><dd><a name="index-_002e_002a-476"></a>Element by element multiplication.  If both operands are matrices, the
+number of rows and columns must both agree.
+
+     <br><dt><var>x</var><code> / </code><var>y</var><dd><a name="index-_002f-477"></a>Right division.  This is conceptually equivalent to the expression
+
+     <pre class="example">          (inverse (y') * x')'
+     </pre>
+     <p class="noindent">but it is computed without forming the inverse of <var>y'</var>.
+
+     <p>If the system is not square, or if the coefficient matrix is singular,
+a minimum norm solution is computed.
+
+     <br><dt><var>x</var><code> ./ </code><var>y</var><dd><a name="index-_002e_002f-478"></a>Element by element right division.
+
+     <br><dt><var>x</var><code> \ </code><var>y</var><dd><a name="index-_005c-479"></a>Left division.  This is conceptually equivalent to the expression
+
+     <pre class="example">          inverse (x) * y
+     </pre>
+     <p class="noindent">but it is computed without forming the inverse of <var>x</var>.
+
+     <p>If the system is not square, or if the coefficient matrix is singular,
+a minimum norm solution is computed.
+
+     <br><dt><var>x</var><code> .\ </code><var>y</var><dd><a name="index-_002e_005c-480"></a>Element by element left division.  Each element of <var>y</var> is divided
+by each corresponding element of <var>x</var>.
+
+     <br><dt><var>x</var><code> ^ </code><var>y</var><dt><var>x</var><code> ** </code><var>y</var><dd><a name="index-_002a_002a-481"></a><a name="index-_005e-482"></a>Power operator.  If <var>x</var> and <var>y</var> are both scalars, this operator
+returns <var>x</var> raised to the power <var>y</var>.  If <var>x</var> is a scalar and
+<var>y</var> is a square matrix, the result is computed using an eigenvalue
+expansion.  If <var>x</var> is a square matrix, the result is computed by
+repeated multiplication if <var>y</var> is an integer, and by an eigenvalue
+expansion if <var>y</var> is not an integer.  An error results if both
+<var>x</var> and <var>y</var> are matrices.
+
+     <p>The implementation of this operator needs to be improved.
+
+     <br><dt><var>x</var><code> .^ </code><var>y</var><br><dt><var>x</var><code> .** </code><var>y</var><dd><a name="index-_002e_002a_002a-483"></a><a name="index-_002e_005e-484"></a>Element by element power operator.  If both operands are matrices, the
+number of rows and columns must both agree.
+
+     <br><dt><code>-</code><var>x</var><dd><a name="index-_002d-485"></a>Negation.
+
+     <br><dt><code>+</code><var>x</var><dd><a name="index-_002b-486"></a>Unary plus.  This operator has no effect on the operand.
+
+     <br><dt><var>x</var><code>'</code><dd><a name="index-_0027-487"></a>Complex conjugate transpose.  For real arguments, this operator is the
+same as the transpose operator.  For complex arguments, this operator is
+equivalent to the expression
+
+     <pre class="example">          conj (x.')
+     </pre>
+     <br><dt><var>x</var><code>.'</code><dd><a name="index-_002e_0027-488"></a>Transpose. 
+</dl>
+
+   <p>Note that because Octave's element by element operators begin with a
+<span class="samp">.</span>, there is a possible ambiguity for statements like
+
+<pre class="example">     1./m
+</pre>
+   <p class="noindent">because the period could be interpreted either as part of the constant
+or as part of the operator.  To resolve this conflict, Octave treats the
+expression as if you had typed
+
+<pre class="example">     (1) ./ m
+</pre>
+   <p class="noindent">and not
+
+<pre class="example">     (1.) / m
+</pre>
+   <p class="noindent">Although this is inconsistent with the normal behavior of Octave's
+lexer, which usually prefers to break the input into tokens by
+preferring the longest possible match at any given point, it is more
+useful in this case.
+
+   </body></html>
+

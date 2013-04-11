@@ -83,10 +83,10 @@ public class Boss extends AbstractManager{
 	public Boss (JNIBWAPI game){
 		this.game = game;
 		this.player = game.getSelf();
+		
 	}
 	
 	public void initialize(){
-		
 		validUnits = new ArrayList<Unit>();
 		combatUnits = new ArrayList<Unit>();
 		scoutUnits = new HashSet<Unit>();
@@ -433,6 +433,10 @@ public class Boss extends AbstractManager{
 
 	public OpeningManager getOpeningManager() {
 		return openingManager;
+	}
+	
+	public OpponentPositioning getOpponentPositioning() {
+		return opponentPositioning;
 	}
 
 	public ScoutingManager getScoutManager() {

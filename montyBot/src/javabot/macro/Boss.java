@@ -438,6 +438,10 @@ public class Boss extends AbstractManager{
 	public OpponentPositioning getOpponentPositioning() {
 		return opponentPositioning;
 	}
+	
+	public OpponentKnowledgeBase getOpponentKnowledgeBase() {
+		return opponentKnowledgeBase;
+	}
 
 	public ScoutingManager getScoutManager() {
 		return scoutManager;

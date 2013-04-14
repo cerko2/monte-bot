@@ -100,7 +100,7 @@ public class Boss extends AbstractManager{
 		
 		//subordinate initialization
 		buildManager = new  BuildManager(this);
-		montePlanner = new MonteCarloPlanner();
+		montePlanner = new MonteCarloPlanner( game, this );
 		opponentKnowledgeBase = new OpponentKnowledgeBase(this);
 		openingManager = new OpeningManager(this);
 		opponentPositioning = new OpponentPositioning(game);
@@ -130,7 +130,7 @@ public class Boss extends AbstractManager{
 	
 	public void gameUpdate(){
 		setUnits();
-		montePlanner.update(combatUnits);
+		montePlanner.update( new ArrayList<Unit>( this.opponentPositioning.getEnemyUnits() ), this.combatUnits );
 		workerManager.update(workerUnits);
 		
 		minerals = player.getMinerals();
@@ -557,5 +557,9 @@ public class Boss extends AbstractManager{
 			
 			System.out.println(game.getGroundDistance(base1.getTx(), base1.getTy(), base2.getTx(), base2.getTy()));
 		}
+	}
+	
+	public ArrayList<Unit> getNexuses() {
+		return nexuses;
 	}
 }

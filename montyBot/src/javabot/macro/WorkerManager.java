@@ -25,7 +25,7 @@ import javabot.util.Position;
 
 public class WorkerManager extends AbstractManager {
 	
-	private final boolean WORKER_MANAGER_DEBUG = true;
+	private final boolean WORKER_MANAGER_DEBUG = false;
 	
 	private final double maxWorkersPerMineralField = 2.3;
 	private final double maxWorkersPerGeyser = 3.0;
@@ -251,7 +251,7 @@ public class WorkerManager extends AbstractManager {
 		
 		allWorkersRatio /= nexusBases.size();
 		
-		game.printText("workers ratio: " + allWorkersRatio);
+//		game.printText("workers ratio: " + allWorkersRatio);
 	}
 	
 	/**

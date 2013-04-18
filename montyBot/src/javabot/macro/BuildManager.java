@@ -18,7 +18,7 @@ import javabot.util.BWColor;
 * 
 */
 public class BuildManager extends AbstractManager{
-	private boolean testing = true; //testovacie vypisy.
+	private boolean testing = false; //testovacie vypisy.
 	private boolean grid = false; //testovacie vypisy.
 	private boolean freeMode = false; // dokym neskonci opening som obmedzeny.
 	private int time = 0;

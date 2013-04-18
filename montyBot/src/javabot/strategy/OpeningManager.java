@@ -12,7 +12,7 @@ import javabot.model.Race;
 import javabot.types.UnitType.UnitTypes;
 
 public class OpeningManager extends AbstractManager{
-	private boolean debug = true;
+	private boolean debug = false;
 	private JNIBWAPI game;
 	private Boss boss;
 	private boolean isActive;

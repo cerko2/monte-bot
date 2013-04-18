@@ -1,343 +1,478 @@
 package javabot.combat;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javabot.JNIBWAPI;
 import javabot.model.Unit;
 import javabot.types.UnitType.UnitTypes;
+import javabot.util.BWColor;
+import javabot.util.UnitUtils;
+
+/**
+ * DO NOT FORGET TO REMOVE UNITS FROM AVAILABLE LISTS
+ * @author user
+ *
+ */
 
 public class SquadManager {
 	
-	//our squad ID => squad
-	private TreeMap<Integer, Squad> ourSquads = new TreeMap<Integer, Squad>();
+	TreeMap< Integer, OurSquad > ourSquads     = new TreeMap< Integer, OurSquad >();
+	HashMap< Integer, EnemySquad > enemySquads = new HashMap< Integer, EnemySquad >();
+	HarrassSquad harassSquad;
 	
-	// enemy squad ID => squad
-	private TreeMap<Integer, Squad> enemySquads = new TreeMap<Integer, Squad>();
+	ArrayList<Unit> enemyCombatUnits;
 	
-	// unit_id => enemy squad ID
-	private TreeMap<Integer, Integer> enemyLeaders = new TreeMap<Integer, Integer>();
-	
-	private int enemy_squad_id = 0;
-	private int our_squad_id   = 0;
+	ArrayList<Unit> availableUnits;
+	ArrayList<Unit> availableAntiAirUnits;
+	ArrayList<Unit> availableAntiGroundUnits;
 	
 	private JNIBWAPI bwapi;
-	private MonteCarloPlanner monteCarlo;
-
-	private ArrayList<Unit> enemyUnits;
-	private ArrayList<Unit> myUnits;
 	
-	boolean noMoreMyUnits = false;
-	
-	public SquadManager( JNIBWAPI bwapi, MonteCarloPlanner monteCarlo ) 
+	public SquadManager( JNIBWAPI bwapi ) 
 	{
-		this.bwapi 		= bwapi;
-		this.monteCarlo = monteCarlo;
+		this.bwapi = bwapi;
 	}
 	
-	public void setSquads( ArrayList<Unit> enemyUnits, ArrayList<Unit> myUnits ) 
+	public void updateSquadManager( ArrayList<Unit> enemyUnits, ArrayList<Unit> ourUnits )
 	{
-		setEnemyUnits(enemyUnits);
-		setMyUnits(myUnits);
+		ourSquads   = new TreeMap< Integer, OurSquad >();
+		enemySquads = new HashMap< Integer, EnemySquad >();
+		harassSquad = null;
+		
+		this.enemyCombatUnits         = getEnemyCombatUnits( enemyUnits );
+		this.availableUnits           = getOurCombatUnits( ourUnits );
+		this.availableAntiAirUnits    = getOurAntiAirUnits();
+		this.availableAntiGroundUnits = getOurAntiGroundUnits();
+		
 		setEnemySquads();
 		setOurSquads();
 	}
 	
-	private void setOurSquads() 
+	private ArrayList<Unit> getOurCombatUnits( ArrayList<Unit> ourUnits ) 
 	{
-		ourSquads = new TreeMap<Integer, Squad>();
-		//sorted list of enemy squads ( the weakest is first, then the order is ASCENDING )
-		ArrayList<Squad> enemySquads = this.getEnemySquads();
-		
-		for ( Squad s : enemySquads ) 
+		ArrayList<Unit> result = new ArrayList<Unit>();
+		for ( Unit u : ourUnits )
 		{
-
-			if (noMoreMyUnits) 
+			if (  ( !bwapi.getUnitType( u.getTypeID() ).isWorker() ) && 
+				( ( bwapi.getUnitType( u.getTypeID() ).isAttackCapable() ) || isSpecialUnit( u.getTypeID() ) )
+			    )
 			{
-				return;
+				result.add( u );
 			}
-			
-			Squad tmpSquad = new Squad( bwapi, our_squad_id, s.getEnemySquadID() );
-			ourSquads.put( our_squad_id, tmpSquad );
-			
-			int i = 0;
-			
-			if (tmpSquad.isWeakerInAir(s)) {
-				System.out.println("is weaker in air");
-			} else {
-				System.out.println("is not weaker in AIR");
-				System.out.println(tmpSquad.getAirPower());
-				System.out.println(s.getAntiAirPower());
-			}
-			
-			while ( tmpSquad.isWeakerInAir(s) ) 
-			{
-				i++;
-				addAntiAirUnitToSquad(tmpSquad);
-				if (noMoreMyUnits) {
-					return;
-				}
-				if (i > 200) {
-					break;
-				}
-				tmpSquad.updateSquad();
-			}
-			
-			if (tmpSquad.isWeakerInAir(s)) {
-				System.out.println("is weaker in ground");
-			} else {
-				System.out.println("is not weaker in ground");
-				System.out.println(tmpSquad.getGroundPower());
-				System.out.println(s.getAntiGroundPower());
-			}
-			
-			while ( tmpSquad.isWeakerOnGround(s) )
-			{
-				addAntiGroundUnitToSquad(tmpSquad);
-				if (noMoreMyUnits) {
-					return;
-				}
-				tmpSquad.updateSquad();
-			}
-			
-			our_squad_id++;
-			
 		}
-		
+		return result;
 	}
-	
-	private void addAntiAirUnitToSquad( Squad s ) 
+
+	private ArrayList<Unit> getOurAntiAirUnits() 
 	{
-		int i = 0;
-		for ( Unit u : myUnits ) 
+		ArrayList<Unit> result = new ArrayList<Unit>();
+		for ( Unit u : availableUnits )
 		{
 			if ( bwapi.getUnitType( u.getTypeID() ).isCanAttackAir() )
 			{
-				s.putUnit(u);
-				myUnits.remove( i );
-				return;
+				result.add( u );
 			}
-			i++;
 		}
+		return result;
 	}
-	
-	private void addAntiGroundUnitToSquad( Squad s ) 
+
+	private ArrayList<Unit> getOurAntiGroundUnits() 
 	{
-		int i = -1;
-		for ( Unit u : myUnits ) 
+		ArrayList<Unit> result = new ArrayList<Unit>();
+		for ( Unit u : availableUnits )
 		{
-			i++;
-			if ( ( !bwapi.getUnitType( u.getTypeID() ).isCanMove() ) || ( u.getTypeID() == UnitTypes.Protoss_Probe.ordinal() ) ) 
+			if ( bwapi.getUnitType( u.getTypeID() ).isCanAttackGround() )
 			{
-				continue;
+				result.add( u );
 			}
-			
-			if ( !bwapi.getUnitType( u.getTypeID() ).isCanAttackAir() && bwapi.getUnitType( u.getTypeID() ).isCanAttackGround() )
-			{
-				s.putUnit(u);
-				myUnits.remove( i );
-				return;
-			}
-			
 		}
+		return result;
+	}
+
+	private boolean isSpecialUnit( int typeID ) 
+	{
+		if ( typeID == UnitTypes.Protoss_Carrier.ordinal() ) return true;
+		if ( typeID == UnitTypes.Protoss_Reaver.ordinal() ) return true;
+		if ( typeID == UnitTypes.Protoss_Dark_Archon.ordinal() ) return true;
+		if ( typeID == UnitTypes.Protoss_High_Templar.ordinal() ) return true;
+		if ( typeID == UnitTypes.Terran_Science_Vessel.ordinal() ) return true;
+		if ( typeID == UnitTypes.Terran_Medic.ordinal() ) return true;
+		if ( typeID == UnitTypes.Zerg_Defiler.ordinal() ) return true;
+		if ( typeID == UnitTypes.Zerg_Queen.ordinal() ) return true;
 		
-		i = -1;
+		return false;
 		
-		for ( Unit u : myUnits ) 
+	}
+	
+	/*********************** OUR SQUADS ARE SET BELOW ************************************/ 
+	
+	private void setOurSquads() 
+	{
+		int ourSquadId = 0;
+		
+		while ( ( ourSquadId < enemySquads.size() ) && ( !availableUnits.isEmpty() ) )
 		{
+			matchEnemySquadsPower( ourSquadId );
+			ourSquadId++;
+		}
+		
+		while ( !availableUnits.isEmpty() )
+		{
+			addUnitToHarrassSquad();
+		}
+		
+		for ( Map.Entry<Integer, OurSquad> s : ourSquads.entrySet() )
+		{
+			s.getValue().update();
+		}
+		
+	}
+	
+	private void addUnitToHarrassSquad() 
+	{
+		if ( harassSquad == null )
+			harassSquad = new HarrassSquad( bwapi );
+		for ( Unit u : availableUnits )
+		{
+			harassSquad.squadUnits.add( u );
+			harassSquad.update();
+		}
+		
+		availableUnits.clear();
+	}
+	
+	private void removeUnitFromAvailableUnits( Unit unit )
+	{
+		if ( unit == null ) return;
+		int i = 0;
+		for ( Unit u : availableUnits )
+		{
+			if ( u.getID() == unit.getID() )
+				break;
 			i++;
-			
-			if ( ( !bwapi.getUnitType( u.getTypeID() ).isCanMove() ) || ( u.getTypeID() == UnitTypes.Protoss_Probe.ordinal() ) || ( !bwapi.getUnitType( u.getTypeID() ).isCanAttackGround() ) ) 
-			{
-				continue;
-			}
-			
-			s.putUnit(u);
-			myUnits.remove( i );
-			return;
-			
+		}
+		availableUnits.remove( i );
+		
+		i = 0;
+		for ( Unit u : availableAntiAirUnits )
+		{
+			if ( u.getID() == unit.getID() )
+				break;
+			i++;
 		}
 		
-		noMoreMyUnits = true;
+		if ( i != availableAntiAirUnits.size() )
+			availableAntiAirUnits.remove( i );
 		
-	}
-	
-	private void setEnemySquads() 
-	{
-		enemySquads  = new TreeMap<Integer, Squad>();
-		enemyLeaders = new TreeMap<Integer, Integer>();
-		for (Unit u : enemyUnits) {
-			
-			if ( u.getTypeID() == UnitTypes.Protoss_Probe.ordinal() ) 
-			{
-				continue;
-			}
-			
-			if ( !
-					   ( bwapi.getUnitType(u.getTypeID()).isCanAttackAir() 
-					|| ( bwapi.getUnitType(u.getTypeID()).isCanAttackGround() ) 
-					|| ( u.getTypeID() == UnitTypes.Protoss_Reaver.ordinal() ) 
-					|| ( u.getTypeID() == UnitTypes.Protoss_Carrier.ordinal() )
-					|| ( u.getTypeID() == UnitTypes.Protoss_Dark_Archon.ordinal() )
-					|| ( u.getTypeID() == UnitTypes.Protoss_High_Templar.ordinal() )) ) 
-			{
-				continue;
-			}
-			
-			if ( !hasLeader(u) ) 
-			{
-				enemy_squad_id++;
-				enemySquads.put(new Integer(enemy_squad_id), new Squad( bwapi, enemy_squad_id ));
-				enemySquads.get(new Integer(enemy_squad_id)).putUnit(u);
-			} 
+		i = 0;
+		for ( Unit u : availableAntiGroundUnits )
+		{
+			if ( u.getID() == unit.getID() )
+				break;
+			i++;
 		}
+		if ( i != availableAntiGroundUnits.size() )
+			availableAntiGroundUnits.remove( i );
 		
-	}
-	
-	/**
-	 * Some modul should send known enemy units to this modul
-	 * @param enemyUnits (bwapi.getEnemyUnits)
-	 */
-	public void setEnemyUnits(ArrayList<Unit> enemyUnits) 
-	{
-		this.enemyUnits = enemyUnits;
 	}
 
 	/**
-	 * If the unit has a leader, it means it belongs to a squad. 
-	 * To become a leader you must be the first unit I iterate through 
-	 * in a certain are that is capable of attacking.
-	 * @param u (Unit)
-	 * @return
+	 * After this function fires and we had enough units,
+	 * our squad with the ID of an enemySquad is ready to kick this squads ass :)
+	 * @param enemySquadId
 	 */
-	private boolean hasLeader( Unit u ) 
+	private void matchEnemySquadsPower( int enemySquadId )
 	{
+		EnemySquad enemySquad = enemySquads.get( enemySquadId );
 		
-		if ( enemyLeaders.size() < 1 ) 
-		{
-			enemyLeaders.put( u.getID(), new Integer( enemy_squad_id+1 ) );
-			return false;
-		} 
+		ourSquads.put( enemySquadId, new OurSquad( bwapi, enemySquadId ) );
 		
-		for ( Map.Entry<Integer, Integer> entry : enemyLeaders.entrySet() ) 
+		int counter = 0;
+		while ( ourSquads.get( enemySquadId ).isWeakerOnGroundThan( enemySquad ) )
 		{
-			if ( MonteCarloPlanner.getDistance( bwapi.getUnit( entry.getKey() ), u ) < 500 ) 
+			if ( counter > 100 ) break;
+			addGroundFighterToSquad( enemySquadId );
+			counter++;
+		}
+		
+		counter = 0;
+		while ( ourSquads.get( enemySquadId ).isWeakerInAirThan( enemySquad ) )
+		{
+			if ( counter > 100 ) break;
+			addAirFighterToSquad( enemySquadId );
+			counter++;
+		}
+		
+		ArrayList<Integer> emptySquadIds = new ArrayList<Integer>();
+		for ( Map.Entry<Integer, OurSquad> entry : ourSquads.entrySet() )
+		{
+			if ( entry.getValue().squadUnits.isEmpty() )
+				emptySquadIds.add( entry.getKey() );
+		}
+		
+		for ( Integer i : emptySquadIds )
+		{
+			ourSquads.remove( i );
+		}
+		
+	}
+	
+	private Unit findClosestAntiAirUnit( int ourSquadId )
+	{
+		Unit closestUnit = null;
+		double closestDist = 111111111111111.1;
+		
+		for ( Unit ourSquadUnit : ourSquads.get( ourSquadId ).squadUnits )
+		{
+			for ( Unit available : availableAntiAirUnits )
 			{
-				enemySquads.get( new Integer( entry.getValue() ) ).putUnit( u );
-				return true;
+				if ( UnitUtils.getDistance( ourSquadUnit , available ) < closestDist )
+				{
+					closestDist = UnitUtils.getDistance( ourSquadUnit , available );
+					closestUnit = available;
+				}
 			}
 		}
 		
-		enemyLeaders.put( u.getID(), new Integer( enemy_squad_id+1 ) );
-		return false;
+		removeUnitFromAvailableUnits( closestUnit );
 		
-	} //hasLeader
-	
-	public int getEnemySquadsSize() 
-	{
-		return enemySquads.size();
+		return closestUnit;
 	}
 	
-	public ArrayList<Squad> getEnemySquads() 
+	/**
+	 * Do not forget to remove units from AVAILABLE LIST
+	 * @param ourSquadId
+	 * @return
+	 */
+	private Unit findClosestAntiGroundUnit( int ourSquadId )
 	{
-		ArrayList<Squad> result = new ArrayList<Squad>();
+		Unit closestUnit = null;
+		double closestDist = 111111111111111.1;
 		
-		for ( Map.Entry<Integer, Squad> entry : enemySquads.entrySet() ) 
+		for ( Unit ourSquadUnit : ourSquads.get( ourSquadId ).squadUnits )
 		{
-			entry.getValue().updateSquad();
-			result.add(entry.getValue());
+			for ( Unit available : availableAntiGroundUnits )
+			{
+				if ( UnitUtils.getDistance( ourSquadUnit , available ) < closestDist )
+				{
+					closestDist = UnitUtils.getDistance( ourSquadUnit , available );
+					closestUnit = available;
+				}
+			}
 		}
 		
-		Collections.sort(result);
+		removeUnitFromAvailableUnits( closestUnit );
 		
+		return closestUnit;
+	}
+	
+	private void addAirFighterToSquad( int ourSquadId )
+	{
+		Unit newFighter = findClosestAntiAirUnit(ourSquadId);
+		if ( newFighter == null )
+		{
+			if ( !availableAntiAirUnits.isEmpty() )
+			{
+				newFighter = availableAntiAirUnits.get( 0 );
+				removeUnitFromAvailableUnits( newFighter );
+			} else 
+			{
+				return;
+			}
+		}
+		
+		ourSquads.get( ourSquadId ).squadUnits.add( newFighter );
+		
+	}
+
+	private void addGroundFighterToSquad( int ourSquadId ) 
+	{
+		Unit newFighter = findClosestAntiGroundUnit(ourSquadId);
+		if ( newFighter == null )
+		{
+			if ( !availableAntiGroundUnits.isEmpty() )
+			{
+				newFighter = availableAntiGroundUnits.get( 0 );
+				removeUnitFromAvailableUnits( newFighter );
+			} else 
+			{
+				return;
+			}
+		}
+		
+		ourSquads.get( ourSquadId ).squadUnits.add( newFighter );
+	}
+
+	
+	/*********************** END OF OUR SQUADS SETTING **********************************/
+    
+
+	/************************ ENEMY SQUADS ARE SET BELOW *****************************/
+	
+	private ArrayList<Unit> getEnemyCombatUnits( ArrayList<Unit> enemyUnits )
+	{
+		ArrayList<Unit> result = new ArrayList<Unit>();
+		for ( Unit u : enemyUnits )
+		{
+			if (  ( !bwapi.getUnitType( u.getTypeID() ).isWorker() ) && 
+				  ( ( bwapi.getUnitType( u.getTypeID() ).isAttackCapable() ) || isSpecialUnit( u.getTypeID() ) )
+			    )
+			{
+				result.add( u );
+			}
+		}
 		return result;
 	}
 	
-	public TreeMap<Integer, Squad> getEnemySquadsTree()
-	{
-		return this.enemySquads;
-	}
 	
-	public TreeMap<Integer, Squad> getOurSquadsTree() 
+	private void setEnemySquads()
 	{
-		return this.ourSquads;
-	}
-
-	public ArrayList<Unit> getMyUnits() 
-	{
-		return myUnits;
-	}
-
-	public void setMyUnits( ArrayList<Unit> myUnits ) 
-	{
-		this.myUnits = myUnits;
-	}
-	
-	public Squad getOurSquad( int enemyID ) 
-	{
-
-		for ( Map.Entry<Integer, Squad> entry : ourSquads.entrySet() )
+		int enemySquadId = 0;
+		while ( !enemyCombatUnits.isEmpty() )
 		{
-			if ( entry.getValue().getEnemySquadID() == enemyID )
+			newEnemySquad( enemySquadId );
+			enemySquadId++;
+		}
+	}
+	
+	private void newEnemySquad( int id )
+	{
+		enemySquads.put( id, new EnemySquad( this.bwapi ) );
+		Unit tmpUnit = nextEnemySquadUnit( enemySquads.get( id ) );
+		while ( tmpUnit != null )
+		{
+			enemySquads.get( id ).squadUnits.add( tmpUnit );
+			tmpUnit = nextEnemySquadUnit( enemySquads.get( id ) );
+		}
+		
+		enemySquads.get( id ).update();
+		
+	}
+	
+	/**
+	 * Unit neimplementuje metody equals a hashmap
+	 * @param unit
+	 */
+	private void removeUnitFromEnemyCombatUnits( Unit unit )
+	{
+		if ( unit == null ) return;
+		int i = 0;
+		for ( Unit u : enemyCombatUnits )
+		{
+			if ( u.getID() == unit.getID() )
+				break;
+			i++;
+		}
+		
+		enemyCombatUnits.remove( i );
+	}
+	
+	// jendotky patria do squadu ked su vo vzdialenosti distanceFromSquad od jednotky z tohoto squadu
+	private Unit nearestEnemyUnit( Unit squadUnit, double distanceFromSquad )
+	{
+		double nearestDist = distanceFromSquad;
+		Unit nearestUnit   = null;
+		for ( Unit u : enemyCombatUnits )
+		{
+			if ( UnitUtils.getDistance( u, squadUnit ) < nearestDist )
 			{
-				return entry.getValue();
+				nearestDist = UnitUtils.getDistance( u, squadUnit );
+				nearestUnit = u;
+			}
+		}
+		
+		removeUnitFromEnemyCombatUnits( nearestUnit );
+		
+		return nearestUnit;
+	}
+
+	private Unit nextEnemySquadUnit( EnemySquad enemySquad ) 
+	{
+		// ak prva jednotka squadu
+		if ( enemySquad.squadUnits.isEmpty() )
+		{
+			if ( enemyCombatUnits.isEmpty() )
+			{
+				return null;
+			}
+			else 
+			{
+				return enemyCombatUnits.get( 0 );
+			}
+		}
+		
+		for ( Unit squadUnit : enemySquad.squadUnits )
+		{
+			Unit tmp = nearestEnemyUnit( squadUnit, 200.0 );
+			if ( tmp != null )
+			{
+				return tmp; 
 			}
 		}
 		
 		return null;
 	}
+
+	/*************************** END ENEMY SQUADS SETTING ***********************************/
 	
-	public void updateSquadManager( int unitID ) 
+	public void debug() 
 	{
-	
-		enemyLeaders.remove( unitID );
-		
-		for ( Map.Entry<Integer, Squad> entry : ourSquads.entrySet() ) 
+		ArrayList<Integer> colors = new ArrayList<Integer>();
+		colors.add(BWColor.RED);
+		colors.add(BWColor.GREEN);
+		colors.add(BWColor.BLUE);
+		colors.add(BWColor.YELLOW);
+		colors.add(BWColor.PURPLE);
+		colors.add(BWColor.WHITE);
+		colors.add(BWColor.CYAN);
+		colors.add(BWColor.ORANGE);
+		colors.add(BWColor.BLACK);
+		colors.add(BWColor.BROWN);
+		colors.add(BWColor.TEAL);
+		int i = 0;
+		bwapi.drawText(10, 10, "Count our squads: " + ourSquads.size(), true);
+		bwapi.drawText(10, 20, "Count enemy squads: " + enemySquads.size(), true);
+		bwapi.drawText(10, 30, "Harass squad existuje: " + ( harassSquad != null ), true);
+		for ( Map.Entry<Integer, EnemySquad> e_squad : enemySquads.entrySet() )
 		{
-			if ( entry.getValue().getUnits().size() == 1 ) 
+			if ( i == colors.size() ) i = 0;
+			for ( Unit u : e_squad.getValue().squadUnits )
 			{
-				setSquads( bwapi.getEnemyUnits(), bwapi.getMyUnits() );
-				return;
+				bwapi.drawCircle( u.getX(), u.getY(), 20, colors.get(i), false, false);
+			}
+			Unit l = e_squad.getValue().getLeader();
+			bwapi.drawText( l.getX(), l.getY(), e_squad.getValue().toString(), false );
+			
+			if ( ourSquads.get( e_squad.getKey() ) != null )
+			{
+				for ( Unit u : ourSquads.get( e_squad.getKey() ).squadUnits )
+				{
+					bwapi.drawCircle( u.getX(), u.getY(), 20, colors.get(i), false, false);
+				}
+				
+				Unit a = ourSquads.get( e_squad.getKey() ).getLeader();
+				bwapi.drawText( a.getX(), a.getY(), ourSquads.get( e_squad.getKey() ).toString(), false );
 			}
 			
-			entry.getValue().updateSquad( unitID );
+			i++;
+			
 		}
 		
-		for ( Map.Entry<Integer, Squad> entry : enemySquads.entrySet() ) 
+		if ( harassSquad != null )
 		{
-			if ( entry.getValue().getUnits().size() == 1 ) 
+			for ( Unit u : harassSquad.squadUnits )
 			{
-				setSquads( bwapi.getEnemyUnits(), bwapi.getMyUnits() );
-				return;
+				bwapi.drawCircle( u.getX() , u.getY(), 5, BWColor.RED, true, false );
 			}
-			entry.getValue().updateSquad( unitID );
 		}
-		
 	}
 
-	public void updateSquadManager( ArrayList<Unit> enemyUnits, ArrayList<Unit> myUnits ) 
+	public HarrassSquad getHarrassSquad() 
 	{
-		for (Map.Entry<Integer, Squad> entry : ourSquads.entrySet()) 
-		{
-			if ( entry.getValue().getUnits().size() == 1 ) 
-			{
-				setSquads( enemyUnits, myUnits );
-				return;
-			}
-			entry.getValue().updateSquad();
-		}
-		
-		for (Map.Entry<Integer, Squad> entry : enemySquads.entrySet()) 
-		{
-			if ( entry.getValue().getUnits().size() == 1 ) 
-			{
-				setSquads( enemyUnits, myUnits );
-				return;
-			}
-			entry.getValue().updateSquad();
-		}
+		return harassSquad;
 	}
 	
 }

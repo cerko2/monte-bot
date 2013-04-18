@@ -17,7 +17,7 @@ import javabot.types.UnitType.UnitTypes;
  * otestovat funciu createUnit
  */
 public class UnitProductionManager extends AbstractManager{
-	private boolean testing = true; //testovacie vypisy.
+	private boolean testing = false; //testovacie vypisy.
 	private boolean freeMode = false; // dokym neskonci opening som obmedzeny.
 	
 	private JNIBWAPI game = null;

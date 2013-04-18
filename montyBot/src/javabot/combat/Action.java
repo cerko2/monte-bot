@@ -3,40 +3,31 @@ package javabot.combat;
 import javabot.model.Region;
 
 public class Action {
-
-	private Region currentRegion;
-	private String actionName;
 	
-	private boolean enemy_action;
-	private boolean baseAction;
-	private int squadID;
+	Region region;
+	int start, end;
 	
-	private int started_at;
-	private int ended_at;
+	public Action( Region r, int start, int end )
+	{
+		region 	   = r;
+		this.start = start;
+		this.end   = end;
+	}
 	
-	public Action( Region currentRegion, String actionName )
+	public Region getRegion()
 	{
-		this.setCurrentRegion( currentRegion );
-		this.setActionName( actionName );
+		return region;
 	}
-
-	public Region getCurrentRegion() 
+	
+	public boolean happenedInTime( int time )
 	{
-		return currentRegion;
+		return ( start < time ) && ( end >= time );
 	}
-
-	public void setCurrentRegion( Region currentRegion ) 
+	
+	@Override
+	public String toString() 
 	{
-		this.currentRegion = currentRegion;
+		return "Region: " + region.getID() + " start: " + start + " end: " + end;
 	}
-
-	public String getActionName() 
-	{
-		return actionName;
-	}
-
-	public void setActionName(String actionName) {
-		this.actionName = actionName;
-	}
-
+	
 }

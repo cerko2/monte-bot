@@ -30,9 +30,10 @@ import javabot.util.Wall;
 public class Boss extends AbstractManager{
 	
 	public static final boolean BOSS_DEBUG = true;
-	public static final boolean WALLIN_DEBUG = true;
-	public static final boolean OPPONENT_POSITIONING_DEBUG = true;
-	public static final boolean RESOURCE_DEBUG = true;
+	public static final boolean WALLIN_DEBUG = false;
+	public static final boolean OPPONENT_POSITIONING_DEBUG = false;
+	public static final boolean RESOURCE_DEBUG = false;
+	public static final boolean MONTE_CARLO_DEBUG = true;
 	
 	//REALLY SLOW
 	public static final boolean PATH_DEBUG = false;
@@ -100,7 +101,6 @@ public class Boss extends AbstractManager{
 		
 		//subordinate initialization
 		buildManager = new  BuildManager(this);
-		montePlanner = new MonteCarloPlanner( game, this );
 		opponentKnowledgeBase = new OpponentKnowledgeBase(this);
 		openingManager = new OpeningManager(this);
 		opponentPositioning = new OpponentPositioning(game);
@@ -111,7 +111,7 @@ public class Boss extends AbstractManager{
 		
 		opponentModeling = new OpponentModeling(game, opponentPositioning);
 		armyCompositionManager = new ArmyCompositionManager(game, unitProductionManager, opponentPositioning, opponentModeling);
-		
+		montePlanner = new MonteCarloPlanner( game );
 		addManager(opponentKnowledgeBase);
 		addManager(openingManager);
 		addManager(opponentPositioning);
@@ -120,6 +120,7 @@ public class Boss extends AbstractManager{
 		addManager(unitProductionManager);	// azder
 		addManager(armyCompositionManager);
 		addManager(scoutManager);
+		addManager( montePlanner );
 	}
 	
 	public void gameStarted(){
@@ -130,13 +131,15 @@ public class Boss extends AbstractManager{
 	
 	public void gameUpdate(){
 		setUnits();
-		montePlanner.update( new ArrayList<Unit>( this.opponentPositioning.getEnemyUnits() ), this.combatUnits );
+		
+		montePlanner.update( new ArrayList<Unit>( opponentPositioning.getEnemyUnits() ) , game.getMyUnits() );
+		
 		workerManager.update(workerUnits);
 		
 		minerals = player.getMinerals();
 		gas = player.getGas();
 		
-		if (BOSS_DEBUG){
+		if (!BOSS_DEBUG){
 			debug();
 		}
 		

@@ -45,6 +45,7 @@ public class OpponentPositioning extends AbstractManager{
 	}
 	
 	public Collection<Unit> getEnemyUnits(){
+		if ( enemyUnits == null ) return null;
 		return enemyUnits.values();
 	}
 	

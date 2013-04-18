@@ -1,255 +1,184 @@
 package javabot.combat;
 
-import java.awt.Point;
 import java.util.ArrayList;
-import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+import javabot.model.Region;
 
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
-import javabot.macro.Boss;
-import javabot.model.ChokePoint;
-import javabot.model.Map;
-import javabot.model.Region;
 import javabot.model.Unit;
+import javabot.util.RegionUtils;
 
 public class MonteCarloPlanner extends AbstractManager 
 {
 
+	final boolean DEBUG = true;
 	SquadManager squadManager;
-	JNIBWAPI     bwapi;
-	int          endFrame;
-	static Map   map;
-	private Boss boss;
-	private ArrayList<Base>  enemyBases;
-	private ArrayList<Base>  myBases;
-	private ArrayList<Squad> enemySquads;
-	private ArrayList<Squad> mySquads;
+	JNIBWAPI bwapi;
 	
-	private ArrayList<Plan> ourPlans;
-	private ArrayList<Plan> enemyPlans;
+	ArrayList<Unit> enemyUnits;
+	ArrayList<Unit> ourUnits;
+	ArrayList<Base> ourBases;
+	ArrayList<Base> enemyBases;
 	
-		
-	public MonteCarloPlanner( JNIBWAPI bwapi, Boss boss )
+	public MonteCarloPlanner( JNIBWAPI bwapi ) 
 	{
-		this.bwapi   = bwapi;
-		squadManager = new SquadManager(bwapi, this);
-		this.boss    = boss;
+		this.bwapi = bwapi;
 	}
-	
-	/**
-	 * Call this function to initialize monteCarloPlanner;
-	 */
-	public void gameStarted()
+
+	private void setEnemyBases() 
 	{
-		squadManager.setSquads( ( ArrayList<Unit> ) boss.getOpponentPositioning().getEnemyUnits(), bwapi.getMyUnits() );
-		setOurBases();
-		setEnemyBases();
-		endFrame = bwapi.getFrameCount() + 120 * 24;
-		map 	 = bwapi.getMap();
-	} // gameStarted
-	
+		HashSet<Integer> regions = new HashSet<Integer>();
+		enemyBases = new ArrayList<Base>();
+		
+		for ( Unit u : enemyUnits )
+		{
+			if ( bwapi.getUnitType( u.getTypeID() ).isBuilding() )
+			{
+				Region r = RegionUtils.getRegion( bwapi.getMap() , u );
+				if ( !regions.contains( r ) )
+				{
+					regions.add( r.getID() );
+					enemyBases.add( new Base( bwapi , r ) );
+				}
+			}
+		}
+		
+	}
+
 	private void setOurBases() 
 	{
-		TreeSet<Region> baseRegions = new TreeSet<Region>();
-		for ( Unit u : boss.getNexuses() )
+		HashSet<Integer> regions = new HashSet<Integer>();
+		ourBases = new ArrayList<Base>();
+		for ( Unit u : ourUnits )
 		{
-			baseRegions.add( MonteCarloPlanner.getPointRegion( new Point( u.getX(), u.getY() ) ) );
-		}
-		
-		for ( Region r : baseRegions )
-		{
-			myBases.add( new Base( bwapi, r, this, true ) );
-		}
-		
-	} // setOurBases
-	
-	private void setEnemyBases()
-	{
-		TreeSet<Region> baseRegions = new TreeSet<Region>();
-		for ( Unit u : ( TreeSet<Unit> ) boss.getOpponentPositioning().getEnemyUnits() )
-		{
-			if ( bwapi.getUnitType( u.getID() ).isBuilding() )
+			if ( bwapi.getUnitType( u.getTypeID() ).isBuilding() )
 			{
-				baseRegions.add( MonteCarloPlanner.getPointRegion( new Point( u.getX(), u.getY() ) ) );
+				Region r = RegionUtils.getRegion( bwapi.getMap() , u );
+				if ( !regions.contains( r ) )
+				{
+					regions.add( r.getID() );
+					ourBases.add( new Base( bwapi , r ) );
+				}
 			}
 		}
-		
-		for ( Region r : baseRegions )
-		{
-			myBases.add( new Base( bwapi, r, this, false ) );
-		}
-		
-	} // setEnemyBases
-	
-	@Override
-	public void unitDestroy( int unitID ) 
-	{
-		super.unitDestroy( unitID );
-		update( unitID );
 	}
 	
-	/**
-	 * call this function every time an event unit killed fires
-	 * @param unitID
-	 */
-	public void update( int unitID )
+	public HarrassSquad getHarrassSquad()
 	{
-		squadManager.updateSquadManager( unitID );
+		return squadManager.getHarrassSquad();
 	}
 	
-	public void update( ArrayList<Unit> enemyUnits, ArrayList<Unit> myUnits )
+	public void update( ArrayList<Unit> enemyUnits, ArrayList<Unit> myUnits ) 
 	{
 		
-		if ( enemyUnits == null )
+		if ( bwapi.getFrameCount() % ( 24*30 ) == 0 )
 		{
-			System.out.println( "enemy units je null" );
-			return;
-		}
-		
-		if ( myUnits == null )
-		{
-			System.out.println( "my units je null" );
-			return;
-		}
-		
-		if ( bwapi == null )
-		{
-			System.out.println( "bwapi je null" );
-			return;
-		}
-		
-//		if ( ( enemyUnits == null ) || ( myUnits == null ) || ( bwapi == null ) )
-//		{	
-//			return;
-//		}
-		
-		// next two minutes
-		endFrame = bwapi.getFrameCount() + 120 * 24; 
-		
-		if ( squadManager.getOurSquadsTree().size() <= squadManager.getEnemySquadsTree().size() )
-		{
-			squadManager.setSquads( enemyUnits, myUnits );
-		}
-		
-		squadManager.updateSquadManager( enemyUnits, myUnits );
-		System.out.println( "Our squads: " + squadManager.getOurSquadsTree().size() );
-		System.out.println( "Enemy squads: " + squadManager.getEnemySquadsTree().size() );
-	}
-	
-	
-	/**** GENERATE PLANS ****/
-	
-	/**
-	 * generates one plan for all my, or enemy units
-	 * @param is_my_plan
-	 * @return Plan
-	 */
-	private Plan generateOnePlan( boolean is_my_plan )
-	{
-		return new Plan( this.squadManager, this.myBases, this.enemyBases, is_my_plan );
-	}
-	
-	private void generatePlans() 
-	{
-		for ( int i = 0; i < 100; i++ )
-			ourPlans.add( generateOnePlan( true ) );
-		
-		for ( int i = 0; i < 1000; i++ )
-			enemyPlans.add( generateOnePlan( false ) );
-	}
-	
-	private int compute( Plan plan, ArrayList<Plan> EnemyPlans )
-	{
-		// vsetkym enemy planom s mojim planom prejdi casovu os
-		// ked su dva squady v jednom case na rovnakom regione, simuluj boj
-		// nejak to vyhodnot
-		// zapamataj do priemeru
-		// cykluj o zivot
-		return -1;
-	}
-	
-	public Plan getOurBestPlan()
-	{
-		generatePlans();
-		for ( Plan p : ourPlans )
-			p.evaluate( this.compute( p , this.enemyPlans ) );
-		
-		int worst 	   = 1000000;
-		Plan bestPlan  = null;
-		for ( Plan p : ourPlans )
-		{
-			if ( worst > p.getPlanGrade() )
+			this.enemyUnits = enemyUnits;
+			this.ourUnits   = myUnits;
+			if ( squadManager == null ) 
 			{
-				worst    = p.getPlanGrade();
-				bestPlan = p;
+				squadManager = new SquadManager( bwapi );
+			}
+			squadManager.updateSquadManager( enemyUnits, myUnits );
+			
+			setOurBases();
+			setEnemyBases();
+			generatePlans();
+			
+		}
+		debug();
+		
+		if ( squadManager == null || squadManager.ourSquads == null )
+		{
+			return;
+		}
+		
+		for ( Map.Entry<Integer, OurSquad> entry : squadManager.ourSquads.entrySet() )
+		{
+			entry.getValue().followPlan( entry.getValue().plan );
+		}
+		
+	}
+	
+	/********************** GENERATE PLAN METHODS ********************/
+	
+	private void generatePlans()
+	{
+		for ( Map.Entry<Integer, OurSquad> entry : squadManager.ourSquads.entrySet() )
+		{
+			entry.getValue().setSimulatorCollections( enemyBases, ourBases, squadManager.enemySquads, squadManager.ourSquads );
+			entry.getValue().generatePlan();
+		}
+	}
+	
+	private void debugConnectedRegions( HashMap<Integer, Double> connected, int squad_id, boolean enemySquad ) 
+	{
+		for ( Map.Entry<Integer, Double> entry : connected.entrySet() )
+		{
+			int regionId = entry.getKey();
+			if ( regionId > 1000 ) regionId -= 1000000;
+			Region r = RegionUtils.getRegion( bwapi.getMap(), regionId );
+			
+			if ( r == null )
+			{
+				System.out.println( "Region pri z connected bol nulovy" );
+				continue;
+			}
+			
+			if ( !enemySquad )
+			{
+				bwapi.drawText( r.getCenterX()-50, r.getCenterY() + ( 10 * ( squad_id + 1 ) ), "Our Squad ID: " + squad_id + " Chance: " + entry.getValue().intValue() + "%%", false );
+			}
+			else
+			{
+				bwapi.drawText( r.getCenterX()-50, r.getCenterY() - ( 10 * ( squad_id + 1 ) ), "Enemy Squad ID: " + squad_id + " Chance: " + entry.getValue().intValue() + "%%", false );
 			}
 		}
-		
-		if ( bestPlan == null ) throw new NullPointerException( "Best plan could not be found" );
-		
-		return bestPlan;
 	}
+
+	/********************** END GENERATE PLAN METHODS ****************/
 	
-	
-	/*** STATIC METHODS ***/
-	
-	public static Region getPointRegion(Point point) {
-        ArrayList<Region> regions = map.getRegions();
-        for (Region region : regions){
-            int[] coordinates = region.getCoordinates();
-            double[] xCoords = new double[coordinates.length / 2];
-            double[] yCoords = new double[coordinates.length / 2];
-            for (int i = 0; i < xCoords.length; i++){
-                xCoords[i] = coordinates[i * 2];
-                yCoords[i] = coordinates[(i * 2) + 1];
-            }
-            if (pnpoly(xCoords.length, xCoords, yCoords, point.getX(), point.getY())){
-                return region;
-            }
-        }
-        return null;
-    } // getPointRegion
-	
-	public static double getDistance( Unit u1, Unit u2 ) 
+	public void debug()
 	{
-		return Math.sqrt( Math.pow( u1.getX() - u2.getX(), 2 ) + Math.pow( u1.getY() - u2.getY(), 2 ) );
+		if ( DEBUG )
+		{
+			squadManager.debug();
+			
+			for ( Region r : bwapi.getMap().getRegions() )
+			{
+				bwapi.drawText( r.getCenterX(), r.getCenterY(), "Region s id: " + r.getID(), false );
+			}
+			
+			for ( Base b : ourBases )
+			{
+				bwapi.drawText( b.getRegion().getCenterX(), b.getRegion().getCenterY()+10, "Our base on (region_id): " + b.getRegion().getID(), false);
+			}
+			
+			for ( Base b : enemyBases )
+			{
+				bwapi.drawText( b.getRegion().getCenterX(), b.getRegion().getCenterY()+10, "Enemy base (region_id): " + b.getRegion().getID(), false);
+			}
+			
+			for ( Map.Entry<Integer, OurSquad> ourSquad : squadManager.ourSquads.entrySet() )
+			{
+				ourSquad.getValue().setSimulatorCollections( enemyBases, ourBases, squadManager.enemySquads, squadManager.ourSquads );
+				HashMap<Integer, Double> connected = ourSquad.getValue().evaluateNearbyRegions();
+				debugConnectedRegions( connected, ourSquad.getKey(), false );
+			}
+			
+			for ( Map.Entry<Integer, EnemySquad> enemySquad : squadManager.enemySquads.entrySet() )
+			{
+				enemySquad.getValue().setSimulatorCollections( enemyBases, ourBases, squadManager.enemySquads, squadManager.ourSquads );
+				HashMap<Integer, Double> connected = enemySquad.getValue().evaluateNearbyRegions();
+				debugConnectedRegions( connected, enemySquad.getKey(), true );
+			}
+		}
 	}
 	
-	public static double getDistance( Region u1, Region u2 ) 
-	{
-		return Math.sqrt( Math.pow( u1.getCenterX() - u2.getCenterX(), 2 ) + Math.pow( u1.getCenterY() - u2.getCenterY(), 2 ) );
-	}
-	
-	public static double getDistance( ChokePoint u1, ChokePoint u2 ) 
-	{
-		return Math.sqrt( Math.pow( u1.getCenterX() - u2.getCenterX(), 2 ) + Math.pow( u1.getCenterY() - u2.getCenterY(), 2 ) );
-	}
-	
-	public static double getDistance( Region u1, ChokePoint u2 ) 
-	{
-		return Math.sqrt( Math.pow( u1.getCenterX() - u2.getCenterX(), 2 ) + Math.pow( u1.getCenterY() - u2.getCenterY(), 2 ) );
-	}
-	
-	public static double getDistance( Unit u1, ChokePoint u2 ) 
-	{
-		return Math.sqrt( Math.pow( u1.getX() - u2.getCenterX(), 2 ) + Math.pow( u1.getY() - u2.getCenterY(), 2 ) );
-	}
-	
-    public static boolean pnpoly(int nvert, double[] vertx, double[] verty, double testx, double testy){
-        int i, j = 0;
-        boolean c = false;
-        for (i = 0, j = nvert-1; i < nvert; j = i++) {
-            if ( ((verty[i]>testy) != (verty[j]>testy)) &&
-                    (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
-                c = !c;
-        }
-        return c;
-    } // pnpoly
-    
-    public Unit getNearestWorker( int x, int y )
-    {
-    	return bwapi.getUnit( boss.getWorkerManager().getWorker( x, y ) );
-    }
 	
 }
 

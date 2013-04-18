@@ -2,18 +2,12 @@ package javabot.util;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collections;
-
-import javabot.util.BWColor;
 
 import javabot.JNIBWAPI;
 import javabot.model.ChokePoint;
 import javabot.model.Map;
 import javabot.model.Region;
 import javabot.model.Unit;
-import javabot.types.UnitType;
-import javabot.types.UnitType.UnitTypes;
-import javabot.types.WeaponType;
 
 public class RegionUtils {
 	

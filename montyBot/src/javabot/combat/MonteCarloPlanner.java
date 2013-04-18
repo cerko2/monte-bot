@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javabot.model.Region;
 
@@ -23,6 +24,9 @@ public class MonteCarloPlanner extends AbstractManager
 	ArrayList<Unit> ourUnits;
 	ArrayList<Base> ourBases;
 	ArrayList<Base> enemyBases;
+	
+	ArrayList<MyPlan> myPlans    = new ArrayList<MyPlan>();
+	ArrayList<EnemyPlan> enemyPlans = new ArrayList<EnemyPlan>();
 	
 	public MonteCarloPlanner( JNIBWAPI bwapi ) 
 	{
@@ -75,7 +79,7 @@ public class MonteCarloPlanner extends AbstractManager
 	public void update( ArrayList<Unit> enemyUnits, ArrayList<Unit> myUnits ) 
 	{
 		
-		if ( bwapi.getFrameCount() % ( 24*30 ) == 0 )
+		if ( bwapi.getFrameCount() % ( 24*120 ) == 0 )
 		{
 			this.enemyUnits = enemyUnits;
 			this.ourUnits   = myUnits;
@@ -87,7 +91,18 @@ public class MonteCarloPlanner extends AbstractManager
 			
 			setOurBases();
 			setEnemyBases();
-			generatePlans();
+			squadManager.ourSquads = getBestPlan();
+			
+			try {
+				for ( Action a : squadManager.ourSquads.get( 0 ).plan )
+				{
+					System.out.println( a );
+				}
+			}
+			catch( NullPointerException e )
+			{
+				
+			}
 			
 		}
 		debug();
@@ -108,11 +123,90 @@ public class MonteCarloPlanner extends AbstractManager
 	
 	private void generatePlans()
 	{
-		for ( Map.Entry<Integer, OurSquad> entry : squadManager.ourSquads.entrySet() )
+		bwapi.printText( "Started generating" );
+		myPlans    = new ArrayList<MyPlan>();
+		enemyPlans = new ArrayList<EnemyPlan>();
+		for ( int i = 0; i < 100; i++ )
 		{
-			entry.getValue().setSimulatorCollections( enemyBases, ourBases, squadManager.enemySquads, squadManager.ourSquads );
-			entry.getValue().generatePlan();
+			
+			TreeMap<Integer, OurSquad> tmpOurSquads = new TreeMap<Integer, OurSquad>( squadManager.ourSquads );
+		
+			for ( Map.Entry<Integer, OurSquad> entry : tmpOurSquads.entrySet() )
+			{
+				entry.getValue().setSimulatorCollections( enemyBases, ourBases, squadManager.enemySquads, squadManager.ourSquads );
+				entry.getValue().generatePlan();
+			}
+			
+			myPlans.add( new MyPlan ( tmpOurSquads ) );
+			
 		}
+		
+		HashMap<Integer, EnemySquad> tmpEnemySquads = new HashMap<Integer, EnemySquad>(squadManager.enemySquads);
+		
+		for ( int i = 0; i < 100; i++ )
+		{
+		
+			for ( Map.Entry<Integer, EnemySquad> entry : tmpEnemySquads.entrySet() )
+			{
+				entry.getValue().setSimulatorCollections( enemyBases, ourBases, squadManager.enemySquads, squadManager.ourSquads );
+				entry.getValue().generatePlan();
+			}
+			
+			enemyPlans.add( new EnemyPlan( tmpEnemySquads ) );
+		
+		}
+		
+		bwapi.printText( "Ended generating" );
+		
+	}
+	
+	private TreeMap<Integer, OurSquad> getBestPlan()
+	{
+		
+		generatePlans();
+		
+		bwapi.printText( "Started computing" );
+		
+		if ( myPlans.isEmpty() )
+		{
+			System.out.println( "Monte Carlo my plans are empty" );
+			return null;
+		}
+		
+		MyPlan bestPlan = null;
+		
+		int i = 0;
+		
+		for ( MyPlan myPlan : myPlans )
+		{
+			if ( bestPlan == null )
+			{
+				bestPlan = myPlans.get( 0 );
+			}
+			for ( EnemyPlan enemyPlan : enemyPlans )
+			{
+				myPlan.compareToEnemyPlan( enemyPlan.getEnemySquads() );
+			}
+			
+			if ( bestPlan.getScore() < myPlan.getScore() )
+			{
+				bestPlan = myPlan;
+				bwapi.printText( "Best plan with the ID of " + i + " was picked ");
+			}
+			i++;
+		}
+		
+		bwapi.printText( "Ended computing" );
+		
+		if ( !myPlans.isEmpty() && ( bestPlan == null ) )
+		{
+			return myPlans.get( 0 ).ourSquads;
+		}
+		
+		
+		return bestPlan.ourSquads;
+		
+		
 	}
 	
 	private void debugConnectedRegions( HashMap<Integer, Double> connected, int squad_id, boolean enemySquad ) 

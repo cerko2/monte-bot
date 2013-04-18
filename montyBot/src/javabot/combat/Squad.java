@@ -19,6 +19,9 @@ public class Squad {
 	ArrayList<Unit> squadUnits = new ArrayList<Unit>();
 	double groundPower;
 	
+	int hp;
+	double dps;
+	
 	public Squad( JNIBWAPI bwapi )
 	{
 		this.bwapi = bwapi;
@@ -49,7 +52,64 @@ public class Squad {
 		}
 		simulatorRegion = RegionUtils.getRegion( bwapi.getMap() , leader );
 		squadSpeed      = bwapi.getUnitType( leader.getTypeID() ).getTopSpeed();
+		
+		hp  = getHP();
+		dps = getDps();
 	}
+
+	protected double getDps() 
+	{
+		
+		double result = 0.0;
+		for ( Unit u : squadUnits )
+		{
+			double weaponDamage = bwapi.getWeaponType( bwapi.getUnitType( u.getTypeID() ).getGroundWeaponID() ).getDamageAmount();
+			double cooldown     = bwapi.getWeaponType( bwapi.getUnitType( u.getTypeID() ).getGroundWeaponID() ).getDamageCooldown();
+			result += weaponDamage / cooldown;
+		}
+		return result;
+	}
+
+	protected int getHP() 
+	{
+		int result = 0;
+		for ( Unit u : squadUnits )
+		{
+			result += u.getHitPoints() + u.getShield();
+		}
+		return result;
+	}
+	
+	protected void setDps( double dps )
+	{
+		this.dps = dps;
+	}
+	
+	protected void setHP( int hp )
+	{
+		this.hp = hp;
+	}
+	
+	public void simulateSquadFight( OurSquad s1, EnemySquad s2 )
+	{
+		
+		if ( ( s2.antiGroundPower < s1.antiGroundPower ) )
+		{
+			s1.score += s2.getHP();
+		}
+		
+		if ( ( s2.antiGroundPower > s1.antiGroundPower ) )
+		{
+			s1.score -= s1.getHP();
+		}
+		
+		if ( ( s2.antiGroundPower == s1.antiGroundPower ) )
+		{
+			s1.score += ( s2.getHP() - s1.getHP() );
+		}
+		
+	}
+	
 
 	private Unit setLeader() 
 	{
@@ -151,7 +211,9 @@ public class Squad {
 		
 		if ( leader != null && simulatorRegion == null )
 			simulatorRegion = RegionUtils.findNearestRegion( bwapi.getMap(), leader );
-		result += "Region ID: " + simulatorRegion.getID();
+		result += "Region ID: " + simulatorRegion.getID() + System.lineSeparator();;
+		result += "Squad HP: " + getHP() + System.lineSeparator();;
+		result += "Squad DPS: " + getDps() + System.lineSeparator();; 
 		
 		return result;
 	}
@@ -202,8 +264,6 @@ public class Squad {
 			int time = (int) ( RegionUtils.airPathToRegion( simulatorRegion, to ) / squadSpeed );
 			
 			simulatorRegion = to;
-			
-			System.out.println( "LEN LETCI" );
 			
 			return time;
 		}

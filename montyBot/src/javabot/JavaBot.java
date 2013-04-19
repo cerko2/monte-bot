@@ -3,6 +3,8 @@ package javabot;
 import javabot.macro.Boss;
 import javabot.model.BaseLocation;
 import javabot.model.Unit;
+import javabot.types.UnitType;
+import javabot.types.UnitType.UnitTypes;
 import javabot.util.BWColor;
 import javabot.util.map.MapGrid;
 
@@ -43,6 +45,7 @@ public class JavaBot extends AbstractManager {
 		
 		mapGrid.gameStarted();
 		super.gameStarted();
+
 	}
 	
 	public void initialize(){

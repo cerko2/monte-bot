@@ -275,6 +275,9 @@ public class SituationVector {
 		if ((buildingTypeID == UnitTypes.Protoss_Cybernetics_Core.ordinal()) && 		(unitTypeID == UnitTypes.Protoss_Observer.ordinal())) return true;
 		if ((buildingTypeID == UnitTypes.Protoss_Robotics_Facility.ordinal()) && 		(unitTypeID == UnitTypes.Protoss_Observer.ordinal())) return true;
 		if ((buildingTypeID == UnitTypes.Protoss_Observatory.ordinal()) && 		(unitTypeID == UnitTypes.Protoss_Observer.ordinal())) return true;
+		if ((buildingTypeID == UnitTypes.Protoss_Gateway.ordinal()) && 		(unitTypeID == UnitTypes.Protoss_Shuttle.ordinal())) return true;
+		if ((buildingTypeID == UnitTypes.Protoss_Cybernetics_Core.ordinal()) && 		(unitTypeID == UnitTypes.Protoss_Shuttle.ordinal())) return true;
+		if ((buildingTypeID == UnitTypes.Protoss_Robotics_Facility.ordinal()) && 		(unitTypeID == UnitTypes.Protoss_Shuttle.ordinal())) return true;
 		if ((buildingTypeID == UnitTypes.Protoss_Gateway.ordinal()) && (unitTypeID == UnitTypes.Protoss_High_Templar.ordinal())) return true;
 		if ((buildingTypeID == UnitTypes.Protoss_Cybernetics_Core.ordinal()) && (unitTypeID == UnitTypes.Protoss_High_Templar.ordinal())) return true;
 		if ((buildingTypeID == UnitTypes.Protoss_Citadel_of_Adun.ordinal()) && (unitTypeID == UnitTypes.Protoss_High_Templar.ordinal())) return true;

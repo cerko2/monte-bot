@@ -1,4 +1,4 @@
-package javabot.strategy.action;
+package javabot.strategy.planner.action;
 
 import java.util.HashSet;
 
@@ -24,6 +24,10 @@ public abstract class Action {
 	
 	public ActionRequirements getRequirements(){
 		return requirements;
+	}
+	
+	public UnitType getProducedType(){
+		return producedType;
 	}
 	
 }

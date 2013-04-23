@@ -1,4 +1,4 @@
-package javabot.strategy.action;
+package javabot.strategy.planner.action;
 
 import java.util.HashSet;
 
@@ -16,6 +16,6 @@ public class TrainDragoon extends Action{
 		for (Integer ii : UnitUtils.requiredUnits(UnitTypes.Protoss_Dragoon)){
 			requiredTypes.add(game.getUnitType(ii));
 		}
-		requirements = new ActionRequirements(125, 50, 2, game.getUnitType(UnitTypes.Protoss_Nexus.ordinal()), requiredTypes);
+		requirements = new ActionRequirements(125, 50, 2, game.getUnitType(UnitTypes.Protoss_Gateway.ordinal()), requiredTypes);
 	}
 }

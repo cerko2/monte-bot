@@ -1,4 +1,4 @@
-package javabot.strategy.action;
+package javabot.strategy.planner.action;
 
 import java.util.HashSet;
 

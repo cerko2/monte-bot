@@ -8,5 +8,6 @@ public class State {
 	private int minerals;
 	private int gas;
 	private int supplyUsed;
+	private int frame;
 
 }

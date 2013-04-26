@@ -34,6 +34,7 @@ public class Boss extends AbstractManager{
 	public static final boolean WALLIN_DEBUG = true;
 	public static final boolean OPPONENT_POSITIONING_DEBUG = true;
 	public static final boolean RESOURCE_DEBUG = true;
+	public static final boolean OPPONENT_MODELLING_DEBUG = false;
 	
 	//REALLY SLOW
 	public static final boolean PATH_DEBUG = false;
@@ -85,10 +86,10 @@ public class Boss extends AbstractManager{
 	public Boss (JNIBWAPI game){
 		this.game = game;
 		this.player = game.getSelf();
-		
 	}
 	
 	public void initialize(){
+		
 		validUnits = new ArrayList<Unit>();
 		combatUnits = new ArrayList<Unit>();
 		scoutUnits = new HashSet<Unit>();
@@ -111,13 +112,14 @@ public class Boss extends AbstractManager{
 		workerManager = new WorkerManager(this);
 		unitProductionManager = new UnitProductionManager(this); 
 		
-		opponentModeling = new OpponentModeling(game, opponentPositioning);
+		opponentModeling = new OpponentModeling(game, opponentPositioning, this);
 		armyCompositionManager = new ArmyCompositionManager(game, unitProductionManager, opponentPositioning, opponentModeling);
 		planner = new Planner(game);
 		
 		addManager(opponentKnowledgeBase);
 		addManager(openingManager);
 		addManager(opponentPositioning);
+		addManager(opponentModeling);		// miso certicky
 		addManager(wallInModule);			// miso certicky
 		addManager(buildManager);			// azder
 		addManager(unitProductionManager);	// azder
@@ -456,7 +458,7 @@ public class Boss extends AbstractManager{
 	public OpponentKnowledgeBase getOpponentKnowledgeBase() {
 		return opponentKnowledgeBase;
 	}
-
+	
 	public ScoutingManager getScoutManager() {
 		return scoutManager;
 	}

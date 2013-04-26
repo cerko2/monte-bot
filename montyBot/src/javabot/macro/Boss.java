@@ -21,6 +21,7 @@ import javabot.strategy.OpponentKnowledgeBase;
 import javabot.strategy.OpponentModeling;
 import javabot.strategy.OpponentPositioning;
 import javabot.strategy.WallInModule;
+import javabot.strategy.planner.Planner;
 import javabot.types.UnitType;
 import javabot.types.UnitType.UnitTypes;
 import javabot.util.BWColor;
@@ -52,6 +53,7 @@ public class Boss extends AbstractManager{
 	private OpponentKnowledgeBase opponentKnowledgeBase;
 	private OpponentModeling opponentModeling;
 	private OpponentPositioning opponentPositioning;
+	private Planner planner;
 	private ScoutingManager scoutManager;
 	private UnitProductionManager unitProductionManager;
 	private WallInModule wallInModule;
@@ -111,6 +113,7 @@ public class Boss extends AbstractManager{
 		
 		opponentModeling = new OpponentModeling(game, opponentPositioning);
 		armyCompositionManager = new ArmyCompositionManager(game, unitProductionManager, opponentPositioning, opponentModeling);
+		planner = new Planner(game);
 		
 		addManager(opponentKnowledgeBase);
 		addManager(openingManager);
@@ -126,6 +129,17 @@ public class Boss extends AbstractManager{
 		initialize();
 		
 		super.gameStarted();
+		
+		HashMap<Integer, Integer> goals = new HashMap<Integer, Integer>();
+		
+		goals.put(UnitTypes.Protoss_Zealot.ordinal(), 5);
+		goals.put(UnitTypes.Protoss_Dragoon.ordinal(), 5);
+		goals.put(UnitTypes.Protoss_High_Templar.ordinal(), 4);
+		goals.put(UnitTypes.Protoss_Arbiter.ordinal(), 2);
+		goals.put(UnitTypes.Protoss_Reaver.ordinal(), 2);
+		goals.put(UnitTypes.Protoss_Observer.ordinal(), 2);
+		
+		planner.generatePlan(goals);
 	}
 	
 	public void gameUpdate(){

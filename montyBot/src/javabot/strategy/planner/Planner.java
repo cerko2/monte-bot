@@ -37,6 +37,7 @@ public class Planner {
 		this.renewableResouces = new HashMap<Integer, Integer>();
 		this.availableTech = new HashSet<Integer>();
 		this.actionsToExecute = new ArrayList<Action>();
+		this.upcomingTech = new HashSet<Integer>();
 		
 	}
 	
@@ -46,6 +47,10 @@ public class Planner {
 		setResources();
 		setActionsToExecute(goals);
 		ArrayList<Action> sequentialPlan = generateSequentialPlan(goals);
+		
+		for (Action action : sequentialPlan){
+			System.out.println(action.getClass().getName());
+		}
 		
 	}
 	
@@ -106,6 +111,7 @@ public class Planner {
 			for (Action action : executableActions){
 				executeAction(action);
 				plan.add(action);
+				executableActions.remove(action);
 				break;
 			}
 			

@@ -18,11 +18,17 @@ public class Planner {
 	private JNIBWAPI game;
 	private Player player;
 	
+	private Scheduler scheduler;
+	
 	//typeID - amount ready
-	private HashMap<Integer, Integer> renewableResouces;
+	private HashMap<Integer, Integer> renewableResources;
 	private int minerals;
 	private int gas;
 	private int supplyUsed;
+	private int supplyMax;
+	
+	private double mineralRate;
+	private double gasRate;
 	
 	//typeID
 	private HashSet<Integer> availableTech;
@@ -34,7 +40,8 @@ public class Planner {
 		
 		this.game = game;
 		this.player = game.getSelf();
-		this.renewableResouces = new HashMap<Integer, Integer>();
+		this.scheduler = new Scheduler();
+		this.renewableResources = new HashMap<Integer, Integer>();
 		this.availableTech = new HashSet<Integer>();
 		this.actionsToExecute = new ArrayList<Action>();
 		this.upcomingTech = new HashSet<Integer>();
@@ -45,6 +52,20 @@ public class Planner {
 		
 		//initial state
 		setResources();
+		
+		State initialState = new State(
+				game.getFrameCount(), 
+				renewableResources, 
+				availableTech,
+				minerals,
+				gas,
+				supplyUsed,
+				supplyMax,
+				mineralRate,
+				gasRate
+				);
+		
+		scheduler.setInitialState(initialState);
 		setActionsToExecute(goals);
 		ArrayList<Action> sequentialPlan = generateSequentialPlan(goals);
 		
@@ -55,12 +76,13 @@ public class Planner {
 	}
 	
 	private void setResources(){
-		renewableResouces.clear();
+		renewableResources.clear();
 		availableTech.clear();
 		
 		minerals = player.getMinerals();
 		gas = player.getGas();
 		supplyUsed = player.getSupplyUsed() / 2;
+		supplyMax = player.getSupplyTotal() / 2;
 		
 		UnitType type = null;
 		for (Unit unit : game.getMyUnits()){
@@ -155,11 +177,11 @@ public class Planner {
 	
 	private void addResource(UnitType type){
 		if (type.isBuilding()){
-			if (renewableResouces.containsKey(type.getID())){
-				renewableResouces.put(type.getID(), renewableResouces.get(type.getID()) + 1);
+			if (renewableResources.containsKey(type.getID())){
+				renewableResources.put(type.getID(), renewableResources.get(type.getID()) + 1);
 			}
 			else {
-				renewableResouces.put(type.getID(), 1);
+				renewableResources.put(type.getID(), 1);
 			}
 			availableTech.add(type.getID());
 		}

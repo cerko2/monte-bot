@@ -114,7 +114,7 @@ public class Boss extends AbstractManager{
 		
 		opponentModeling = new OpponentModeling(game, opponentPositioning, this);
 		armyCompositionManager = new ArmyCompositionManager(game, unitProductionManager, opponentPositioning, opponentModeling);
-		planner = new Planner(game);
+		planner = new Planner(game, this);
 		
 		addManager(opponentKnowledgeBase);
 		addManager(openingManager);
@@ -132,16 +132,7 @@ public class Boss extends AbstractManager{
 		
 		super.gameStarted();
 		
-		HashMap<Integer, Integer> goals = new HashMap<Integer, Integer>();
 		
-		goals.put(UnitTypes.Protoss_Zealot.ordinal(), 5);
-		goals.put(UnitTypes.Protoss_Dragoon.ordinal(), 5);
-		goals.put(UnitTypes.Protoss_High_Templar.ordinal(), 4);
-		goals.put(UnitTypes.Protoss_Arbiter.ordinal(), 2);
-		goals.put(UnitTypes.Protoss_Reaver.ordinal(), 2);
-		goals.put(UnitTypes.Protoss_Observer.ordinal(), 2);
-		
-		planner.generatePlan(goals);
 	}
 	
 	public void gameUpdate(){
@@ -151,6 +142,29 @@ public class Boss extends AbstractManager{
 		
 		minerals = player.getMinerals();
 		gas = player.getGas();
+		
+		if (game.getFrameCount() == 1){
+
+			HashMap<Integer, Integer> goals = new HashMap<Integer, Integer>();
+
+			goals.put(UnitTypes.Protoss_Zealot.ordinal(), 5);
+			goals.put(UnitTypes.Protoss_Dragoon.ordinal(), 5);
+			goals.put(UnitTypes.Protoss_High_Templar.ordinal(), 4);
+			goals.put(UnitTypes.Protoss_Arbiter.ordinal(), 2);
+			goals.put(UnitTypes.Protoss_Reaver.ordinal(), 2);
+			goals.put(UnitTypes.Protoss_Observer.ordinal(), 2);
+
+			planner.generatePlan(goals);
+		}
+		/*
+		System.out.println("min : " + workerManager.getMineralIncome(1000));
+		System.out.println("min 1 fr: " + ((double) workerManager.getMineralIncome(1000)) / 1000);
+		System.out.println("min 1 fr 1w: " + (((double) workerManager.getMineralIncome(1000)) / 1000) / minWorkers);
+		System.out.println("gas : " + workerManager.getGasIncome(1000));
+		System.out.println("gas 1 fr: " + ((double) workerManager.getGasIncome(1000)) / 1000);
+		System.out.println("gas 1 fr 1w: " + (((double) workerManager.getGasIncome(1000)) / 1000) / gasWorkers);
+		*/
+		
 		
 		if (BOSS_DEBUG){
 			debug();

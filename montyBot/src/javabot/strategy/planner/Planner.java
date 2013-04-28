@@ -7,6 +7,8 @@ import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 
 import javabot.JNIBWAPI;
+import javabot.macro.Boss;
+import javabot.macro.WorkerManager;
 import javabot.model.Player;
 import javabot.model.Unit;
 import javabot.strategy.planner.action.Action;
@@ -15,8 +17,14 @@ import javabot.types.UnitType;
 
 public class Planner {
 	
+	//zatial len nejake konstanty kym sa neda z workerManagera dostat presne ako sa zmeni income na ktoru probu v plane
+	public static final double minIncomePerWorker = 0.042;
+	public static final double gasIncomePerWorker = 0.072;
+	
 	private JNIBWAPI game;
 	private Player player;
+	private Boss boss;
+	private WorkerManager workerManager;
 	
 	private Scheduler scheduler;
 	
@@ -30,15 +38,20 @@ public class Planner {
 	private double mineralRate;
 	private double gasRate;
 	
+	private int mineralWorkers;
+	private int gasWorkers;
+	
 	//typeID
 	private HashSet<Integer> availableTech;
 	private HashSet<Integer> upcomingTech;
 	
 	private ArrayList<Action> actionsToExecute;
 	
-	public Planner(JNIBWAPI game){
+	public Planner(JNIBWAPI game, Boss boss){
 		
 		this.game = game;
+		this.boss = boss;
+		this.workerManager = boss.getWorkerManager();
 		this.player = game.getSelf();
 		this.scheduler = new Scheduler();
 		this.renewableResources = new HashMap<Integer, Integer>();
@@ -62,7 +75,9 @@ public class Planner {
 				supplyUsed,
 				supplyMax,
 				mineralRate,
-				gasRate
+				gasRate,
+				mineralWorkers,
+				gasWorkers
 				);
 		
 		scheduler.setInitialState(initialState);
@@ -83,6 +98,21 @@ public class Planner {
 		gas = player.getGas();
 		supplyUsed = player.getSupplyUsed() / 2;
 		supplyMax = player.getSupplyTotal() / 2;
+		
+		mineralWorkers = 0;
+		gasWorkers = 0;
+
+		for (Unit unit : game.getMyUnits()){
+			if (unit.isGatheringMinerals()){
+				mineralWorkers++;
+			}
+			if (unit.isGatheringGas()){
+				gasWorkers++;
+			}
+		}
+
+		mineralRate = mineralWorkers * minIncomePerWorker;
+		gasRate = gasWorkers * gasIncomePerWorker;
 		
 		UnitType type = null;
 		for (Unit unit : game.getMyUnits()){

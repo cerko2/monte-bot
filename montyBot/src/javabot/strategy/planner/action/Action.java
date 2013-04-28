@@ -30,4 +30,12 @@ public abstract class Action {
 		return producedType;
 	}
 	
+	public int getDuration(){
+		return duration;
+	}
+	
+	public int getSupplyProvided(){
+		return supplyProvided;
+	}
+	
 }

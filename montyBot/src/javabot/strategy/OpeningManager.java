@@ -1,6 +1,8 @@
 package javabot.strategy;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import javabot.AbstractManager;
@@ -10,12 +12,15 @@ import javabot.model.Race;
 import javabot.types.UnitType.UnitTypes;
 
 public class OpeningManager extends AbstractManager{
-	private boolean debug = false;
+	private boolean debug = true;
 	private JNIBWAPI game;
 	private Boss boss;
 	private boolean isActive;
 	private ArrayList<OpeningList> allOpeningLists;
 	private OpeningList openingList;
+	ArrayList<double[]> openingsChances = new ArrayList<double[]>();
+	ArrayList<String> debugOpeningsPercentageChance = new ArrayList<String>();
+	String nextTask = "";
 	
 	public OpeningManager(Boss boss){
 		this.boss = boss;
@@ -28,13 +33,32 @@ public class OpeningManager extends AbstractManager{
 	
 	public void gameUpdate(){
 		if (isActive()){
+			drawText(10, 192, "Opening Manager: active");
+			//drawText(10, 208, "Next task: " + nextTask);
+			drawText(10, 208, "Selected opening: " + openingList.getName());
 			if (!openingList.isCompleted()){
 				perform(openingList.getNextTask());
+				
+				int height = 224;
+				if (debugOpeningsPercentageChance.size() == 0){
+					drawText(10, height, "Opening was selected randomly.");
+				}
+				else{
+					drawText(10, height, "Opening lists chances:");
+					height += 16;
+					for (int i = 0; i < debugOpeningsPercentageChance.size(); i++){
+						drawText(20, height, debugOpeningsPercentageChance.get(i));
+						height += 16;
+					}
+				}
 			}
 			else{
 				setInactive();
 				game.printText("Opening Manager has ended.");
 			}
+		}
+		else{
+			game.drawText(10, 176, "Opening Manager: disabled", true);
 		}
 	}
 	
@@ -88,53 +112,164 @@ public class OpeningManager extends AbstractManager{
 				if (game.getUnitType(task.unitTypeID).isBuilding()){
 					boss.getBuildManager().createBuilding(openingList.getNextTask().unitTypeID);
 					openingList.completeTask();
-					sendText("Build building");
+					//sendText("Build building");
+					nextTask = "Build building";
 				}
 				else{
 					if (task.unitTypeID == UnitTypes.Protoss_Probe.ordinal()){
 						boss.getWorkerManager().buildWorker();
 						openingList.completeTask();
-						sendText("Train worker");
+						//sendText("Train worker");
+						nextTask = "Train worker";
 					}
 					else{
 						boss.getUnitProductionManager().createUnit(openingList.getNextTask().unitTypeID);
 						openingList.completeTask();
-						sendText("Train unit");
+						//sendText("Train unit");
+						nextTask = "Train unit";
 					}
 				}
 			break;
 			case OpeningTask.SCOUTING_ACTION:
 				boss.startScouting();
 				openingList.completeTask();
-				sendText("Start scouting");
+				//sendText("Start scouting");
+				nextTask = "Start scouting";
 			break;
 		}
 	}
 	
 	private void setOpening(){
 		int enemyRace = game.getEnemies().get(0).getRaceID();
-		ArrayList<Integer> possibleOpeningListsIDs = getOpeningLists(enemyRace);
-		//TODO vyberat podla statistiky, opponent knowledge base managera atd..
-		int index;
+		String enemyName = game.getEnemies().get(0).getName();
+		int openingID = -1;
+
+		HashMap<Integer, double[]> playersKB = boss.getOpponentKnowledgeBase().getEnemysKB(enemyName);
+		if (playersKB == null){
+			HashMap<Integer, double[]> racesKB = boss.getOpponentKnowledgeBase().getRacesKB(enemyRace);
+			if (racesKB == null){
+				//select random opening
+				openingID = getRandomOpeningListID(enemyRace);
+			}
+			else{
+				openingID = findSuitableOpeningID(racesKB);
+			}
+		}
+		else{
+			openingID = findSuitableOpeningID(playersKB);
+		}
 		
-		if (possibleOpeningListsIDs.size() - 1 == 0){
-			index = 0;
+		openingList = getOpeningListByID(openingID);
+		//game.printText("Bol zvoleny opening: " + openingList.getName());
+	}	
+	
+	private int findSuitableOpeningID(HashMap<Integer, double[]> KB){
+		int result = -1;
+		double maxScore = Double.MIN_VALUE;
+		Random r;
+		ArrayList<Integer> unusedOpenings = getUnusedOpeningLists(KB);
+		for (Entry<Integer, double[]> entry : KB.entrySet()) {
+			double[] stats = entry.getValue();
+			double[] os = {entry.getKey(), stats[1], 0};
+			openingsChances.add(os);
+		}
+			
+		double sum = 0;
+		for (int i = 0; i < openingsChances.size(); i++){
+			double[] temp = openingsChances.get(i);
+			temp[1] += 10;
+			if (temp[1] > maxScore){
+				maxScore = temp[1];
+			}
+			sum += temp[1];
+			openingsChances.set(i, temp);
+		}
+		
+		if (unusedOpenings.size() > 0){
+			sum += maxScore;
+			String s = "Unused opening lists (" + (maxScore * 100 / sum) + " percent)";
+			debugOpeningsPercentageChance.add(s);
+		}
+		
+		for (int i = 0; i < openingsChances.size(); i++){
+			double[] temp = openingsChances.get(i);
+			temp[2] = temp[1] * 100 / sum;
+			openingsChances.set(i, temp);
+			String s = getOpeningListByID((int)temp[0]).getName() + " (" + temp[2] + " percent)";
+			debugOpeningsPercentageChance.add(s);
+		}
+
+		r = new Random();
+		double percentage = r.nextDouble() * 100;
+		
+		double currentPercentage = 0;
+		for (int i = 0; i < openingsChances.size(); i++){
+			currentPercentage += openingsChances.get(i)[2];
+			if (percentage <= currentPercentage){
+				int openingID = (int)openingsChances.get(i)[0];
+				result = openingID;
+				return result;
+			}
+		}
+		
+		if (unusedOpenings.size() > 0){
+			
+			if (unusedOpenings.size() == 1){
+				result = unusedOpenings.get(0);
+			}
+			else{
+				r = new Random();
+				int index = r.nextInt(unusedOpenings.size() - 1);
+				result = unusedOpenings.get(index);
+			}
+		}
+		
+		return result;
+	}
+	
+	private OpeningList getOpeningListByID(int ID){
+		OpeningList result = new OpeningList(-1, "empty", game.getEnemies().get(0).getRaceID());
+		for (int i = 0; i < allOpeningLists.size(); i++) {
+			OpeningList ol = allOpeningLists.get(i);
+			if (ol.getID() == ID){
+				return ol;
+			}
+		}
+		return result;
+	}
+	
+	private ArrayList<Integer> getOpeningListsIDsByRace(int raceID){
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		for (int i = 0; i < allOpeningLists.size(); i++) {
+			OpeningList ol = allOpeningLists.get(i);
+			if (ol.getAgainstRace() == raceID){
+				result.add(ol.getID());
+			}
+		}
+		return result;
+	}
+	
+	private int getRandomOpeningListID(int raceID){
+		int result = -1;
+		ArrayList<Integer> allOpeningListsByRace = getOpeningListsIDsByRace(raceID);
+		if (allOpeningListsByRace.size() - 1 == 0){
+			result = allOpeningListsByRace.get(0);
 		}
 		else{
 			Random r = new Random();
-			index = r.nextInt(possibleOpeningListsIDs.size() - 1);
+			int index = r.nextInt(allOpeningListsByRace.size() - 1);
+			result = allOpeningListsByRace.get(index);
 		}
-		
-		OpeningList ol = allOpeningLists.get(possibleOpeningListsIDs.get(index)); 
-		openingList = ol;
-		game.printText("Bol zvolený opening: " + openingList.getName());
-	}	
+		return result;
+	}
 	
-	private ArrayList<Integer> getOpeningLists(int raceID){
+	private ArrayList<Integer> getUnusedOpeningLists(HashMap<Integer, double[]> KB){
 		ArrayList<Integer> result = new ArrayList<Integer>();
-		for (int i = 0; i < allOpeningLists.size(); i++) {
-			if (allOpeningLists.get(i).getAgainstRace() == raceID){
-				result.add(i);
+		ArrayList<Integer> possibleOpeningLists = getOpeningListsIDsByRace(game.getEnemies().get(0).getRaceID());
+		for (int i = 0; i < possibleOpeningLists.size(); i++) {
+			int openingListID = possibleOpeningLists.get(i);
+			if (!KB.containsKey(openingListID)){
+				result.add(openingListID);
 			}
 		}
 		return result;
@@ -275,6 +410,10 @@ public class OpeningManager extends AbstractManager{
 	private void sendText(String msg){
 		if(debug) game.sendText("OM: " + msg);
 	}
+	
+	private void drawText(int x, int y, String msg){
+		if(debug) game.drawText(x, y, msg, true);
+	}
 
 }
 	
@@ -309,6 +448,7 @@ class OpeningList{
 	public OpeningList(int ID, String name, int againstRace){
 		this.name = name;
 		this.againstRace = againstRace;
+		this.ID = ID;
 		self = new ArrayList<OpeningTask>();
 		iterator = 0;
 	}

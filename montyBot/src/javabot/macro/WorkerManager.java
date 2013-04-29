@@ -909,11 +909,6 @@ public class WorkerManager extends AbstractManager {
 		 * @param worker - worker which will be added to this NexusBase
 		 */
 		public void deleteWorker(Unit worker) {
-			if (mineralWorkers.contains(worker)) {
-				mineralWorkers.remove(worker);
-				startMiningFrame.remove(worker);
-				
-				for (Map.Entry<Unit, ArrayList<Unit>> mineral: minerals.entrySet()) {
 					if (mineral.getValue().contains(worker)) {
 						mineral.getValue().remove(worker);
 						break;

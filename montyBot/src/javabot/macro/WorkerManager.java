@@ -63,12 +63,12 @@ public class WorkerManager extends AbstractManager {
 	// Cached paths from one base location to another
 	private HashMap<Pair<BaseLocation, BaseLocation>, ArrayList<Position>> groundPaths = new HashMap<Pair<BaseLocation, BaseLocation>, ArrayList<Position>>();
 	
-	private int mineralIncome = 0;
+	/*private int mineralIncome = 0;
 	private int mineralIncome10 = 0;
 	private int gasIncome = 0;
 	private int gasIncome10 = 0;
 	private int beforeMinerals = 0;
-	private int beforeGas = 0;
+	private int beforeGas = 0;*/
 
 	/**
 	 * WorkerManager constructor.
@@ -259,7 +259,7 @@ public class WorkerManager extends AbstractManager {
 			drawDebugInfo();
 		}
 		
-		if (game.getFrameCount() % 1000 == 0) {
+		/*if (game.getFrameCount() % 1000 == 0) {
 			game.printText("min: " + (mineralIncome - game.getSelf().getMinerals()) + "  gas: " + (gasIncome - game.getSelf().getGas()));
 			mineralIncome = game.getSelf().getMinerals() + getMineralIncome(1000);
 			gasIncome = game.getSelf().getGas() + getGasIncome(1000);
@@ -272,7 +272,7 @@ public class WorkerManager extends AbstractManager {
 			
 			beforeMinerals = game.getSelf().getMinerals();
 			beforeGas = game.getSelf().getGas();
-		}
+		}*/
 	}
 	
 	public void balanceWorkersBetweenMineralsAndGas() {

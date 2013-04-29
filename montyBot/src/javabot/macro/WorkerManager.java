@@ -38,6 +38,8 @@ public class WorkerManager extends AbstractManager {
 	// Minerals assigned to this manager by Boss
 	//private int minerals = 0;
 	
+	public NexusBase capitalNexusBase = null;
+	
 	// All Nexus bases which bot have
 	public ArrayList<NexusBase> nexusBases = new ArrayList<NexusBase>();
 	
@@ -59,6 +61,10 @@ public class WorkerManager extends AbstractManager {
 	// Ratio of resources that will be needed in near future
 	public double mineralsRatioForBuild = 0;
 	public double gasRatioForBuild = 0;
+	
+	// Mineral and gas workers ratio
+	public double mineralWorkersRatio = 0;
+	public double gasWorkersRatio = 0;
 	
 	// Cached paths from one base location to another
 	private HashMap<Pair<BaseLocation, BaseLocation>, ArrayList<Position>> groundPaths = new HashMap<Pair<BaseLocation, BaseLocation>, ArrayList<Position>>();
@@ -98,7 +104,7 @@ public class WorkerManager extends AbstractManager {
 			}
 		}
 		
-		// Find out wether new Nexus is completed and is not added into nexusBases list
+		// Find out whether new Nexus is completed and is not added into nexusBases list
 		for (Unit unit: myNexuses) {
 			boolean newNexus = true;
 				
@@ -109,7 +115,13 @@ public class WorkerManager extends AbstractManager {
 			}
 			
 			if (newNexus) {
-				nexusBases.add(new NexusBase(this, unit));
+				NexusBase newNexusBase = new NexusBase(this, unit);
+				
+				if (capitalNexusBase == null) {
+					capitalNexusBase = newNexusBase;
+				}
+				
+				nexusBases.add(newNexusBase);
 			}
 		}	
 		
@@ -191,10 +203,10 @@ public class WorkerManager extends AbstractManager {
 			}
 		}
 		
-		// Finds out wether some worker was unassigned by boss from this manager and deletes
+		// Finds out whether some worker was unassigned by boss from this manager and deletes
 		// it from NexusBase
 		for (Unit worker: allWorkers) {
-			if (!units.contains(worker)) {
+			if (!units.contains(worker) || !unitExists(worker)) {
 				for (NexusBase nexusBase: nexusBases) {
 					nexusBase.deleteWorker(worker);
 				}
@@ -278,16 +290,16 @@ public class WorkerManager extends AbstractManager {
 	public void balanceWorkersBetweenMineralsAndGas() {
 		updateDesiredResources();
 		
-		double allWorkersRatio = 0;
-		
 		for (NexusBase nexusBase: nexusBases) {
-			allWorkersRatio += nexusBase.getWorkerRatio();
+			computeMineralAndGasWorkersRatio();
 			
-			//double ratio = nexusBase.getCountMineralWorkers() / nexusBase.getCountGasWorkers();
-			
+			if (gasRatioForBuild - gasWorkersRatio >= 0.1) {
+				nexusBase.moveOneWorkerToGas();
+			}
+			else if (gasRatioForBuild - gasWorkersRatio <= -0.1) {
+				nexusBase.moveOneWorkerToMinerals();
+			}
 		}
-		
-		allWorkersRatio /= nexusBases.size();
 	}
 	
 	/**
@@ -468,7 +480,7 @@ public class WorkerManager extends AbstractManager {
 				nexusBase.deleteWorker(nearestWorker);
 				unassignedWorkers.remove(nearestWorker);
 			}
-			
+
 			return nearestWorker.getID();
 		}
 		else {
@@ -637,6 +649,38 @@ public class WorkerManager extends AbstractManager {
 			mineralsRatioForBuild = 1;
 		}
 	}
+	
+	private void computeMineralAndGasWorkersRatio() {
+		double mineralWorkers = 0;
+		double gasWorkers = 0;
+		double allWorkers = 0;
+		
+		for (NexusBase nexusBase: nexusBases) {
+			mineralWorkers += nexusBase.mineralWorkers.size();
+			
+			double currentGasWorkers = 0;
+			
+			for (Map.Entry<Unit, ArrayList<Unit>> assimilator: nexusBase.assimilators.entrySet()) {
+				if (assimilator.getKey().getResources() == 0) {
+					currentGasWorkers += assimilator.getValue().size();
+				}
+				else {
+					currentGasWorkers += assimilator.getValue().size() * 2;
+				}
+			}
+			
+			gasWorkers += currentGasWorkers;
+			
+			allWorkers += nexusBase.mineralWorkers.size() + currentGasWorkers;  
+		}
+		
+		if (allWorkers == 0) {
+			allWorkers = 1;
+		}
+		
+		mineralWorkersRatio = mineralWorkers / allWorkers;
+		gasWorkersRatio = gasWorkers / allWorkers;
+	}
 
 	/**
 	 * Retrieves base with Nexus which have smallest worker ratio (count of mineral and gas workers 
@@ -711,29 +755,6 @@ public class WorkerManager extends AbstractManager {
 		}
 		
 		return result;
-	}
-	
-	
-	/**
-	 * Returns nearest BaseLocation to position.
-	 * 
-	 * @param pos - position to which will be nearest NexusBase finded.
-	 * @return nearest BaseLocation.
-	 */
-	private BaseLocation getNearestBaseLocation(Position pos) {
-		BaseLocation nearestBase = null;
-		Position posNearest = new Position(-1,-1);
-		
-		for (BaseLocation base: game.getMap().getBaseLocations()) {
-			Position posCurrent = new Position(base.getX(), base.getY());
-			
-			if (nearestBase == null || pos.distance(posCurrent) < pos.distance(posNearest)) {
-				nearestBase = base;
-				posNearest = new Position(nearestBase.getX(), nearestBase.getY());
-			}
-		}
-		
-		return nearestBase;
 	}
 
 	/**
@@ -839,6 +860,11 @@ public class WorkerManager extends AbstractManager {
 				transferedBase.deleteWorker(worker);
 				unassignedWorkers.add(worker);
 				transferedWorkers.remove(worker);
+				
+				if (capitalNexusBase != null && isPathClear(nearestNexusBase.base, capitalNexusBase.base)) {
+					game.move(worker.getID(), capitalNexusBase.base.getX(), capitalNexusBase.base.getY());
+				}
+				
 				break;
 			}
 		}
@@ -855,6 +881,24 @@ public class WorkerManager extends AbstractManager {
 		
 		for (Unit neutralUnit: neutralUnits) {
 			if (neutralUnit.getX() == mineral.getX() && neutralUnit.getY() == mineral.getY()) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/** 
+	 * Checks whether unit exists.
+	 * 
+	 *  @param unit - unit to check for existence
+	 *  @return true if unit exists, false otherwise
+	 */
+	private boolean unitExists(Unit unit) {
+		ArrayList<Unit> myUnits = game.getMyUnits();
+		
+		for (Unit currentUnit: myUnits) {
+			if (currentUnit == unit) {
 				return true;
 			}
 		}
@@ -880,7 +924,7 @@ public class WorkerManager extends AbstractManager {
 			i++;
 		}
 		
-		debug += "  desMinRat: " + df.format(mineralsRatioForBuild) +  " desGasRat: " + df.format(gasRatioForBuild);
+		debug += "  min. ratio: " + df.format(mineralWorkersRatio) +  "/" + df.format(mineralsRatioForBuild) + " gas ratio: " + df.format(gasWorkersRatio) +  "/" + df.format(gasRatioForBuild);
 		
 		game.drawText(6, 48, debug, true);
 		
@@ -888,7 +932,7 @@ public class WorkerManager extends AbstractManager {
 			Position workerPosition = new Position(transferedWorker.getKey().getX(), transferedWorker.getKey().getY());
 			Position nexusBasePosition = new Position(transferedWorker.getValue().nexus.getX(), transferedWorker.getValue().nexus.getY());
 			
-			game.drawLine((int)workerPosition.x, (int)workerPosition.y, (int)nexusBasePosition.x, (int)nexusBasePosition.y, BWColor.GREEN, false);
+			game.drawLine((int)workerPosition.x, (int)workerPosition.y, (int)nexusBasePosition.x, (int)nexusBasePosition.y, BWColor.ORANGE, false);
 		}
 	}
 	
@@ -904,11 +948,11 @@ public class WorkerManager extends AbstractManager {
 		
 		// Each mineral field of minerals belonging to this BaseLocation and it's workers, 
 		// which will mine this mineral field
-		private HashMap<Unit, ArrayList<Unit>> minerals = new HashMap<Unit, ArrayList<Unit>>();
+		public HashMap<Unit, ArrayList<Unit>> minerals = new HashMap<Unit, ArrayList<Unit>>();
 		
 		// Each Assimilator belonging to this Nexus and it's workers, which will harvest 
 		// harvest gas from this Assimilator
-		private HashMap<Unit, ArrayList<Unit>> assimilators = new HashMap<Unit, ArrayList<Unit>>();
+		public HashMap<Unit, ArrayList<Unit>> assimilators = new HashMap<Unit, ArrayList<Unit>>();
 		
 		// All workers that will mine minerals assigned to this Nexus
 		public ArrayList<Unit> mineralWorkers = new ArrayList<Unit>();
@@ -1001,6 +1045,7 @@ public class WorkerManager extends AbstractManager {
 					if (workers.size() < manager.maxWorkersPerGeyser && (assimilator.getKey().getResources() > 0 || allAssimilatorsDepleted)) {
 						deleteWorker(worker);
 						workers.add(worker);
+						game.printText("move to gas");
 						game.rightClick(worker.getID(), assimilator.getKey().getID());
 						break;
 					}
@@ -1031,6 +1076,7 @@ public class WorkerManager extends AbstractManager {
 					if (workers.size() < manager.maxWorkersPerMineralField) {
 						deleteWorker(worker);
 						workers.add(worker);
+						game.printText("move to minerals");
 						game.rightClick(worker.getID(), mineral.getKey().getID());
 						break;
 					}
@@ -1050,15 +1096,15 @@ public class WorkerManager extends AbstractManager {
 			// add worker to gas workers and assign it to first Assimilator which have assigned 
 			// workers number smaller to workersPerGeyser constant
 			if (assimilators.size() > 0 && getCountGasWorkers() < getMaxGasWorkers()) {
-				gasWorkers.add(worker);
-				startMiningFrame.put(worker, -1);
-				
 				boolean allAssimilatorsDepleted = isAllAssimilatorsDepleted();
 				
 				for (Map.Entry<Unit, ArrayList<Unit>> assimilator: assimilators.entrySet()) {
 					ArrayList<Unit> workers = assimilator.getValue();
 					
 					if (workers.size() < manager.maxWorkersPerGeyser && (assimilator.getKey().getResources() > 0 || allAssimilatorsDepleted)) {
+						gasWorkers.add(worker);
+						startMiningFrame.put(worker, -1);
+						
 						workers.add(worker);
 						game.rightClick(worker.getID(), assimilator.getKey().getID());
 						return true;
@@ -1118,26 +1164,27 @@ public class WorkerManager extends AbstractManager {
 		 * @param worker - worker which will be added to this NexusBase
 		 */
 		public void deleteWorker(Unit worker) {
-			if (mineralWorkers.contains(worker)) {
-				mineralWorkers.remove(worker);
-				startMiningFrame.remove(worker);
-				
-				for (Map.Entry<Unit, ArrayList<Unit>> mineral: minerals.entrySet()) {
-					if (mineral.getValue().contains(worker)) {
-						mineral.getValue().remove(worker);
-						break;
-					}
-				}
-			}
-			else if (gasWorkers.contains(worker)) {
+			if (gasWorkers.contains(worker)) {
 				gasWorkers.remove(worker);
 				startMiningFrame.remove(worker);
-				
-				for (Map.Entry<Unit, ArrayList<Unit>> assimilator: assimilators.entrySet()) {
-					if (assimilator.getValue().contains(worker)) {
-						assimilator.getValue().remove(worker);
-						break;
-					}
+			}
+			
+			for (Map.Entry<Unit, ArrayList<Unit>> assimilator: assimilators.entrySet()) {
+				if (assimilator.getValue().contains(worker)) {
+					assimilator.getValue().remove(worker);
+					break;
+				}
+			}
+			
+			if (mineralWorkers.contains(worker)) {
+				mineralWorkers.remove(worker);
+				startMiningFrame.remove(worker);	
+			}
+			
+			for (Map.Entry<Unit, ArrayList<Unit>> mineral: minerals.entrySet()) {
+				if (mineral.getValue().contains(worker)) {
+					mineral.getValue().remove(worker);
+					break;
 				}
 			}
 		}
@@ -1470,11 +1517,13 @@ public class WorkerManager extends AbstractManager {
 			}
 			
 			for (Unit worker: mineralWorkers) {
-				game.drawLine(nexus.getX(), nexus.getY(), worker.getX(), worker.getY(), BWColor.ORANGE, false);
+				game.drawLine(nexus.getX(), nexus.getY(), worker.getX(), worker.getY(), BWColor.CYAN, false);
+				game.drawBox(worker.getX()-16, worker.getY()-16, worker.getX()+16, worker.getY()+16, BWColor.CYAN, false, false);
 			}
 			
 			for (Unit worker: gasWorkers) {
-				game.drawLine(nexus.getX(), nexus.getY(), worker.getX(), worker.getY(), BWColor.ORANGE, false);
+				game.drawLine(nexus.getX(), nexus.getY(), worker.getX(), worker.getY(), BWColor.GREEN, false);
+				game.drawCircle(worker.getX(), worker.getY(), 16, BWColor.GREEN, false, false);
 			}
 			
 		}

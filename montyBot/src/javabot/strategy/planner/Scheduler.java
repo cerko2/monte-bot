@@ -55,12 +55,17 @@ public class Scheduler {
 		
 		NavigableMap<Integer, State> reverseTimeline = timeline.descendingMap();
 		
+		//updates all the traversed actions that can execute this action with its requirements
+		//takes resources, borrows buildings etc.
+		TimelineActionStart stateUpdater = new TimelineActionStart(action);
+		
 		for (Entry<Integer, State> entry : reverseTimeline.entrySet()){
 			if (!entry.getValue().canExecute(action)){
 				Entry<Integer, State> laterState = reverseTimeline.lowerEntry(entry.getKey());
 				
 				if (laterState == null){
-					
+					//wait between last action and new action
+					placeAsLast(entry.getValue(), action);
 				}
 				else {
 					placeBetweenStates(entry.getValue(), laterState.getValue(), action);
@@ -69,6 +74,11 @@ public class Scheduler {
 			else {
 				if (reverseTimeline.lastKey() == entry.getKey()){
 					//move to the beginning
+					
+				}
+				else {
+					//update state with actions requirements
+					stateUpdater.updateState(entry.getValue(), false);
 				}
 			}
 		}
@@ -80,9 +90,10 @@ public class Scheduler {
 		
 		State startState = null;
 		
-		//if we have enough supply and tech then we dont have resources
+		//if we have enough supply/tech/borrow then we dont have resources
 		if (supplyBuffer(earlier) >= requirements.getSupply()
-				&& earlier.haveTech(requirements))
+				&& earlier.haveTech(requirements)
+				&& earlier.canBorrow(requirements.getRenewable()))
 		{
 			
 			startState = delayUntillReady(earlier, action);
@@ -98,6 +109,7 @@ public class Scheduler {
 		
 		TimelineActionStart startAction = new TimelineActionStart(action);
 		startState.addAction(startAction, true);
+		timeline.put(startState.getFrame(), startState);
 		
 		TimelineActionEnd endAction = new TimelineActionEnd(action);
 		State endState = null;
@@ -125,6 +137,51 @@ public class Scheduler {
 		}
 		
 		
+	}
+	
+	private void placeAsLast(State state, Action action){
+		State startState = delayUntillReady(state, action);
+		TimelineActionStart startAction = new TimelineActionStart(action);
+		startState.addAction(startAction, true);
+		
+		TimelineActionEnd endAction = new TimelineActionEnd(action);
+		State endState = new State(startState);
+		endState.addAction(endAction, true);
+		
+		timeline.put(startState.getFrame(), startState);
+		timeline.put(endState.getFrame(), endState);
+	}
+	
+	private void placeFromStart(Action action){
+		State startState = delayUntillReady(initialState, action);
+		TimelineActionStart startAction = new TimelineActionStart(action);
+		startState.addAction(startAction, true);
+		timeline.put(startState.getFrame(), startState);
+		
+		TimelineActionEnd endAction = new TimelineActionEnd(action);
+		State endState = null;
+		
+		if (timeline.containsKey(startState.getFrame() + action.getDuration())){
+			endState = timeline.get(startState.getFrame() + action.getDuration());
+			endState.addAction(endAction, false);
+		}
+		else {
+			//copy earlier states data and go from there
+			endState = new State(getEarlierState(startState.getFrame() + action.getDuration()));
+			
+			//reset states frame so that updateState sets it correctly
+			endState.setFrame(startState.getFrame());
+			endState.addAction(endAction, true);
+			timeline.put(endState.getFrame(), endState);
+		}
+		//get state before endState, and update end income
+		State earlierState = getEarlierState(endState.getFrame());
+		endState.updateIncome(earlierState);
+		
+		//update following states with actions effects
+		for (Entry<Integer, State> entry : timeline.tailMap(endState.getFrame(), false).entrySet()){
+			endAction.updateState(entry.getValue(), false);
+		}
 	}
 	
 	private State getEarlierState(int frame){

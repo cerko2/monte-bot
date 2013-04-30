@@ -55,7 +55,7 @@ public class Scheduler {
 		
 		NavigableMap<Integer, State> reverseTimeline = timeline.descendingMap();
 		
-		//updates all the traversed actions that can execute this action with its requirements
+		//updates all the traversed states that can execute this action with its requirements
 		//takes resources, borrows buildings etc.
 		TimelineActionStart stateUpdater = new TimelineActionStart(action);
 		
@@ -74,6 +74,7 @@ public class Scheduler {
 			else {
 				if (reverseTimeline.lastKey() == entry.getKey()){
 					//move to the beginning
+					placeFromStart(action);
 					
 				}
 				else {
@@ -217,6 +218,8 @@ public class Scheduler {
 		int framesToMove = (int) Math.ceil(minBuffer / delayed.getMineralRate());
 		int gasMove = (int) Math.ceil(gasBuffer / delayed.getGasRate());
 		framesToMove = (framesToMove > gasMove) ? framesToMove : gasMove;
+		if (framesToMove < 0)
+			framesToMove = 0;
 		
 		delayed.delay(framesToMove);
 		

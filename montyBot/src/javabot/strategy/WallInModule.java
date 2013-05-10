@@ -2,6 +2,8 @@ package javabot.strategy;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
@@ -81,16 +83,30 @@ public class WallInModule extends AbstractManager {
 		return false;
 	}
 	
-	public void computeWall(ChokePoint choke, Region insideRegion, Integer unitTypeId) {
+	// It is possible, but unnecessary to specify the enemy unit type (3rd parameter), which we want
+	// to keep locked out (default is zergling)
+	public void smartComputeWall(ChokePoint choke, Region insideRegion, ArrayList<Integer> buildingTypeIds, Integer unitTypeId) {
+		int size = 0;
+		while (size < buildingTypeIds.size()) {
+			if (computeWall(choke, insideRegion, buildingTypeIds.subList(0, size) , unitTypeId)) return;
+			size++;
+		}
+		bwapi.printText("Wall at "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" couldn't be found.");
+	}
+	public void smartComputeWall(ChokePoint choke, Region insideRegion, ArrayList<Integer> buildingTypeIds) {
+		smartComputeWall(choke, insideRegion, buildingTypeIds, UnitTypes.Zerg_Zergling.ordinal());
+		
+	}
+	
+	private boolean computeWall(ChokePoint choke, Region insideRegion, Collection<Integer> buildingTypeIds, Integer unitTypeId) {
 		
 		for (Wall w : walls) {
 			if (w.getChokePoint() == choke) {
 				bwapi.printText("Wall for chokepoint "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" has already been computed.");
-				return;
+				return true;
 			}
 		}
-		
-		bwapi.printText("Computing wall for chokepoint "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+".");
+		bwapi.printText("Computing wall for chokepoint "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" with "+String.valueOf(buildingTypeIds.size())+" buildings.");
 		
 		Region outsideRegion;
 		if (choke.getFirstRegion().getID() == insideRegion.getID()) {
@@ -107,42 +123,47 @@ public class WallInModule extends AbstractManager {
 		else if ((unitTypeId == UnitTypes.Terran_SCV.ordinal()) || (unitTypeId == UnitTypes.Zerg_Drone.ordinal()) || (unitTypeId == UnitTypes.Protoss_Probe.ordinal())) dynamicLP += "enemyUnitX(23). enemyUnitY(23).\n";  
 		else {dynamicLP += "enemyUnitX(23). enemyUnitY(23).\n";}
 		
-		// wall composition (terran: 1xBarrack, 2xDepot)
-		/*
+		// create building instance identifiers and fill the temporary hashmap with them
+		// also, create a string representation of building instances with their associated types
+		HashMap<String, String> buildings = new HashMap<>();
+		String buildingInstStr = "";
+		int id = 0;
+		for (int tid : buildingTypeIds) {
+			id++;
+			String shortname = bwapi.getUnitType(tid).getName().substring(bwapi.getUnitType(tid).getName().indexOf(" ")).replace(" ", "").toLowerCase()+String.valueOf(id);
+			buildingInstStr += "building("+shortname+").\n";
+			
+			if (tid == UnitTypes.Protoss_Pylon.ordinal()) {
+				buildingInstStr += "type("+shortname+",pylonType).\n";
+				buildings.put(shortname, "pylonType");
+			} else if (tid == UnitTypes.Protoss_Gateway.ordinal()) {
+				buildingInstStr += "type("+shortname+",gatewayType).\n";
+				buildings.put(shortname, "gatewayType");
+			} else if (tid == UnitTypes.Protoss_Forge.ordinal()) {
+				buildingInstStr += "type("+shortname+",forgeType).\n";
+				buildings.put(shortname, "forgeType");
+			} else if (tid == UnitTypes.Protoss_Photon_Cannon.ordinal()) {
+				buildingInstStr += "type("+shortname+",cannonType).\n";
+				buildings.put(shortname, "cannonType");
+			} else {
+				bwapi.printText("ERROR (Wall-In Manager): Unsupported unit type for wall-in ("+bwapi.getUnitType(tid)+").\nOnly Pylon, GW, Forge and Cannon is allowed.");
+				return false;
+			}
+		}
+		
+		// create a string representation of answer set generator statements
+		String generatorsStr = "";
+		for (String ins : buildings.keySet()) {
+			//generatorsStr += "0[place("+ins+",X,Y) : buildable("+buildings.get(ins)+",X,Y)]1.\n"; // originally, this allows for this building not to be present in the wall
+			generatorsStr += "1[place("+ins+",X,Y) : buildable("+buildings.get(ins)+",X,Y)]1.\n";
+		}
+		
+		// put everything together into a dynamic part of logic program
 		dynamicLP += 
-		"% Specify what building instances to build.\n" +
-		"building(barrack).\n" +
-		"building(depot1).\n" +
-		"building(depot2).\n" +
-		"\n" +
 		"% Specify building types and their sizes.\n" +
-		"buildingType(barrackType).\n" +
-		"buildingType(depotType).\n" +
-		"width(barrackType,4). height(barrackType,3).	leftSpace(barrackType,16). rightSpace(barrackType,7). topSpace(barrackType,8). bottomSpace(barrackType,15).\n" +
-		"width(depotType,3). height(depotType,2).		leftSpace(depotType,10). rightSpace(depotType,9). topSpace(depotType,10). bottomSpace(depotType,5).\n" +
-		"% Assign building instances to their types.\n" +
-		"type(barrack,barrackType).\n" +
-		"type(depot1,depotType).\n" +
-		"type(depot2,depotType).\n" +
-		"% Generate all the models.\n" +
-		"1[place(barrack,X,Y) : buildable(barrackType,X,Y)]1.\n" +
-		"1[place(depot1,X,Y) : buildable(depotType,X,Y)]1.\n" +
-		"1[place(depot2,X,Y) : buildable(depotType,X,Y)]1.\n" +
-		"% Filter out those models, where the path is not blocked.\n" +
-		":- insideBase(X1,Y1), outsideBase(X2,Y2), canreach(X2,Y2).\n";
-		*/
-		dynamicLP += 
-		"% Specify what building instances to build.\n" +
-		"building(forge).\n" +
-		"building(gateway).\n" +
-		"building(zealots).\n" +
-		"building(pylon).\n" +
-		"building(cannon).\n" +
-		"\n" +
-		"% Specify building types and their sizes.\n" +
+		"buildingType(zealotsType).\n" +
 		"buildingType(forgeType).\n" +
 		"buildingType(gatewayType).\n" +
-		"buildingType(zealotsType).\n" +
 		"buildingType(pylonType).\n" +
 		"buildingType(cannonType).\n" +
 		"width(gatewayType,4). height(gatewayType,3).	leftSpace(gatewayType,16). rightSpace(gatewayType,15). topSpace(gatewayType,16). bottomSpace(gatewayType,7).\n" +
@@ -150,36 +171,17 @@ public class WallInModule extends AbstractManager {
 		"width(pylonType,2). height(pylonType,2).		leftSpace(pylonType,16). rightSpace(pylonType,15). topSpace(pylonType,20). bottomSpace(pylonType,11).\n" +
 		"width(cannonType,2). height(cannonType,2).		leftSpace(cannonType,12). rightSpace(cannonType,11). topSpace(cannonType,16). bottomSpace(cannonType,15).\n" +
 		"width(zealotsType,1). height(zealotsType,1).	leftSpace(zealotsType,-5). rightSpace(zealotsType,-5). topSpace(zealotsType,-5). bottomSpace(zealotsType,-5).\n" +
-		"% Assign building instances to their types.\n" +
-		"type(forge,forgeType).\n" +
-		"type(gateway,gatewayType).\n" +
+		
+		"% Specify what building instances to build.\n" +
+		"building(zealots).\n" +
 		"type(zealots,zealotsType).\n" +
-		"type(pylon,pylonType).\n" +
-		"type(cannon,cannonType).\n" +
+		buildingInstStr +
+		
 		"% Generate all the models.\n" +
-		"0[place(forge,X,Y) : buildable(forgeType,X,Y)]1.\n" +
-		"0[place(cannon,X,Y) : buildable(cannonType,X,Y)]1.\n" +
-		"0[place(gateway,X,Y) : buildable(gatewayType,X,Y)]1.\n" +
-		"0[place(pylon,X,Y) : buildable(pylonType,X,Y)]1.\n" +
 		"1[place(zealots,X,Y) : buildable(zealotsType,X,Y)]1.\n" +
+		generatorsStr +
 		"% Filter out those models, where the path is not blocked.\n" +
 		":- insideBase(X1,Y1), outsideBase(X2,Y2), canreach(X2,Y2).\n";
-		
-		String buildingName1 = "gateway";
-		int buildingWidth1 = 4;
-		int buildingHeight1 = 3;
-		String buildingName2 = "forge";
-		int buildingWidth2 = 3;
-		int buildingHeight2 = 2;
-		String buildingName3 = "pylon";
-		int buildingWidth3 = 2;
-		int buildingHeight3 = 2;
-		String buildingName4 = "cannon";
-		int buildingWidth4 = 2;
-		int buildingHeight4 = 2;
-		String buildingName5 = "zealots";
-		int buildingWidth5 = 1;
-		int buildingHeight5 = 1;
 		
 		HashSet<String> dynAtoms = new HashSet<String>();
 		int insideX = -1;
@@ -227,12 +229,25 @@ public class WallInModule extends AbstractManager {
 					//}
 				}
 				
-				// buildable 
-				if (this.isBuildable(x, y, buildingWidth1, buildingHeight1, new Point(insideX,insideY), new Point(outsideX,outsideY), choke.getCenterX()/32-CHOKEPOINT_RADIUS, choke.getCenterX()/32+CHOKEPOINT_RADIUS, choke.getCenterY()/32-CHOKEPOINT_RADIUS, choke.getCenterY()/32+CHOKEPOINT_RADIUS)) dynAtoms.add("buildable("+buildingName1+"Type,"+String.valueOf(x)+","+String.valueOf(y)+").\n");
-				if (this.isBuildable(x, y, buildingWidth2, buildingHeight2, new Point(insideX,insideY), new Point(outsideX,outsideY), choke.getCenterX()/32-CHOKEPOINT_RADIUS, choke.getCenterX()/32+CHOKEPOINT_RADIUS, choke.getCenterY()/32-CHOKEPOINT_RADIUS, choke.getCenterY()/32+CHOKEPOINT_RADIUS)) dynAtoms.add("buildable("+buildingName2+"Type,"+String.valueOf(x)+","+String.valueOf(y)+").\n");
-				if (this.isBuildable(x, y, buildingWidth3, buildingHeight3, new Point(insideX,insideY), new Point(outsideX,outsideY), choke.getCenterX()/32-CHOKEPOINT_RADIUS, choke.getCenterX()/32+CHOKEPOINT_RADIUS, choke.getCenterY()/32-CHOKEPOINT_RADIUS, choke.getCenterY()/32+CHOKEPOINT_RADIUS)) dynAtoms.add("buildable("+buildingName3+"Type,"+String.valueOf(x)+","+String.valueOf(y)+").\n");
-				if (this.isBuildable(x, y, buildingWidth4, buildingHeight4, new Point(insideX,insideY), new Point(outsideX,outsideY), choke.getCenterX()/32-CHOKEPOINT_RADIUS, choke.getCenterX()/32+CHOKEPOINT_RADIUS, choke.getCenterY()/32-CHOKEPOINT_RADIUS, choke.getCenterY()/32+CHOKEPOINT_RADIUS)) dynAtoms.add("buildable("+buildingName4+"Type,"+String.valueOf(x)+","+String.valueOf(y)+").\n");
-				if (this.isBuildable(x, y, buildingWidth5, buildingHeight5, new Point(insideX,insideY), new Point(outsideX,outsideY), choke.getCenterX()/32-CHOKEPOINT_RADIUS, choke.getCenterX()/32+CHOKEPOINT_RADIUS, choke.getCenterY()/32-CHOKEPOINT_RADIUS, choke.getCenterY()/32+CHOKEPOINT_RADIUS)) dynAtoms.add("buildable("+buildingName5+"Type,"+String.valueOf(x)+","+String.valueOf(y)+").\n");
+				// buildable
+				if (this.isBuildable(x, y, 1, 1, new Point(insideX,insideY), new Point(outsideX,outsideY), choke.getCenterX()/32-CHOKEPOINT_RADIUS, choke.getCenterX()/32+CHOKEPOINT_RADIUS, choke.getCenterY()/32-CHOKEPOINT_RADIUS, choke.getCenterY()/32+CHOKEPOINT_RADIUS)) dynAtoms.add("buildable(zealotsType,"+String.valueOf(x)+","+String.valueOf(y)+").\n");
+				for (String ins : buildings.keySet()) {
+					int buildingWidth = 0; int buildingHeight = 0;
+					if (buildings.get(ins) == "gatewayType") {
+						buildingWidth = 4; buildingHeight = 3;
+					} else if (buildings.get(ins) == "forgeType") {
+						buildingWidth = 3; buildingHeight = 2;
+					} else if (buildings.get(ins) == "pylonType") {
+						buildingWidth = 2; buildingHeight = 2;
+					} else if (buildings.get(ins) == "cannonType") {
+						buildingWidth = 2; buildingHeight = 2;
+					}
+					
+					if (this.isBuildable(x, y, buildingWidth, buildingHeight, new Point(insideX,insideY), new Point(outsideX,outsideY), choke.getCenterX()/32-CHOKEPOINT_RADIUS, choke.getCenterX()/32+CHOKEPOINT_RADIUS, choke.getCenterY()/32-CHOKEPOINT_RADIUS, choke.getCenterY()/32+CHOKEPOINT_RADIUS)) {
+						dynAtoms.add("buildable("+buildings.get(ins)+","+String.valueOf(x)+","+String.valueOf(y)+").\n");
+					}
+						
+				}
 				
 				// blocked by neutrals
 				//if (obstructedByNeutrals(x, y)) {
@@ -258,7 +273,7 @@ public class WallInModule extends AbstractManager {
 			walls.add(new Wall());
 			int newId = walls.size()-1;
 			for (String s : model) {
-				String[] pars = s.substring(s.indexOf("(")+1).substring(0,s.substring(s.indexOf("(")+1).indexOf(")")).split(",");
+				String[] pars = s.substring(s.indexOf("(")+1).substring(0,s.substring(s.indexOf("(")+1).indexOf(")")).toLowerCase().split(",");
 				if (pars[0].contains("gateway")) {
 					walls.get(newId).getBuildingTypeIds().add(UnitTypes.Protoss_Gateway.ordinal());
 				} else if (pars[0].contains("forge")) {
@@ -274,14 +289,17 @@ public class WallInModule extends AbstractManager {
 			}
 			// correct the wall (remove isolated buildings)
 			walls.get(newId).correct(CHOKEPOINT_RADIUS, bwapi);
+			return true;
 		} else {
-			bwapi.printText("Wall at "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" couldn't be found.");
 			walls.add(new Wall());
 			walls.get(walls.size()-1).setSuccessfullyFound(false);
+			return false;
 		}
 		
 	}
-	
+
+
+
 	private String staticLP = 
 "% =========== THIS IS THE STATIC LP ==========\n" +
 "#hide.\n" +

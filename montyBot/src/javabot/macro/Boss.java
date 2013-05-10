@@ -489,8 +489,15 @@ public class Boss extends AbstractManager{
 					}
 				}
 
+				// try to make some debug wall at every home choke
 				for (ChokePoint c : home.getChokePoints()) {
-					wallInModule.computeWall( c, home, UnitTypes.Zerg_Zergling.ordinal());
+					ArrayList<Integer> testWall = new ArrayList<Integer>();
+					testWall.add(UnitTypes.Protoss_Pylon.ordinal());
+					testWall.add(UnitTypes.Protoss_Gateway.ordinal());
+					testWall.add(UnitTypes.Protoss_Forge.ordinal());
+					testWall.add(UnitTypes.Protoss_Photon_Cannon.ordinal());
+					testWall.add(UnitTypes.Protoss_Pylon.ordinal());
+					wallInModule.smartComputeWall( c, home, testWall);
 				}
 			}
 			// END DEBUG

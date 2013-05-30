@@ -1,6 +1,8 @@
 package javabot.macro;
 
+import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -500,7 +502,6 @@ public class Boss extends AbstractManager{
 					wallInModule.smartComputeWall( c, home, testWall);
 				}
 			}
-			// END DEBUG
 
 			// Draw our home position and chokes
 			if (home != null) {
@@ -521,9 +522,14 @@ public class Boss extends AbstractManager{
 					int tileWidth = game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileWidth();
 					int tileHeight = game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileHeight();
 					game.drawBox(bt.x*32, bt.y*32, (bt.x + tileWidth)*32, (bt.y + tileHeight)*32, BWColor.YELLOW, false, false);
-					game.drawText(new Point(bt.x*32+4, bt.y*32+2), game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getName()+" "+String.valueOf(bt.x)+","+String.valueOf(bt.y), false);
+					game.drawText(new Point(bt.x*32+4, bt.y*32+2), game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getName().substring(game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getName().indexOf(" ")+1)  +" "+String.valueOf(bt.x)+","+String.valueOf(bt.y), false);
+				}
+				for (Point weakness : w.getWeaknesses()) {
+					game.drawCircle(weakness.x, weakness.y, 5, BWColor.RED, true, false);
 				}
 			}
+
+		// END WALL-IN DEBUG
 		}
 		
 		if (OPPONENT_POSITIONING_DEBUG){

@@ -5,9 +5,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import com.sun.corba.se.spi.extension.ZeroPortPolicy;
+
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.model.ChokePoint;
+import javabot.model.Race;
 import javabot.model.Region;
 import javabot.model.Unit;
 import javabot.types.UnitType.UnitTypes;
@@ -94,7 +98,16 @@ public class WallInModule extends AbstractManager {
 		bwapi.printText("Wall at "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" couldn't be found.");
 	}
 	public void smartComputeWall(ChokePoint choke, Region insideRegion, ArrayList<Integer> buildingTypeIds) {
-		smartComputeWall(choke, insideRegion, buildingTypeIds, UnitTypes.Zerg_Zergling.ordinal());
+		if (bwapi.getEnemies().get(0).getRaceID() == bwapi.getUnitType(UnitTypes.Zerg_Zergling.ordinal()).getRaceID()) {
+			//wall against zerglings
+			smartComputeWall(choke, insideRegion, buildingTypeIds, UnitTypes.Zerg_Zergling.ordinal());
+		} else if (bwapi.getEnemies().get(0).getRaceID() == bwapi.getUnitType(UnitTypes.Protoss_Zealot.ordinal()).getRaceID()) {
+			// against zealots
+			smartComputeWall(choke, insideRegion, buildingTypeIds, UnitTypes.Protoss_Zealot.ordinal());
+		} else {
+			// default is Worker
+			smartComputeWall(choke, insideRegion, buildingTypeIds, UnitTypes.Terran_SCV.ordinal());
+		}
 		
 	}
 	
@@ -118,10 +131,23 @@ public class WallInModule extends AbstractManager {
 		String dynamicLP = "";
 	
 		// enemy unit type
-		if (unitTypeId == UnitTypes.Zerg_Zergling.ordinal()) dynamicLP += "enemyUnitX(16). enemyUnitY(16).\n";
-		else if (unitTypeId == UnitTypes.Protoss_Zealot.ordinal()) dynamicLP += "enemyUnitX(23). enemyUnitY(19).\n";
-		else if ((unitTypeId == UnitTypes.Terran_SCV.ordinal()) || (unitTypeId == UnitTypes.Zerg_Drone.ordinal()) || (unitTypeId == UnitTypes.Protoss_Probe.ordinal())) dynamicLP += "enemyUnitX(23). enemyUnitY(23).\n";  
-		else {dynamicLP += "enemyUnitX(23). enemyUnitY(23).\n";}
+		int criticalGapSize;
+		if (unitTypeId == UnitTypes.Zerg_Zergling.ordinal()) {
+			dynamicLP += "enemyUnitX(16). enemyUnitY(16).\n";
+			criticalGapSize = 16;
+		}
+		else if (unitTypeId == UnitTypes.Protoss_Zealot.ordinal()) {
+			dynamicLP += "enemyUnitX(23). enemyUnitY(19).\n";
+			criticalGapSize = 19;
+		}
+		else if ((unitTypeId == UnitTypes.Terran_SCV.ordinal()) || (unitTypeId == UnitTypes.Zerg_Drone.ordinal()) || (unitTypeId == UnitTypes.Protoss_Probe.ordinal())) {
+			dynamicLP += "enemyUnitX(23). enemyUnitY(23).\n";
+			criticalGapSize = 23;
+		}
+		else {
+			dynamicLP += "enemyUnitX(23). enemyUnitY(23).\n";
+			criticalGapSize = 23;
+			}
 		
 		// create building instance identifiers and fill the temporary hashmap with them
 		// also, create a string representation of building instances with their associated types
@@ -289,6 +315,8 @@ public class WallInModule extends AbstractManager {
 			}
 			// correct the wall (remove isolated buildings)
 			walls.get(newId).correct(CHOKEPOINT_RADIUS, bwapi);
+			// and find the weak spots of the wall
+			walls.get(newId).findWeaknesses(bwapi,criticalGapSize);
 			return true;
 		} else {
 			walls.add(new Wall());

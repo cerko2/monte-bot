@@ -54,11 +54,11 @@ public class OpeningManager extends AbstractManager{
 			}
 			else{
 				setInactive();
-				game.printText("Opening Manager has ended.");
+				//game.printText("Opening Manager has ended.");
 			}
 		}
 		else{
-			game.drawText(10, 176, "Opening Manager: disabled", true);
+			drawText(10, 176, "Opening Manager: disabled");
 		}
 	}
 	
@@ -82,6 +82,10 @@ public class OpeningManager extends AbstractManager{
 	
 	public int getOpeningID(){
 		return openingList.getID();
+	}
+	
+	public int getOpeningType(){
+		return openingList.getType();
 	}
 
 	private void setInactive(){
@@ -158,8 +162,12 @@ public class OpeningManager extends AbstractManager{
 		else{
 			openingID = findSuitableOpeningID(playersKB);
 		}
-		
+		//TODO: for @Miso Certicky - uncomment next line for selecting only opening with WallIn
+		openingID = 5;
 		openingList = getOpeningListByID(openingID);
+		if (openingList.containWallIn()){
+			
+		}
 		//game.printText("Bol zvoleny opening: " + openingList.getName());
 	}	
 	
@@ -286,13 +294,13 @@ public class OpeningManager extends AbstractManager{
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.SCOUTING_ACTION, -1));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.SCOUTING_ACTION));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
-		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.SCOUTING_ACTION, -1));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.SCOUTING_ACTION));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
@@ -321,7 +329,7 @@ public class OpeningManager extends AbstractManager{
 		//TODO mal by mat dve obmedzenia 10 supply a 200 minerals...
 		ol.add(new OpeningTask(OpeningTask.MINERALS_CONSTRAINT, 200, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
-		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.SCOUTING_ACTION, -1));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.SCOUTING_ACTION));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
@@ -333,6 +341,22 @@ public class OpeningManager extends AbstractManager{
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 20, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
 		aol.add(ol);
 		
+		
+		ol = new OpeningList(5, "Fast Expand Forge Walling", Race.ZERG.ordinal(), OpeningList.FAST_EXPAND_TYPE);
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.SCOUTING_ACTION));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Forge.ordinal(), OpeningTask.WALL_IN));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Photon_Cannon.ordinal(), OpeningTask.WALL_IN));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Photon_Cannon.ordinal(), OpeningTask.WALL_IN));
+		ol.add(new OpeningTask(OpeningTask.MINERALS_CONSTRAINT, 400, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Nexus.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal(), OpeningTask.WALL_IN));
+		aol.add(ol);
 		/*
 		ol = new OpeningList("10/11 Gateway", Race.ZERG.ordinal());
 		aol.add(ol);
@@ -344,7 +368,7 @@ public class OpeningManager extends AbstractManager{
 		/////////////////////////////////////////////////////
 		//             OPENINGS AGAINST TERRAN             //
 		/////////////////////////////////////////////////////
-		ol = new OpeningList(3, "14 Nexus", Race.TERRAN.ordinal());
+		ol = new OpeningList(3, "14 Nexus", Race.TERRAN.ordinal(), OpeningList.FAST_EXPAND_TYPE);
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
@@ -356,7 +380,7 @@ public class OpeningManager extends AbstractManager{
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 12, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Nexus.ordinal()));
-		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.SCOUTING_ACTION, -1));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.SCOUTING_ACTION));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 13, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 14, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 14, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
@@ -395,7 +419,7 @@ public class OpeningManager extends AbstractManager{
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
-		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.SCOUTING_ACTION, -1));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.SCOUTING_ACTION));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 11, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
@@ -424,33 +448,53 @@ class OpeningTask {
 	
 	public static final int PRODUCING_ACTION = 0;
 	public static final int SCOUTING_ACTION = 1;
+	public static final boolean WALL_IN = true;
 	
 	public int constraintType;
 	public int constraint;
 	public int action;
 	public int unitTypeID;
+	public boolean wallIn;
 	
-	public OpeningTask(int constraintType, int constraint, int action, int unitTypeID){
+	public OpeningTask(int constraintType, int constraint, int action, int unitTypeID, boolean wallIn){
 		this.constraintType = constraintType;
 		this.constraint = constraint;
 		this.action = action;
 		this.unitTypeID = unitTypeID;
+		this.wallIn = wallIn;
+	}
+	
+	public OpeningTask(int constraintType, int constraint, int action, int unitTypeID){
+		this(constraintType, constraint, action, unitTypeID, false);
+	}
+	
+	public OpeningTask(int constraintType, int constraint, int action){
+		this(constraintType, constraint, action, -1, false);
 	}
 }
 
 class OpeningList{
+	public static final int NORMAL_TYPE = 0;
+	public static final int FAST_EXPAND_TYPE = 1;
+	public static final int PROXY_TYPE = 2;
 	private ArrayList<OpeningTask> self;
 	private int iterator;
 	private int againstRace;
 	private int ID;
 	private String name;
+	private int type;
 	
-	public OpeningList(int ID, String name, int againstRace){
+	public OpeningList(int ID, String name, int againstRace, int type){
 		this.name = name;
 		this.againstRace = againstRace;
+		this.type = type;
 		this.ID = ID;
 		self = new ArrayList<OpeningTask>();
 		iterator = 0;
+	}
+	
+	public OpeningList(int ID, String name, int againstRace){
+		this(ID, name, againstRace, NORMAL_TYPE);
 	}
 	
 	public void add(OpeningTask o){
@@ -467,6 +511,25 @@ class OpeningList{
 	
 	public String getName(){
 		return name;
+	}
+	
+	public int getType(){
+		return type;
+	}
+	
+	public boolean containWallIn(){
+		for (OpeningTask ot : self) {
+			if (ot.wallIn) return true;
+		}
+		return false;
+	}
+	
+	public ArrayList<Integer> retrieveWallInBuildings(){
+		ArrayList<Integer> wallIn = new ArrayList<Integer>();
+		for (OpeningTask ot : self) {
+			if (ot.wallIn) wallIn.add(ot.unitTypeID);
+		}
+		return wallIn;
 	}
 
 	public OpeningTask getNextTask(){

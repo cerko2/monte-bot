@@ -8,7 +8,9 @@ import java.util.Random;
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.macro.Boss;
+import javabot.model.ChokePoint;
 import javabot.model.Race;
+import javabot.model.Region;
 import javabot.types.UnitType.UnitTypes;
 
 public class OpeningManager extends AbstractManager{
@@ -18,6 +20,7 @@ public class OpeningManager extends AbstractManager{
 	private boolean isActive;
 	private ArrayList<OpeningList> allOpeningLists;
 	private OpeningList openingList;
+	private boolean computedWallIn = false;
 	ArrayList<double[]> openingsChances = new ArrayList<double[]>();
 	ArrayList<String> debugOpeningsPercentageChance = new ArrayList<String>();
 	String nextTask = "";
@@ -59,6 +62,26 @@ public class OpeningManager extends AbstractManager{
 		}
 		else{
 			drawText(10, 176, "Opening Manager: disabled");
+		}
+		
+		if (openingList.containWallIn() && !computedWallIn){
+			Region home = game.getMap().getRegions().get(0);
+			ChokePoint nearestChoke = null;
+			double nearestDistance = Double.MAX_VALUE;
+			for (ChokePoint choke : home.getChokePoints()) {
+				double distance = Math.sqrt(Math.pow(choke.getCenterX() - game.getMap().getBaseLocations().get(0).getX(), 2) + Math.pow(choke.getCenterY() - game.getMap().getBaseLocations().get(0).getY(), 2));
+				if (distance < nearestDistance){
+					nearestChoke = choke;
+					nearestDistance = distance;
+				}
+			}
+			if (nearestChoke != null){
+				boss.getWallInModule().smartComputeWall(nearestChoke, home, openingList.retrieveWallInBuildings());
+				computedWallIn = true;
+			}
+			else{
+				game.printText("Nearest choke wasn't found.");
+			}
 		}
 	}
 	
@@ -163,11 +186,8 @@ public class OpeningManager extends AbstractManager{
 			openingID = findSuitableOpeningID(playersKB);
 		}
 		//TODO: for @Miso Certicky - uncomment next line for selecting only opening with WallIn
-		openingID = 5;
+		//openingID = 5;
 		openingList = getOpeningListByID(openingID);
-		if (openingList.containWallIn()){
-			
-		}
 		//game.printText("Bol zvoleny opening: " + openingList.getName());
 	}	
 	
@@ -341,7 +361,8 @@ public class OpeningManager extends AbstractManager{
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 20, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Zealot.ordinal()));
 		aol.add(ol);
 		
-		
+		//TODO: for @Miso Certicky - you can modify, clone or inspire from this opening to create other
+		//wallIn opening
 		ol = new OpeningList(5, "Fast Expand Forge Walling", Race.ZERG.ordinal(), OpeningList.FAST_EXPAND_TYPE);
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));

@@ -20,8 +20,8 @@ public class Wall {
 	private ArrayList<Point> weaknesses;
 	private ArrayList<Line2D.Double> lines;
 	
-	public Wall() {
-		this.chokePoint = null;
+	public Wall(ChokePoint choke) {
+		this.chokePoint = choke;
 		this.buildingTypeIds = new ArrayList<Integer>();
 		this.buildTiles = new ArrayList<Point>();
 		this.weaknesses = new ArrayList<>();

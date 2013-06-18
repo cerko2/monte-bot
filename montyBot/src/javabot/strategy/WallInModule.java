@@ -10,6 +10,7 @@ import com.sun.corba.se.spi.extension.ZeroPortPolicy;
 
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
+import javabot.macro.Boss;
 import javabot.model.ChokePoint;
 import javabot.model.Race;
 import javabot.model.Region;
@@ -19,15 +20,18 @@ import javabot.util.AspSolver;
 import javabot.util.Wall;
 import javabot.types.UnitType;
 
-
-
 public class WallInModule extends AbstractManager {
 	
 	// constants
 	public static final int CHOKEPOINT_RADIUS = 8;
+	public static final boolean OPTIMIZATION_ENABLED = true;	// enable optimization in our logic program (better results, but slower)
+	public static final int MAX_BUILDINGS_FOR_OPTIMIZATION = 3;	// turn off the optimization if we're dealing with more buildings than this
+	public static final int ANSWER_SETS_MAX_COUNT = 5;			// number of answer sets to compute when optimizing (higher number means bettes solutions, but slower)
 
 	private JNIBWAPI bwapi;
 	private AspSolver asp;
+	private String optimizationStatements = "";
+	private Boss boss;
 	
 	private ArrayList<Wall> walls;
 	
@@ -44,10 +48,18 @@ public class WallInModule extends AbstractManager {
 		return this.walls;
 	}
 	
-	public WallInModule(JNIBWAPI game) {
+	public WallInModule(JNIBWAPI game, Boss bossman) {
 		this.bwapi = game;
-		this.asp = new AspSolver("bwapi-data/AI/montyBot/clingo.exe","wall-in");
+		this.asp = new AspSolver("bwapi-data/AI/montyBot/clingo.exe","wall-in",ANSWER_SETS_MAX_COUNT);
 		this.walls = new ArrayList<Wall>();
+		this.boss = bossman;
+		
+		if (OPTIMIZATION_ENABLED) {
+			this.optimizationStatements = 
+					"% Optimization statements.\n" +
+					"#minimize [verticalGap(X1,Y1,X2,Y2,G) = G ].\n" +
+					"#minimize [horizontalGap(X1,Y1,X2,Y2,G) = G ].\n";
+		}
 	}
 	
 	public void gameStarted() {
@@ -92,10 +104,17 @@ public class WallInModule extends AbstractManager {
 	public void smartComputeWall(ChokePoint choke, Region insideRegion, ArrayList<Integer> buildingTypeIds, Integer unitTypeId) {
 		int size = 0;
 		while (size < buildingTypeIds.size()) {
+			// if we're working with too many buildings, turn off optimization
+			if (size > MAX_BUILDINGS_FOR_OPTIMIZATION) {
+				this.optimizationStatements = "";
+			}
+			
 			if (computeWall(choke, insideRegion, buildingTypeIds.subList(0, size) , unitTypeId)) return;
 			size++;
 		}
 		bwapi.printText("Wall at "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" couldn't be found.");
+		walls.add(new Wall(choke));
+		walls.get(walls.size()-1).setSuccessfullyFound(false);
 	}
 	public void smartComputeWall(ChokePoint choke, Region insideRegion, ArrayList<Integer> buildingTypeIds) {
 		if (bwapi.getEnemies().get(0).getRaceID() == bwapi.getUnitType(UnitTypes.Zerg_Zergling.ordinal()).getRaceID()) {
@@ -108,18 +127,24 @@ public class WallInModule extends AbstractManager {
 			// default is Worker
 			smartComputeWall(choke, insideRegion, buildingTypeIds, UnitTypes.Terran_SCV.ordinal());
 		}
-		
 	}
 	
 	private boolean computeWall(ChokePoint choke, Region insideRegion, Collection<Integer> buildingTypeIds, Integer unitTypeId) {
 		
 		for (Wall w : walls) {
 			if (w.getChokePoint() == choke) {
-				bwapi.printText("Wall for chokepoint "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" has already been computed.");
+				if (boss.WALLIN_DEBUG) bwapi.printText("Wall for chokepoint "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" has already been computed.");
 				return true;
 			}
 		}
-		bwapi.printText("Computing wall for chokepoint "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" with "+String.valueOf(buildingTypeIds.size())+" buildings.");
+
+		if (boss.WALLIN_DEBUG) {
+			String buildingStr = "";
+			for (int i : buildingTypeIds) {
+				buildingStr += bwapi.getUnitType(i).getName().substring(bwapi.getUnitType(i).getName().indexOf(" ")+1)+" ";
+			}
+			bwapi.javaPrint("Computing wall for chokepoint "+String.valueOf(choke.getCenterX())+","+String.valueOf(choke.getCenterY())+" at "+bwapi.getMap().getName()+".\n["+buildingStr+"].");
+		}
 		
 		Region outsideRegion;
 		if (choke.getFirstRegion().getID() == insideRegion.getID()) {
@@ -196,7 +221,7 @@ public class WallInModule extends AbstractManager {
 		"width(forgeType,3). height(forgeType,2).		leftSpace(forgeType,12). rightSpace(forgeType,11). topSpace(forgeType,8). bottomSpace(forgeType,11).\n" +
 		"width(pylonType,2). height(pylonType,2).		leftSpace(pylonType,16). rightSpace(pylonType,15). topSpace(pylonType,20). bottomSpace(pylonType,11).\n" +
 		"width(cannonType,2). height(cannonType,2).		leftSpace(cannonType,12). rightSpace(cannonType,11). topSpace(cannonType,16). bottomSpace(cannonType,15).\n" +
-		"width(zealotsType,1). height(zealotsType,1).	leftSpace(zealotsType,-5). rightSpace(zealotsType,-5). topSpace(zealotsType,-5). bottomSpace(zealotsType,-5).\n" +
+		"width(zealotsType,1). height(zealotsType,1).	leftSpace(zealotsType,-5). rightSpace(zealotsType,0). topSpace(zealotsType,0). bottomSpace(zealotsType,-5).\n" +
 		
 		"% Specify what building instances to build.\n" +
 		"building(zealots).\n" +
@@ -292,11 +317,11 @@ public class WallInModule extends AbstractManager {
 		dynamicLP += "outsideBase("+String.valueOf(outsideX)+","+String.valueOf(outsideY)+").\n";
 		
 		// call ASP solver
-		ArrayList<String> model = asp.solve(staticLP+"\n"+dynamicLP);
+		ArrayList<String> model = asp.solve(staticLP+"\n"+dynamicLP+"\n"+optimizationStatements);
 
 		// add this new wall to our array
 		if (!model.isEmpty()) {
-			walls.add(new Wall());
+			walls.add(new Wall(choke));
 			int newId = walls.size()-1;
 			for (String s : model) {
 				String[] pars = s.substring(s.indexOf("(")+1).substring(0,s.substring(s.indexOf("(")+1).indexOf(")")).toLowerCase().split(",");
@@ -315,12 +340,14 @@ public class WallInModule extends AbstractManager {
 			}
 			// correct the wall (remove isolated buildings)
 			walls.get(newId).correct(CHOKEPOINT_RADIUS, bwapi);
-			// and find the weak spots of the wall
+			// find the weak spots of the wall
 			walls.get(newId).findWeaknesses(bwapi,criticalGapSize);
+			// and declare it successfully found
+			walls.get(walls.size()-1).setSuccessfullyFound(false);
 			return true;
 		} else {
-			walls.add(new Wall());
-			walls.get(walls.size()-1).setSuccessfullyFound(false);
+			//walls.add(new Wall(choke));
+			//walls.get(walls.size()-1).setSuccessfullyFound(false);
 			return false;
 		}
 		

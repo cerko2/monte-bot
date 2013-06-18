@@ -1,5 +1,6 @@
 package javabot.strategy;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -9,9 +10,13 @@ import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.macro.Boss;
 import javabot.model.ChokePoint;
+import javabot.model.Map;
 import javabot.model.Race;
 import javabot.model.Region;
+import javabot.model.Unit;
 import javabot.types.UnitType.UnitTypes;
+import javabot.util.NaturalBase;
+import javabot.util.RegionUtils;
 
 public class OpeningManager extends AbstractManager{
 	private boolean debug = true;
@@ -24,7 +29,11 @@ public class OpeningManager extends AbstractManager{
 	ArrayList<double[]> openingsChances = new ArrayList<double[]>();
 	ArrayList<String> debugOpeningsPercentageChance = new ArrayList<String>();
 	String nextTask = "";
-	
+
+
+	// main base region
+	private Region home; 
+
 	public OpeningManager(Boss boss){
 		this.boss = boss;
 		this.game = boss.game;
@@ -64,25 +73,25 @@ public class OpeningManager extends AbstractManager{
 			drawText(10, 176, "Opening Manager: disabled");
 		}
 		
-		if (openingList.containWallIn() && !computedWallIn){
-			Region home = game.getMap().getRegions().get(0);
-			ChokePoint nearestChoke = null;
-			double nearestDistance = Double.MAX_VALUE;
-			for (ChokePoint choke : home.getChokePoints()) {
-				double distance = Math.sqrt(Math.pow(choke.getCenterX() - game.getMap().getBaseLocations().get(0).getX(), 2) + Math.pow(choke.getCenterY() - game.getMap().getBaseLocations().get(0).getY(), 2));
-				if (distance < nearestDistance){
-					nearestChoke = choke;
-					nearestDistance = distance;
+		// set the location of main and natural base 
+		if (game.getFrameCount() == 1) {
+			Unit homeNexus = game.getMyUnits().get(0);
+			for (Unit u : game.getMyUnits()) {
+				if (u.getTypeID() == UnitTypes.Protoss_Nexus.ordinal()) {
+					homeNexus = u;
+					break;
 				}
 			}
-			if (nearestChoke != null){
-				boss.getWallInModule().smartComputeWall(nearestChoke, home, openingList.retrieveWallInBuildings());
+			this.home = RegionUtils.getRegion(game.getMap(), new Point(homeNexus.getX(),homeNexus.getY()));
+
+			// ... and compute wall-in if necessary
+			if (openingList.containWallIn() && !computedWallIn){
+				NaturalBase nat = RegionUtils.getNaturalChoke(game, home);
+				if (nat != null) boss.getWallInModule().smartComputeWall(nat.chokepoint, nat.region, openingList.retrieveWallInBuildings());
 				computedWallIn = true;
 			}
-			else{
-				game.printText("Nearest choke wasn't found.");
-			}
 		}
+		
 	}
 	
 	public void unitCreate(int unitID){
@@ -185,8 +194,8 @@ public class OpeningManager extends AbstractManager{
 		else{
 			openingID = findSuitableOpeningID(playersKB);
 		}
-		//TODO: for @Miso Certicky - uncomment next line for selecting only opening with WallIn
-		//openingID = 5;
+		//DEBUG: If WALLIN debug in ON, always choose opening number 5
+		if (boss.WALLIN_DEBUG) openingID = 5;
 		openingList = getOpeningListByID(openingID);
 		//game.printText("Bol zvoleny opening: " + openingList.getName());
 	}	
@@ -368,7 +377,7 @@ public class OpeningManager extends AbstractManager{
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
-		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal(), OpeningTask.WALL_IN));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.SCOUTING_ACTION));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));

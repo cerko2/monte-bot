@@ -100,7 +100,7 @@ public class ArmyCompositionManager extends AbstractManager {
 			
 			// now, add units that he probably will have in a few minutes
 			for (int i : opponentModellingManager.getPredictedUnits()){
-				bwapi.printText(String.valueOf(i));
+				//bwapi.printText(String.valueOf(i));
 				rel.add(i);
 			}
 			

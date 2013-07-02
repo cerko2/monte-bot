@@ -1,6 +1,8 @@
 package javabot.macro;
 
+import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,24 +26,29 @@ import javabot.strategy.WallInModule;
 import javabot.types.UnitType;
 import javabot.types.UnitType.UnitTypes;
 import javabot.util.BWColor;
+import javabot.util.NaturalBase;
 import javabot.util.Position;
+import javabot.util.RegionUtils;
 import javabot.util.Wall;
 
 public class Boss extends AbstractManager{
 	
 	public static final boolean BOSS_DEBUG = true;
-	public static final boolean WALLIN_DEBUG = false;
-	public static final boolean OPPONENT_POSITIONING_DEBUG = false;
-	public static final boolean RESOURCE_DEBUG = false;
-	public static final boolean MONTE_CARLO_DEBUG = true;
+	public static final boolean WALLIN_DEBUG = true;
+	public static final boolean OPPONENT_POSITIONING_DEBUG = true;
+	public static final boolean RESOURCE_DEBUG = true;
+	public static final boolean OPPONENT_MODELLING_DEBUG = false;
 	
 	//REALLY SLOW
 	public static final boolean PATH_DEBUG = false;
 	
-	private Region home; // Needed only for DEBUGGING (miso certikcy)
-	
 	public JNIBWAPI game;
 	private Player player;
+	
+	// some debug shit
+	public Region naturalReg = null;
+	public ChokePoint naturalChoke = null;
+	Region home = null;
 	
 	private final int workerDefenseTreshold = 3;
 	
@@ -84,10 +91,10 @@ public class Boss extends AbstractManager{
 	public Boss (JNIBWAPI game){
 		this.game = game;
 		this.player = game.getSelf();
-		
 	}
 	
 	public void initialize(){
+		
 		validUnits = new ArrayList<Unit>();
 		combatUnits = new ArrayList<Unit>();
 		scoutUnits = new HashSet<Unit>();
@@ -101,26 +108,27 @@ public class Boss extends AbstractManager{
 		
 		//subordinate initialization
 		buildManager = new  BuildManager(this);
+		montePlanner = new MonteCarloPlanner();
 		opponentKnowledgeBase = new OpponentKnowledgeBase(this);
 		openingManager = new OpeningManager(this);
 		opponentPositioning = new OpponentPositioning(game);
 		scoutManager = new ScoutingManager(game);
-		wallInModule = new WallInModule(game);
+		wallInModule = new WallInModule(game, this);
 		workerManager = new WorkerManager(this);
 		unitProductionManager = new UnitProductionManager(this); 
 		
-		opponentModeling = new OpponentModeling(game, opponentPositioning);
+		opponentModeling = new OpponentModeling(game, opponentPositioning, this);
 		armyCompositionManager = new ArmyCompositionManager(game, unitProductionManager, opponentPositioning, opponentModeling);
-		montePlanner = new MonteCarloPlanner( game );
+		
 		addManager(opponentKnowledgeBase);
 		addManager(openingManager);
 		addManager(opponentPositioning);
-		addManager(wallInModule);			// miso certicky
-		addManager(buildManager);			// azder
-		addManager(unitProductionManager);	// azder
+		addManager(opponentModeling);		
+		addManager(wallInModule);			
+		addManager(buildManager);			
+		addManager(unitProductionManager);	
 		addManager(armyCompositionManager);
 		addManager(scoutManager);
-		addManager( montePlanner );
 	}
 	
 	public void gameStarted(){
@@ -131,15 +139,13 @@ public class Boss extends AbstractManager{
 	
 	public void gameUpdate(){
 		setUnits();
-		
-		montePlanner.update( new ArrayList<Unit>( opponentPositioning.getEnemyUnits() ) , game.getMyUnits() );
-		
+		montePlanner.update(combatUnits);
 		workerManager.update(workerUnits);
 		
 		minerals = player.getMinerals();
 		gas = player.getGas();
 		
-		if (!BOSS_DEBUG){
+		if (BOSS_DEBUG){
 			debug();
 		}
 		
@@ -445,7 +451,7 @@ public class Boss extends AbstractManager{
 	public OpponentKnowledgeBase getOpponentKnowledgeBase() {
 		return opponentKnowledgeBase;
 	}
-
+	
 	public ScoutingManager getScoutManager() {
 		return scoutManager;
 	}
@@ -469,44 +475,33 @@ public class Boss extends AbstractManager{
 	private void debug(){
 		
 		if (WALLIN_DEBUG){
-			// START DEBUG: Compute the wall on frame 1 (miso certicky)
+			// BEGIN WALL-IN DEBUG
+			// compute natural expand and its chokepoint for drawing
 			if (game.getFrameCount() == 1) {
-				home = game.getMap().getRegions().get(0);
 
 				Unit homeNexus = game.getMyUnits().get(0);
-				int dist = 999999;
-				int dist2;
 				for (Unit u : game.getMyUnits()) {
 					if (u.getTypeID() == UnitTypes.Protoss_Nexus.ordinal()) {
 						homeNexus = u;
 						break;
 					}
 				}
-				for (Region r : game.getMap().getRegions()) {
-					dist2 = Math.abs(r.getCenterX()-homeNexus.getX()) + Math.abs(r.getCenterY()-homeNexus.getY()); 
-					if (dist2 < dist) {
-						dist = dist2;
-						home = r;
-					}
+				home = RegionUtils.getRegion(game.getMap(), new Point(homeNexus.getX(),homeNexus.getY()));
+				NaturalBase nat = RegionUtils.getNaturalChoke(game, home);
+				if (nat != null) {
+					naturalReg = nat.region;
+					naturalChoke = nat.chokepoint;
 				}
-
-				for (ChokePoint c : home.getChokePoints()) {
-					wallInModule.computeWall( c, home, UnitTypes.Zerg_Zergling.ordinal());
-				}
+				
 			}
-			// END DEBUG
-
-			// Draw our home position and chokes
-			if (home != null) {
-				game.drawText(new Point(5,0), "Army Composition: "+String.valueOf(armyCompositionManager.getDesiredArmyComposition().getString(game)), true);
-				game.drawText(new Point(5,287), game.getMap().getName(), true);
-
-				// chokepoints and center of the home Region
-				game.drawCircle(home.getCenterX(), home.getCenterY(), 15, BWColor.TEAL, true, false);
-				for (ChokePoint c : home.getChokePoints()) {
-					game.drawLine(new Point(home.getCenterX() , home.getCenterY() ), new Point(c.getCenterX(),c.getCenterY()),BWColor.TEAL,false);
-					game.drawCircle(c.getCenterX(),c.getCenterY(), 10, BWColor.TEAL, true, false);
-				}
+			if (naturalReg != null && naturalChoke != null && home != null) {
+				game.drawLine(new Point(naturalReg.getCenterX() , naturalReg.getCenterY() ), new Point(home.getCenterX(),home.getCenterY()),BWColor.TEAL,false);
+				game.drawCircle(home.getCenterX(),home.getCenterY(), 10, BWColor.TEAL, true, false);
+				game.drawLine(new Point(naturalReg.getCenterX() , naturalReg.getCenterY() ), new Point(naturalChoke.getCenterX(),naturalChoke.getCenterY()),BWColor.TEAL,false);
+				game.drawCircle(naturalReg.getCenterX(),naturalReg.getCenterY(), 10, BWColor.TEAL, true, false);
+				game.drawText(naturalReg.getCenterX(),naturalReg.getCenterY(), String.valueOf(naturalReg.getCenterX())+","+String.valueOf(naturalReg.getCenterY()), false);
+				game.drawCircle(naturalChoke.getCenterX(),naturalChoke.getCenterY(), 10, BWColor.YELLOW, true, false);
+				game.drawText(naturalChoke.getCenterX(),naturalChoke.getCenterY(), String.valueOf(naturalChoke.getCenterX())+","+String.valueOf(naturalChoke.getCenterY()), false);
 			}
 				
 			// Draw all previously computed walls
@@ -515,9 +510,14 @@ public class Boss extends AbstractManager{
 					int tileWidth = game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileWidth();
 					int tileHeight = game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getTileHeight();
 					game.drawBox(bt.x*32, bt.y*32, (bt.x + tileWidth)*32, (bt.y + tileHeight)*32, BWColor.YELLOW, false, false);
-					game.drawText(new Point(bt.x*32+4, bt.y*32+2), game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getName()+" "+String.valueOf(bt.x)+","+String.valueOf(bt.y), false);
+					game.drawText(new Point(bt.x*32+4, bt.y*32+2), game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getName().substring(game.getUnitType(w.getBuildingTypeIds().get(w.getBuildTiles().indexOf(bt))).getName().indexOf(" ")+1)  +" "+String.valueOf(bt.x)+","+String.valueOf(bt.y), false);
+				}
+				for (Point weakness : w.getWeaknesses()) {
+					game.drawCircle(weakness.x, weakness.y, 5, BWColor.RED, true, false);
 				}
 			}
+
+		// END WALL-IN DEBUG
 		}
 		
 		if (OPPONENT_POSITIONING_DEBUG){
@@ -560,9 +560,5 @@ public class Boss extends AbstractManager{
 			
 			System.out.println(game.getGroundDistance(base1.getTx(), base1.getTy(), base2.getTx(), base2.getTy()));
 		}
-	}
-	
-	public ArrayList<Unit> getNexuses() {
-		return nexuses;
 	}
 }

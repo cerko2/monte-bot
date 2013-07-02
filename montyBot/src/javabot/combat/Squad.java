@@ -243,6 +243,8 @@ public class Squad {
 	}
 	
 	/**
+	 * 
+	 * Moves the simulator region to the region in parameter
 	 * Apply to nearby regions only
 	 * return how much time it took time ( in frames )
 	 */

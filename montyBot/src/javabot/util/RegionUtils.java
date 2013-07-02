@@ -24,7 +24,70 @@ import javabot.types.WeaponType;
 public class RegionUtils {
 	
 	public static Region getRegion(Map map, Unit unit){
+		if ( unit == null ) return null;
 		return getRegion(map, new Point(unit.getX(), unit.getY()));
+	}
+	
+	public static double airPathToRegion( Region from, Region to )
+	{
+		return UnitUtils.getDistance(from.getCenterX(), from.getCenterY(), to.getCenterX(), to.getCenterY());
+	}
+	
+	/**
+	 * Between 2 neighbouring regions
+	 * @param from
+	 * @param to
+	 * @param map
+	 * @return
+	 */
+	public static double groundPathToRegion( Region from, Region to, Map map )
+	{
+		ChokePoint connection = null;
+		
+		for ( ChokePoint r : from.getChokePoints() )
+		{
+			if ( connection != null )
+				break;
+			for ( ChokePoint t : to.getChokePoints() )
+			{
+				if ( ( r.getCenterX() == t.getCenterX() ) && ( r.getCenterY() == t.getCenterY() ) )
+				{
+					connection = t;
+					break;
+				}
+			}
+		}
+		
+		if ( connection == null )
+		{	
+			System.out.println( "Region Utils: neexistuje spolocny chokepoint" );
+			return -1;
+		}
+		
+		return UnitUtils.getDistance( connection.getCenterX(), connection.getCenterY(), from.getCenterX(), from.getCenterY()) +
+			   UnitUtils.getDistance( connection.getCenterX(), connection.getCenterY(), to.getCenterX(), to.getCenterY());
+	}
+	
+	public static Region findNearestRegion( Map map, Unit u )
+	{
+		double distance = 100000000.00;
+		
+		if ( u == null )
+		{
+			return map.getRegions().get( 0 );
+		}
+		
+		Region nearestRegion = null;
+		
+		for ( Region r : map.getRegions() )
+		{
+			if ( UnitUtils.getDistance( r.getCenterX(), r.getCenterY(), u.getX(), u.getY() ) < distance )
+			{
+				distance 	  = UnitUtils.getDistance( r.getCenterX(), r.getCenterY(), u.getX(), u.getY() );
+				nearestRegion = r;
+			}
+		}
+		return nearestRegion;
 	}
 	
 	public static Region getRegion(Map map, Point point){
@@ -149,6 +212,53 @@ public class RegionUtils {
 			if (UnitUtils.getDistance(u.getX(), u.getY(), choke.getCenterX(), choke.getCenterY()) <= choke.getRadius() ) return true;
 		}
 		return false;
+	}
+	
+	public static ArrayList<Region> getConnectedRegions( Map map, Region region )
+	{
+		ArrayList<Region> result = new ArrayList<Region>();
+		for ( Region r : map.getRegions() )
+		{
+			if ( UnitUtils.getDistance( r.getCenterX(), r.getCenterY(), region.getCenterX(), region.getCenterY() ) < 800 )
+			{
+				result.add(r);
+			}
+		}
+		return result;
+	}
+	
+	public static Region getRegion( Map map, int regionId ) 
+	{
+		for ( Region r : map.getRegions() )
+		{
+			if ( r.getID() == regionId )
+			{
+				return r;
+			}
+		}
+		return null;
+	}
+
+	public static ArrayList<Region> getGroundConnectedRegions( Region region, JNIBWAPI bwapi ) 
+	{
+		ArrayList<Region> result = new ArrayList<Region>();
+		
+		for ( Region r : region.getConnectedRegions() )
+		{
+			for ( ChokePoint c : r.getChokePoints() )
+			{
+				if ( ( c.getFirstRegionID()  == region.getID() ) || 
+				     ( c.getSecondRegionID() == region.getID() ) 
+				   )
+				{
+					if ( !chokeObstructedByNeutral( bwapi, c ) )
+					{
+						result.add( r );
+					}
+				}
+			}
+		}
+		return result;
 	}
 	
 }

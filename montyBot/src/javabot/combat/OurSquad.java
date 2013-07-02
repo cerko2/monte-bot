@@ -1,21 +1,19 @@
 package javabot.combat;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javabot.JNIBWAPI;
 import javabot.model.Region;
 import javabot.model.Unit;
 import javabot.util.RegionUtils;
+import javabot.util.UnitUtils;
 
 public class OurSquad extends Squad 
 {
 	
-	public ArrayList<Action> plan = new ArrayList<Action>(); 
+	public CopyOnWriteArrayList<Action> plan = new CopyOnWriteArrayList<Action>(); 
 	
 	ArrayList<Base> enemyBases;
 	ArrayList<Base> ourBases;
@@ -84,30 +82,39 @@ public class OurSquad extends Squad
 	public void setSimulatorCollections (
 			ArrayList<Base> enemyBases, 
 			ArrayList<Base> ourBases, 
-			HashMap<Integer, EnemySquad> enemySquads, 
+			HashMap<Integer, EnemySquad> enemySquads2, 
 			TreeMap<Integer, OurSquad> ourSquads 
 		)
 	{
 		this.enemyBases  = enemyBases;
 		this.ourBases    = ourBases;
-		this.enemySquads = enemySquads;
+		this.enemySquads = enemySquads2;
 		this.ourSquads   = ourSquads;
 	}
 	
-	private Double evaluateRegion( Region r ) 
+	private synchronized Double evaluateRegion( Region r ) 
 	{
 		ArrayList<Double> values = new ArrayList<Double>();
 		
 		double result = 0.0;
 		
-		for ( Base b : enemyBases )
+		try 
 		{
-			values.add( RegionUtils.airPathToRegion( simulatorRegion, b.getRegion() ) * ENEMY_BASE_ATTRACTION );
-		}
 		
-		for ( Base b : ourBases )
+			for ( Base b : enemyBases )
+			{
+				values.add( RegionUtils.airPathToRegion( r, b.getRegion() ) * ENEMY_BASE_ATTRACTION );
+			}
+	
+			for ( Base b : ourBases )
+			{
+				values.add( RegionUtils.airPathToRegion( r, b.getRegion() ) * OUR_BASE_ATTRACTION );
+			}
+			
+		}
+		catch ( ConcurrentModificationException e )
 		{
-			values.add( RegionUtils.airPathToRegion( simulatorRegion, b.getRegion() ) * OUR_BASE_ATTRACTION );
+			System.err.append( "Concurrent modification Base b : ourBases exception" );
 		}
 		
 		for ( Map.Entry<Integer, EnemySquad> e_squad : enemySquads.entrySet() )
@@ -120,7 +127,7 @@ public class OurSquad extends Squad
 				modifier = OPPOSITE_SQUAD_ATTRACTION;
 			}
 			
-			values.add( RegionUtils.airPathToRegion( simulatorRegion, e_squad.getValue().getRegion( true ) ) * modifier );
+			values.add( RegionUtils.airPathToRegion( r, e_squad.getValue().getRegion( true ) ) * modifier );
 		}
 		
 		for ( Map.Entry<Integer, OurSquad> entry : ourSquads.entrySet() )
@@ -131,7 +138,7 @@ public class OurSquad extends Squad
 				modifier = 0.0;
 			}
 			
-			values.add( RegionUtils.airPathToRegion( simulatorRegion, entry.getValue().getRegion( true ) ) * modifier );
+			values.add( RegionUtils.airPathToRegion( r, entry.getValue().getRegion( true ) ) * modifier );
 		}
 		
 		for ( Double d : values )
@@ -211,9 +218,32 @@ public class OurSquad extends Squad
 		
 	}
 	
-	public void followPlan( ArrayList<Action> actions )
+	public boolean enemyIsNearSquad()
 	{
-		if ( actions == null || actions.isEmpty() )
+		
+		for ( Unit u : squadUnits )
+		{
+			if ( u.isUnderAttack() )
+			{
+				return true;
+			}
+			
+			for ( Unit e : bwapi.getEnemyUnits() )
+			{
+				if ( UnitUtils.getDistance( u, e ) < 400 )
+				{
+					return true;
+				}
+			}
+			
+		}
+		
+		return false;
+	}
+	
+	public void followPlan( CopyOnWriteArrayList<Action> plan2 )
+	{
+		if ( plan2 == null || plan2.isEmpty() )
 		{
 			return;
 		}
@@ -228,28 +258,28 @@ public class OurSquad extends Squad
 		
 		for ( Unit u : squadUnits )
 		{
-			bwapi.attack( u.getID() , actions.get(0).getRegion().getCenterX(), actions.get(0).getRegion().getCenterY() );
+			bwapi.attack( u.getID() , plan2.get(0).getRegion().getCenterX(), plan2.get(0).getRegion().getCenterY() );
 		}
 		
-		if ( actions.isEmpty() ) return;
+		if ( plan2.isEmpty() ) return;
 		
-		if ( actions.get(0).getRegion().getID() == getRegion( true ).getID() )
+		if ( plan2.get(0).getRegion().getID() == getRegion( true ).getID() )
 		{
-			actions.remove(0);
+			plan2.remove(0);
 		}
 		
-		if ( actions.isEmpty() ) return;
+		if ( plan2.isEmpty() ) return;
 		
-		if ( actions.get(0).getRegion().getID() == getRegion( true ).getID() )
+		if ( plan2.get(0).getRegion().getID() == getRegion( true ).getID() )
 		{
 			doNotMoveTill = bwapi.getFrameCount() + 120;
 		}
 		
 	}
 	
-	public ArrayList<Action> generatePlan()
+	public CopyOnWriteArrayList<Action> generatePlan()
 	{
-		plan = new ArrayList<Action>();
+		plan = new CopyOnWriteArrayList<Action>();
 		
 		simulatorRegion = RegionUtils.getRegion( bwapi.getMap(), leader );
 		
@@ -271,6 +301,11 @@ public class OurSquad extends Squad
 		HashMap<Integer, Double> connectedRegions = evaluateNearbyRegions();
 
 		double chance = 0.0;
+		
+		if ( connectedRegions == null )
+		{
+			return null;
+		}
 		
 		for ( Map.Entry<Integer, Double> entry : connectedRegions.entrySet() )
 		{

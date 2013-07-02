@@ -1,10 +1,11 @@
 package javabot.combat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.ConcurrentModificationException;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.HashMap;
 
 import javabot.JNIBWAPI;
 import javabot.model.Region;
@@ -21,7 +22,7 @@ public class EnemySquad extends Squad {
 	int ellapsedTime;
 	ArrayList<Base> enemyBases;
 	ArrayList<Base> ourBases;
-	HashMap<Integer, EnemySquad> enemySquads;
+	HashMap <Integer, EnemySquad> enemySquads;
 	TreeMap<Integer, OurSquad> ourSquads;
 	
 	public EnemySquad( JNIBWAPI bwapi ) 
@@ -32,7 +33,7 @@ public class EnemySquad extends Squad {
 	public void setSimulatorCollections (
 			ArrayList<Base> enemyBases, 
 			ArrayList<Base> ourBases, 
-			HashMap<Integer, EnemySquad> enemySquads, 
+			HashMap <Integer, EnemySquad> enemySquads, 
 			TreeMap<Integer, OurSquad> ourSquads 
 		)
 	{
@@ -42,22 +43,25 @@ public class EnemySquad extends Squad {
 		this.ourSquads   = ourSquads;
 	}
 	
-	private Double evaluateRegion( Region r ) 
+	private synchronized Double evaluateRegion( Region r ) 
 	{
 		ArrayList<Double> values = new ArrayList<Double>();
 		
 		double result = 0.0;
 		
-		for ( Base b : enemyBases )
+		try 
 		{
-			values.add( RegionUtils.airPathToRegion( simulatorRegion, b.getRegion() ) * ENEMY_BASE_ATTRACTION );
-		}
-		
-		for ( Base b : ourBases )
-		{
-			values.add( RegionUtils.airPathToRegion( simulatorRegion, b.getRegion() ) * OUR_BASE_ATTRACTION );
-		}
-		
+			
+			for ( Base b : enemyBases )
+			{
+				values.add( RegionUtils.airPathToRegion( simulatorRegion, b.getRegion() ) * ENEMY_BASE_ATTRACTION );
+			}
+			
+			for ( Base b : ourBases )
+			{
+				values.add( RegionUtils.airPathToRegion( simulatorRegion, b.getRegion() ) * OUR_BASE_ATTRACTION );
+			}
+			
 		for ( Map.Entry<Integer, EnemySquad> e_squad : enemySquads.entrySet() )
 		{
 			
@@ -76,6 +80,13 @@ public class EnemySquad extends Squad {
 			result += d;
 		}
 		
+		}
+		
+		catch ( ConcurrentModificationException e )
+		{
+			System.err.append( "Concurrent modification error enemy squad" );
+		}
+		
 		return result;
 	}
 	
@@ -88,7 +99,7 @@ public class EnemySquad extends Squad {
 		}
 		else
 		{
-			connectedRegions = simulatorRegion.getConnectedRegions();
+			connectedRegions = RegionUtils.getGroundConnectedRegions( simulatorRegion, bwapi );
 		}
 		
 		HashMap<Integer, Double> regions = new HashMap<Integer, Double>();
@@ -181,6 +192,7 @@ public class EnemySquad extends Squad {
 		
 		while ( ( result == null ) && ( counter < 50 ) )
 		{
+			if ( chance < 1 ) chance = 1;
 			int percentage = rand.nextInt( (int) chance );
 			
 			int minOK = 0;

@@ -108,7 +108,7 @@ public class Boss extends AbstractManager{
 		
 		//subordinate initialization
 		buildManager = new  BuildManager(this);
-		montePlanner = new MonteCarloPlanner();
+		montePlanner = new MonteCarloPlanner( game );
 		opponentKnowledgeBase = new OpponentKnowledgeBase(this);
 		openingManager = new OpeningManager(this);
 		opponentPositioning = new OpponentPositioning(game);
@@ -139,7 +139,7 @@ public class Boss extends AbstractManager{
 	
 	public void gameUpdate(){
 		setUnits();
-		montePlanner.update(combatUnits);
+		montePlanner.update( new ArrayList<Unit>( opponentPositioning.getEnemyUnits() ) , game.getMyUnits() );
 		workerManager.update(workerUnits);
 		
 		minerals = player.getMinerals();
@@ -331,6 +331,7 @@ public class Boss extends AbstractManager{
 	}
 	
 	private void divideResources(){
+	if ( openingManager == null ) return;
 		buildManagerMinerals = 0;
 		buildManagerGas = 0;
 		unitProductionMinerals = 0;

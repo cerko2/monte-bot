@@ -372,7 +372,7 @@ public class OpeningManager extends AbstractManager{
 		
 		//TODO: for @Miso Certicky - you can modify, clone or inspire from this opening to create other
 		//wallIn opening
-		ol = new OpeningList(5, "Fast Expand Forge Walling", Race.ZERG.ordinal(), OpeningList.FAST_EXPAND_TYPE);
+		ol = new OpeningList(6, "Fast Expand Forge Walling", Race.ZERG.ordinal(), OpeningList.FAST_EXPAND_TYPE);
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
@@ -387,6 +387,26 @@ public class OpeningManager extends AbstractManager{
 		ol.add(new OpeningTask(OpeningTask.MINERALS_CONSTRAINT, 400, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Nexus.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal(), OpeningTask.WALL_IN));
 		aol.add(ol);
+		
+		//for Igor Lacik
+		ol = new OpeningList(5, "Lots of zealots", Race.ZERG.ordinal(), OpeningList.FAST_EXPAND_TYPE);
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 4, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 5, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 6, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 7, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal(), OpeningTask.WALL_IN));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.SCOUTING_ACTION));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 8, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 9, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Probe.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal(), OpeningTask.WALL_IN));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal(), OpeningTask.WALL_IN));
+		ol.add(new OpeningTask(OpeningTask.MINERALS_CONSTRAINT, 100, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.MINERALS_CONSTRAINT, 100, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.MINERALS_CONSTRAINT, 100, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.MINERALS_CONSTRAINT, 100, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Pylon.ordinal()));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal(), OpeningTask.WALL_IN));
+		aol.add(ol);
+		
 		/*
 		ol = new OpeningList("10/11 Gateway", Race.ZERG.ordinal());
 		aol.add(ol);

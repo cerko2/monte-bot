@@ -17,6 +17,7 @@ import javabot.JNIBWAPI;
 import javabot.model.Unit;
 import javabot.util.BWColor;
 import javabot.util.RegionUtils;
+import javabot.util.UnitUtils;
 
 public class MonteCarloPlanner extends AbstractManager implements Runnable
 {
@@ -89,7 +90,7 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 	public void update( ArrayList<Unit> enemyUnits, ArrayList<Unit> myUnits ) 
 	{
 		
-		if ( bwapi.getFrameCount() % ( 24*10 ) == 0 )
+		if ( bwapi.getFrameCount() % ( 24*20 ) == 0 )
 		{
 			fightingSquads.clear();
 			this.enemyUnits = enemyUnits;
@@ -115,8 +116,11 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 		{
 			if ( entry.getValue().enemyIsNearSquad() )
 			{
-				fightingSquads.add( entry.getValue() );
-				
+				if ( !fightingSquads.contains( entry.getValue() ) )
+					fightingSquads.add( entry.getValue() );
+				System.out.println( fightingSquads.size() );
+				if ( bwapi.getFrameCount() % ( 24 ) == 0 )
+					battle();
 			}
 			else
 			{
@@ -354,6 +358,36 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private void battle()
+	{
+		for ( OurSquad ourSquad : fightingSquads )
+		{
+			for ( Unit u : ourSquad.getSquadUnits() )
+			{
+				if ( !u.isExists() ) continue;
+				Unit enemy = FindNearesEnemy( u );
+				bwapi.attack( u.getID(), enemy.getID() );
+			}
+		}
+	}
+	
+	private Unit FindNearesEnemy( Unit u )
+	{
+		Unit nearestEnemy = null;
+		
+		int nearestDist = 1111111;
+		for ( Unit e : bwapi.getEnemyUnits() )
+		{
+			if ( UnitUtils.getDistance( u, e ) < nearestDist )
+			{
+				nearestDist = UnitUtils.getDistance( u, e );
+				nearestEnemy = e;
+			}
+		}
+		
+		return nearestEnemy;
 	}
 	
 	

@@ -230,6 +230,11 @@ public class Squad {
 		return this.antiAirPower < ( enemySquad.airPower * 1.3 );
 	}
 	
+	public ArrayList<Unit> getSquadUnits()
+	{
+		return squadUnits;
+	}
+	
 	public boolean onlyFlyersInSquad()
 	{
 		for ( Unit u : squadUnits )

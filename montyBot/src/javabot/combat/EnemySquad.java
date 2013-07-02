@@ -192,7 +192,7 @@ public class EnemySquad extends Squad {
 		
 		while ( ( result == null ) && ( counter < 50 ) )
 		{
-			if ( chance < 1 ) chance = 1;
+			if ( chance < 1 ) chance = 50;
 			int percentage = rand.nextInt( (int) chance );
 			
 			int minOK = 0;

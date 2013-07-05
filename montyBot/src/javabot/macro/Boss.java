@@ -34,7 +34,7 @@ import javabot.util.Wall;
 public class Boss extends AbstractManager{
 	
 	public static final boolean BOSS_DEBUG = true;
-	public static final boolean WALLIN_DEBUG = true;
+	public static final boolean WALLIN_DEBUG = false;
 	public static final boolean OPPONENT_POSITIONING_DEBUG = true;
 	public static final boolean RESOURCE_DEBUG = true;
 	public static final boolean OPPONENT_MODELLING_DEBUG = false;

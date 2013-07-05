@@ -43,10 +43,6 @@ public class Placement {
 	public Point getBuildTile(int buildingTypeID, int tileX, int tileY) {
 		myPlan();
 		Point ret = new Point(-1, -1);
-		int maxDist = 3;
-		int stopDist = 40;
-
-		
 		// Refinery, Assimilator, Extractor
 		if (game.getUnitType(buildingTypeID).isRefinery()) {
 			Point home = new Point(homeX,homeY);
@@ -71,6 +67,8 @@ public class Placement {
 
 		
 		/*
+		int maxDist = 3;
+		int stopDist = 40;
 		while ((maxDist < stopDist) && (ret.x == -1)) {
 			for (int i=tileX-maxDist; i<=tileX+maxDist; i++) {
 				for (int j=tileY-maxDist; j<=tileY+maxDist; j++) {
@@ -109,8 +107,7 @@ public class Placement {
 			}
 			maxDist += 2;
 		}
-		*/
-		
+		*/	
 	//	if (ret.x == -1) game.printText("Unable to find suitable build position "+game.getUnitType(buildingTypeID).getName());
 		return ret;
 	}
@@ -118,6 +115,7 @@ public class Placement {
 		int tileWidth = game.getUnitType(buildingTypeID).getTileWidth();
 		int tileHeight = game.getUnitType(buildingTypeID).getTileHeight();
 		int size =  tileWidth * tileHeight;
+		getNewSize(size);
 		if(tileX == -1 && tileY == -1){
 			if(size == 4 && !ConstructionSites4.isEmpty()){
 				return new Point(ConstructionSites4.get(0).x,ConstructionSites4.get(0).y) ;
@@ -136,6 +134,19 @@ public class Placement {
 			}	
 		}
 		return null;
+	}
+	private void getNewSize(int size){ // if need new size to build. 
+		if(size == 4 && ConstructionSites4.isEmpty() && !ConstructionSites6.isEmpty()){ 
+			ConstructionSites4.add(new Point(ConstructionSites6.get(0).x, ConstructionSites6.get(0).y));
+			ConstructionSites6.remove(0);
+		}else if(size == 4 && ConstructionSites4.isEmpty() && !ConstructionSites12.isEmpty()){ 
+			ConstructionSites4.add(new Point(ConstructionSites12.get(0).x, ConstructionSites12.get(0).y));
+			ConstructionSites4.add(new Point(ConstructionSites12.get(0).x+2, ConstructionSites12.get(0).y));
+			ConstructionSites12.remove(0);
+		}else if(size == 6 && ConstructionSites6.isEmpty() && !ConstructionSites12.isEmpty()){ 
+			ConstructionSites6.add(new Point(ConstructionSites12.get(0).x, ConstructionSites12.get(0).y));
+			ConstructionSites12.remove(0);
+		}
 	}
 	private Point getNearestPoint(ArrayList<Point> list,int tileX, int tileY){
 		Point near = list.get(0);
@@ -173,8 +184,6 @@ public class Placement {
 		}
 		return true;
 	}
-
-
 //----------------------------------------------------------------------------------------	
 	private void initializationConstructionSites() {
 		Unit nex = null;
@@ -274,14 +283,17 @@ public class Placement {
 				int tileHeight = game.getUnitType(buildingTypeID).getTileHeight();
 				int size =  tileWidth * tileHeight;
 				if(size == 4 && !ConstructionSites4.isEmpty())
-					if( ConstructionSites4.get(0).x == u.getTileX() && ConstructionSites4.get(0).y == u.getTileY() )
-						ConstructionSites4.remove(0);
+					for(int i = 0 ; i < ConstructionSites4.size();i++)
+						if( ConstructionSites4.get(i).x == u.getTileX() && ConstructionSites4.get(i).y == u.getTileY() )
+							ConstructionSites4.remove(i);
 				if(size == 6 && !ConstructionSites6.isEmpty()) 
-					if( ConstructionSites6.get(0).x == u.getTileX() && ConstructionSites6.get(0).y == u.getTileY() )
-						ConstructionSites6.remove(0);
+					for(int i = 0 ; i < ConstructionSites6.size();i++)
+					if( ConstructionSites6.get(i).x == u.getTileX() && ConstructionSites6.get(i).y == u.getTileY() )
+						ConstructionSites6.remove(i);
 				if(size == 12 && !ConstructionSites12.isEmpty()) 
-					if( ConstructionSites12.get(0).x == u.getTileX() && ConstructionSites12.get(0).y == u.getTileY() )
-						ConstructionSites12.remove(0);
+					for(int i = 0 ; i < ConstructionSites12.size();i++)
+						if( ConstructionSites12.get(i).x == u.getTileX() && ConstructionSites12.get(i).y == u.getTileY() )
+							ConstructionSites12.remove(i);
 			}
 		}
 	}
@@ -373,25 +385,21 @@ public class Placement {
 	}
 //------------------------------------------------------------------------------------
 	private void setBuild(int x,int y,boolean hod){
-		if(x >= 0 && y >= 0  && y < game.getMap().getHeight() && x < game.getMap().getWidth()){
+		if(x >= 0 && y >= 0  && y < game.getMap().getHeight() && x < game.getMap().getWidth())
 			myPlan.get(x).get(y).build = hod; 
-		}
 	}
 	private boolean getBuild(int x,int y){
-		if(x >= 0 && y >= 0  && y < game.getMap().getHeight() && x < game.getMap().getWidth()){
+		if(x >= 0 && y >= 0  && y < game.getMap().getHeight() && x < game.getMap().getWidth())
 			return myPlan.get(x).get(y).build; 
-		}
 		return false;
 	}
 	private void setLock(int x,int y,boolean hod){
-		if(x >= 0 && y >= 0  && y < game.getMap().getHeight() && x < game.getMap().getWidth()){
+		if(x >= 0 && y >= 0  && y < game.getMap().getHeight() && x < game.getMap().getWidth())
 			myPlan.get(x).get(y).lock = hod; 
-		}
 	}
 	private boolean getLock(int x,int y){
-		if(x >= 0 && y >= 0  && y < game.getMap().getHeight() && x < game.getMap().getWidth()){
+		if(x >= 0 && y >= 0  && y < game.getMap().getHeight() && x < game.getMap().getWidth())
 			return myPlan.get(x).get(y).lock; 
-		}
 		return true;
 	}
 	private boolean isInElipse(int x,int y,int sx,int sy){ // TODO a,b 
@@ -410,6 +418,7 @@ public class Placement {
 		}
 		public void drawDebugInfo() {
 			if(PLACEMENT_DEBUG){
+				recontrolConstructionSites();
 				/*
 				for(Unit u : game.getMyUnits()){
 					if(game.getUnitType(u.getTypeID()).isBuilding()){

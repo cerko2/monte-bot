@@ -16,6 +16,7 @@ public class Placement {
 	private ArrayList<Point> ConstructionSites4 = new ArrayList<Point>();
 	private ArrayList<Point> ConstructionSites6 = new ArrayList<Point>();
 	private ArrayList<Point> ConstructionSites12 = new ArrayList<Point>();
+	private ArrayList<Point> middleTemplate = new ArrayList<Point>();
 	private int homeX, homeY;
 	private int reset = 0;
 	
@@ -137,14 +138,30 @@ public class Placement {
 	}
 	private void getNewSize(int size){ // if need new size to build. 
 		if(size == 4 && ConstructionSites4.isEmpty() && !ConstructionSites6.isEmpty()){ 
-			ConstructionSites4.add(new Point(ConstructionSites6.get(0).x, ConstructionSites6.get(0).y));
+			Point pom = ConstructionSites6.get(0);
+			Point middle = getNearestPoint(middleTemplate, pom.x, pom.y);
+			if(middle.x > pom.x)
+				pom.x +=1;
+			ConstructionSites4.add(new Point(pom.x, pom.y));
 			ConstructionSites6.remove(0);
 		}else if(size == 4 && ConstructionSites4.isEmpty() && !ConstructionSites12.isEmpty()){ 
-			ConstructionSites4.add(new Point(ConstructionSites12.get(0).x, ConstructionSites12.get(0).y));
-			ConstructionSites4.add(new Point(ConstructionSites12.get(0).x+2, ConstructionSites12.get(0).y));
+			Point pom = ConstructionSites12.get(0);
+			Point middle = getNearestPoint(middleTemplate, pom.x, pom.y);
+			if(middle.y > pom.y)
+				pom.y -=1;
+			ConstructionSites4.add(new Point(pom.x, pom.y));
+			ConstructionSites4.add(new Point(pom.x+2, pom.y));
+			ConstructionSites4.add(new Point(pom.x, pom.y+2));
+			ConstructionSites4.add(new Point(pom.x+2, pom.y+2));
 			ConstructionSites12.remove(0);
 		}else if(size == 6 && ConstructionSites6.isEmpty() && !ConstructionSites12.isEmpty()){ 
-			ConstructionSites6.add(new Point(ConstructionSites12.get(0).x, ConstructionSites12.get(0).y));
+			Point pom = ConstructionSites12.get(0);
+			Point middle = getNearestPoint(middleTemplate, pom.x, pom.y);
+			if(middle.y > pom.y)
+				pom.y +=1;
+			if(middle.x > pom.x)
+				pom.x +=1;
+			ConstructionSites6.add(new Point(pom.x,pom.y));
 			ConstructionSites12.remove(0);
 		}
 	}
@@ -222,20 +239,21 @@ public class Placement {
 		ConstructionSites4 = new ArrayList<Point>();
 		ConstructionSites6 = new ArrayList<Point>();
 		ConstructionSites12 = new ArrayList<Point>();
-		int a = 11;
+		int a = 11; // or 12 need testing 
 		int b = 12;
-		setSablone(x,y);
-		setSablone(x+a,y);
-		setSablone(x-a,y);
-		setSablone(x,y+b);
-		setSablone(x+a,y+b);
-		setSablone(x-a,y+b);
-		setSablone(x,y-b);
-		setSablone(x+a,y-b);
-		setSablone(x-a,y-b);
+		setTemplate(x,y);
+		setTemplate(x+a,y);
+		setTemplate(x-a,y);
+		setTemplate(x,y+b);
+		setTemplate(x+a,y+b);
+		setTemplate(x-a,y+b);
+		setTemplate(x,y-b);
+		setTemplate(x+a,y-b);
+		setTemplate(x-a,y-b);
 		checkSablone();	
 	}
-	private void setSablone(int x , int y ){
+	private void setTemplate(int x , int y ){
+		middleTemplate.add(new Point(x+4,y+5));
 		ConstructionSites12.add(new Point(x ,y));
 		ConstructionSites12.add(new Point(x+4  ,y));
 		ConstructionSites12.add(new Point(x ,y+7));
@@ -418,7 +436,8 @@ public class Placement {
 		}
 		public void drawDebugInfo() {
 			if(PLACEMENT_DEBUG){
-				recontrolConstructionSites();
+				recontrolConstructionSites();	
+				
 				/*
 				for(Unit u : game.getMyUnits()){
 					if(game.getUnitType(u.getTypeID()).isBuilding()){
@@ -436,6 +455,10 @@ public class Placement {
 					}
 				}
 				*/
+				for(Point p : middleTemplate){
+					game.drawCircle(p.x*32, p.y*32, 8, BWColor.ORANGE, true,false);
+					
+				}
 				for(Point p : ConstructionSites12){
 					game.drawBox(p.x*32, p.y*32, (p.x + 4)*32, (p.y + 3)*32, BWColor.YELLOW, false, false);
 					

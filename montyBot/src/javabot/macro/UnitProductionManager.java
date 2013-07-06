@@ -54,6 +54,8 @@ public class UnitProductionManager extends AbstractManager{
 	public UnitProductionManager(Boss boss){
 		this.boss = boss;
 		this.game = boss.game;
+	}
+	public void gameStarted(){
 		sendText("Start: Unit Production");	
 		for(int i = 0 ; i < numArmy ; i++){
 			rateArmy.add(0.0);

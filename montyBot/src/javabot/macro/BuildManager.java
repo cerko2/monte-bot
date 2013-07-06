@@ -79,6 +79,8 @@ public class BuildManager extends AbstractManager{
 	public BuildManager(Boss boss){
 		this.boss = boss;
 		this.game = boss.game;
+	}
+	public void gameStarted(){
 		placement = new Placement(game);
 		
 		sendText("Start: Build Manager");
@@ -92,7 +94,6 @@ public class BuildManager extends AbstractManager{
 		for(int i = 0; i < 235;i++){
 			myCount.add(new MyCount());
 		}
-
 	}
 	public void setAddResources(int minerals,int gas){
 		this.minerals += minerals;

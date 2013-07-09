@@ -22,11 +22,11 @@ import javabot.types.UnitType;
 
 public class WallInModule extends AbstractManager {
 	
-	// constants
+	// constants	(default on reasonable HW: radius=8, opt=true, opt_max=3, ans_sets=5)
 	public static final int CHOKEPOINT_RADIUS = 8;
 	public static final boolean OPTIMIZATION_ENABLED = true;	// enable optimization in our logic program (better results, but slower)
-	public static final int MAX_BUILDINGS_FOR_OPTIMIZATION = 3;	// turn off the optimization if we're dealing with more buildings than this
-	public static final int ANSWER_SETS_MAX_COUNT = 5;			// number of answer sets to compute when optimizing (higher number means bettes solutions, but slower)
+	public static final int MAX_BUILDINGS_FOR_OPTIMIZATION = 2;	// turn off the optimization if we're dealing with more buildings than this
+	public static final int ANSWER_SETS_MAX_COUNT = 3;			// number of answer sets to compute when optimizing (higher number means bettes solutions, but slower)
 
 	private JNIBWAPI bwapi;
 	private AspSolver asp;

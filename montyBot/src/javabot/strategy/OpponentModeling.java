@@ -107,6 +107,7 @@ public class OpponentModeling extends AbstractManager {
 		if (typeID == -1) return;
 		UnitType typ = bwapi.getUnitType(typeID);
 		if (
+				(bwapi.getUnit(unitID) != null) &&
 				(typ.isBuilding()) &&
 				(bwapi.getUnit(unitID).getPlayerID() == opponent.getID()) &&
 				(!destroyedEnemyBuildingTypes.contains(typ.getID()))) 

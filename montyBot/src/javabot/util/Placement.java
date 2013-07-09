@@ -12,11 +12,14 @@ public class Placement {
 	private static final boolean PLACEMENT_DEBUG = true;
 	
 	private JNIBWAPI game = null;
+	private Support sc = new Support();
 	private ArrayList<ArrayList<MyPlan>> myPlan = new ArrayList<ArrayList<MyPlan>>();
 	private ArrayList<Point> ConstructionSites4 = new ArrayList<Point>();
 	private ArrayList<Point> ConstructionSites6 = new ArrayList<Point>();
 	private ArrayList<Point> ConstructionSites12 = new ArrayList<Point>();
 	private ArrayList<Point> middleTemplate = new ArrayList<Point>();
+	private ArrayList<Wall> walls = new ArrayList<Wall>();
+	private ArrayList<Point> usePointWalls =  new ArrayList<Point>();
 	private int homeX, homeY;
 	private int reset = 0;
 	
@@ -41,9 +44,16 @@ public class Placement {
 					return false;	
 		return true;
 	}
+	public void setWall(ArrayList<Wall> walls){
+		this.walls = walls;
+	}
 	public Point getBuildTile(int buildingTypeID, int tileX, int tileY) {
 		myPlan();
 		Point ret = new Point(-1, -1);
+		addUsePointWalls();
+		ret = isInWall(buildingTypeID);
+		if(ret.x != -1)
+			return ret;
 		// Refinery, Assimilator, Extractor
 		if (game.getUnitType(buildingTypeID).isRefinery()) {
 			Point home = new Point(homeX,homeY);
@@ -51,7 +61,7 @@ public class Placement {
 			Double dist = 9999999999999.9;
 			for (Unit n : game.getNeutralUnits()) {
 				if (n.getTypeID() == UnitTypes.Resource_Vespene_Geyser.ordinal()) {
-					Double newDist = getDistance(n, home);
+					Double newDist = sc.getDistance(n, home);
 					if(newDist < dist){
 						dist = newDist;
 						near = new Point(n.getTileX(), n.getTileY());
@@ -168,9 +178,9 @@ public class Placement {
 	private Point getNearestPoint(ArrayList<Point> list,int tileX, int tileY){
 		Point near = list.get(0);
 		Point tile = new Point(tileX, tileY);
-		double dis = getDistance(tile, near);
+		double dis = sc.getDistance(tile, near);
 		for(Point l : list){
-			double disPom = getDistance(tile, l);
+			double disPom = sc.getDistance(tile, l);
 			if(dis > disPom){
 				near = l;
 				dis = disPom;
@@ -178,19 +188,38 @@ public class Placement {
 		}
 		return near;
 	}
-	private double getDistance (Point a, Point b){
-		double distance, pomx, pomy;
-		pomx = Math.abs(a.x-b.x);
-		pomy = Math.abs(a.y-b.y);
-		distance = Math.sqrt((pomx*pomx)+(pomy*pomy))   ;
-		return distance;
+	private Point isInWall(int typeID){
+		for (Wall w : walls) {
+			for(int i = 0 ; i < w.getBuildingTypeIds().size(); i++){
+				int id = w.getBuildingTypeIds().get(i);
+				if(typeID == id){
+					Point ret = new Point(w.getBuildTiles().get(i).x,w.getBuildTiles().get(i).y);
+					if(!isInArray(ret,usePointWalls))
+					return ret;
+				}
+			}
+		}
+		return new Point(-1, -1);
 	}
-	private double getDistance (Unit a, Point b){
-		double distance, pomx, pomy;
-		pomx = Math.abs(a.getX()-b.x);
-		pomy = Math.abs(a.getY()-b.y);
-		distance = Math.sqrt((pomx*pomx)+(pomy*pomy))   ;
-		return distance;
+	private void addUsePointWalls(){
+		usePointWalls = new ArrayList<Point>();
+		for(Unit u : game.getMyUnits()){
+			if(game.getUnitType(u.getTypeID()).isBuilding()){
+				for (Wall w : walls) {
+					for(int i = 0 ; i < w.getBuildTiles().size(); i++){
+						if(w.getBuildTiles().get(i).x == u.getTileX() && w.getBuildTiles().get(i).y== u.getTileY())
+							usePointWalls.add( new Point(w.getBuildTiles().get(i).x,w.getBuildTiles().get(i).y));
+					}
+				}
+			}
+		}
+	}
+	private boolean isInArray(Point p, ArrayList<Point> array){
+		for(Point a : array){
+			if(a.x == p.x && a.y == p.y)
+				return true;
+		}
+		return false;
 	}
 	private boolean canBuildHere(int odi,int odj , int doi,int doj){
 		for(int i = odi; i <= doi ; i++){
@@ -375,7 +404,7 @@ public class Placement {
 			}
 		}
 	}
-	private void controlMyPlan(){
+	private void controlMyPlan(){	
 	/*	for(Unit u : game.getMyUnits()){
 			if(game.getUnitType(u.getTypeID()).isBuilding()){
 				int tileWidth = game.getUnitType(u.getTypeID()).getTileWidth();

@@ -70,6 +70,8 @@ public class OpeningManager extends AbstractManager{
 			}
 		}
 		else{
+			boss.getUnitProductionManager().setFreeMode(true); // ukoncenie diktatury Azder.
+			boss.getBuildManager().setFreeMode(true); // vyhlasenie nezavislosti Azder.
 			drawText(10, 176, "Opening Manager: disabled");
 		}
 		
@@ -120,6 +122,10 @@ public class OpeningManager extends AbstractManager{
 		return openingList.getType();
 	}
 
+	public boolean isWallinOpening(){
+		return openingList.containWallIn();
+	}
+	
 	private void setInactive(){
 		isActive = false;
 	}
@@ -459,10 +465,6 @@ public class OpeningManager extends AbstractManager{
 		aol.add(ol);
 		
 		allOpeningLists = aol;
-	}
-	
-	private void sendText(String msg){
-		if(debug) game.sendText("OM: " + msg);
 	}
 	
 	private void drawText(int x, int y, String msg){

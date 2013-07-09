@@ -149,8 +149,6 @@ public class UnitProductionManager extends AbstractManager{
 	}
 	private void myAct(){
 		useBuilding = new ArrayList<Unit>();
-		if(!boss.getOpeningManager().isActive())
-			freeMode = true;
 		
 		buildExternalStack();
 		if(freeMode){ // AK je modul aktivny

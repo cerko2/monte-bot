@@ -11,6 +11,8 @@ import javabot.model.Unit;
 import javabot.types.UnitType.UnitTypes;
 import javabot.util.BWColor;
 import javabot.util.Placement;
+import javabot.util.Support;
+import javabot.util.Wall;
 
 //Azder BM
 /*TODO*/
@@ -20,6 +22,7 @@ import javabot.util.Placement;
 public class BuildManager extends AbstractManager{
 	private static final boolean BUILD_MANAGER_DEBUG = true; 
 	
+	private Support sc = new Support();
 	private boolean freeMode = false; // dokym neskonci opening som obmedzeny.
 	private int time = 0;
 	private Placement placement = null;
@@ -82,9 +85,10 @@ public class BuildManager extends AbstractManager{
 	}
 	public void gameStarted(){
 		placement = new Placement(game);
+		if(boss.getOpeningManager().isWallinOpening())
+			placement.setWall(boss.getWallInModule().getAllWalls());
 		
 		sendText("Start: Build Manager");
-		if(BUILD_MANAGER_DEBUG) freeMode = true;
 		for(Unit u: game.getMyUnits()){
 			if(u.getTypeID() == UnitTypes.Protoss_Nexus.ordinal()){
 				homeX = u.getX() / 32;
@@ -94,6 +98,9 @@ public class BuildManager extends AbstractManager{
 		for(int i = 0; i < 235;i++){
 			myCount.add(new MyCount());
 		}
+	}
+	public void setFreeMode(Boolean freeMode){
+		this.freeMode = freeMode;
 	}
 	public void setAddResources(int minerals,int gas){
 		this.minerals += minerals;
@@ -221,7 +228,6 @@ public class BuildManager extends AbstractManager{
 		}else sendText("err: boss = null");
 	}
 	private void myAct(){
-		freeMode = false;
 		int SUPPLY = 12 ; // udrzuj tolko miesta 
 		time++;
 		ArrayList<MyUnit> workerss = new ArrayList<>(workers);
@@ -233,8 +239,7 @@ public class BuildManager extends AbstractManager{
 		}
 		
 		restetMyCount();
-		if(!boss.getOpeningManager().isActive())
-			freeMode = true;
+		
 		if(freeMode && game.getSelf().getSupplyTotal() < 400){
 			int freeSupply = getTotalSupply() - game.getSelf().getSupplyUsed();
 			if((freeSupply < SUPPLY) && !isInStack(UnitTypes.Protoss_Pylon.ordinal())){
@@ -306,7 +311,7 @@ public class BuildManager extends AbstractManager{
 		if(workerID != -1 && workerUnit != null){
 			workers.add(new MyUnit(workerUnit, jobID));
 			if(targer.x >= 0){
-				if(getDistance(workerUnit, targer) < 256){
+				if(sc.getDistance(workerUnit, targer) < 256){
 					game.build(workerID, (int) targer.x / 32, (int) targer.y / 32, typeID);
 					return true;
 				}else{
@@ -323,13 +328,7 @@ public class BuildManager extends AbstractManager{
 		return boss.getWorkerManager().getWorker(x, y);
 	}
 //------------------------------------------------------------------------------------------
-	private double getDistance (Unit a, Point b){
-		double distance, pomx, pomy;
-		pomx = Math.abs(a.getX()-b.x);
-		pomy = Math.abs(a.getY()-b.y);
-		distance = Math.sqrt((pomx*pomx)+(pomy*pomy))   ;
-		return distance;
-	}
+
 	private Unit getUnit(int ID){
 		for (Unit unit : game.getMyUnits()) {	
 			if(unit.getID() == ID )

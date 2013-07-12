@@ -152,7 +152,7 @@ public class OpeningManager extends AbstractManager{
 		switch (task.action){
 			case OpeningTask.PRODUCING_ACTION:
 				if (game.getUnitType(task.unitTypeID).isBuilding()){
-					boss.getBuildManager().createBuilding(openingList.getNextTask().unitTypeID);
+					boss.getBuildManager().createBuilding(openingList.getNextTask().unitTypeID,openingList.getNextTask().wallIn);
 					openingList.completeTask();
 					//sendText("Build building");
 					nextTask = "Build building";
@@ -392,6 +392,7 @@ public class OpeningManager extends AbstractManager{
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Photon_Cannon.ordinal(), OpeningTask.WALL_IN));
 		ol.add(new OpeningTask(OpeningTask.MINERALS_CONSTRAINT, 400, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Nexus.ordinal()));
 		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal(), OpeningTask.WALL_IN));
+		ol.add(new OpeningTask(OpeningTask.SUPPLY_CONSTRAINT, 10, OpeningTask.PRODUCING_ACTION, UnitTypes.Protoss_Gateway.ordinal()));
 		aol.add(ol);
 		/*
 		ol = new OpeningList("10/11 Gateway", Race.ZERG.ordinal());

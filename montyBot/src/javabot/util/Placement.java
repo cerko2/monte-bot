@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import javabot.JNIBWAPI;
+import javabot.model.BaseLocation;
 import javabot.model.Unit;
 import javabot.types.UnitType.UnitTypes;
 
@@ -12,12 +13,13 @@ public class Placement {
 	private static final boolean PLACEMENT_DEBUG = true;
 	
 	private JNIBWAPI game = null;
-	private Support sc = new Support();
+	private Support sc = null;
 	private ArrayList<ArrayList<MyPlan>> myPlan = new ArrayList<ArrayList<MyPlan>>();
 	private ArrayList<Point> ConstructionSites4 = new ArrayList<Point>();
 	private ArrayList<Point> ConstructionSites6 = new ArrayList<Point>();
 	private ArrayList<Point> ConstructionSites12 = new ArrayList<Point>();
 	private ArrayList<Point> middleTemplate = new ArrayList<Point>();
+	private ArrayList<Point> baseLocation = new ArrayList<Point>();
 	private ArrayList<Wall> walls = new ArrayList<Wall>();
 	private ArrayList<Point> usePointWalls =  new ArrayList<Point>();
 	private int homeX, homeY;
@@ -30,9 +32,20 @@ public class Placement {
 //-------------------------------------------------------------------------------------
 	public Placement(JNIBWAPI game){
 		this.game = game;
+		sc = new Support(game);
 		initializationMyLimitedPlan();	
 		initializationConstructionSites();	
+		initializationBaseLocations();
+		
 	}
+	private void initializationBaseLocations() {
+		baseLocation =  new ArrayList<Point>();
+		for(BaseLocation b :game.getMap().getBaseLocations()){
+			baseLocation.add(new Point( (b.getX()/ 32) -2,(b.getY()/ 32) -1));
+		}
+		baseLocation = sc.sortGround(new Point(homeX,homeY),baseLocation);
+	}
+
 	public boolean isBuildable (int buildingTypeID,  Point pos){
 		if(game.getUnitType(buildingTypeID).isRefinery() || buildingTypeID == UnitTypes.Protoss_Nexus.ordinal() || buildingTypeID == UnitTypes.Protoss_Pylon.ordinal())
 			return true;
@@ -47,12 +60,12 @@ public class Placement {
 	public void setWall(ArrayList<Wall> walls){
 		this.walls = walls;
 	}
-	public Point getBuildTile(int buildingTypeID, int tileX, int tileY) {
+	public Point getBuildTile(int buildingTypeID, int tileX, int tileY,boolean wall) {
 		myPlan();
 		Point ret = new Point(-1, -1);
 		addUsePointWalls();
 		ret = isInWall(buildingTypeID);
-		if(ret.x != -1)
+		if(wall)
 			return ret;
 		// Refinery, Assimilator, Extractor
 		if (game.getUnitType(buildingTypeID).isRefinery()) {
@@ -123,6 +136,8 @@ public class Placement {
 		return ret;
 	}
 	private Point getPoint(int buildingTypeID,int tileX, int tileY){
+		if(buildingTypeID == UnitTypes.Protoss_Nexus.ordinal())
+			return getPointNexus();
 		int tileWidth = game.getUnitType(buildingTypeID).getTileWidth();
 		int tileHeight = game.getUnitType(buildingTypeID).getTileHeight();
 		int size =  tileWidth * tileHeight;
@@ -137,26 +152,29 @@ public class Placement {
 			}
 		}else {
 			if(size == 4 && !ConstructionSites4.isEmpty()){	
-				return getNearestPoint(ConstructionSites4,tileX,tileY);
+				return sc.getNearestPoint(tileX,tileY,ConstructionSites4);
 			}else if(size == 6 && !ConstructionSites6.isEmpty()){
-				return getNearestPoint(ConstructionSites6,tileX,tileY);
+				return sc.getNearestPoint(tileX,tileY,ConstructionSites6);
 			}else if(size == 12 && !ConstructionSites12.isEmpty()){
-				return getNearestPoint(ConstructionSites12,tileX,tileY);
+				return sc.getNearestPoint(tileX,tileY,ConstructionSites12);
 			}	
 		}
 		return null;
 	}
+	private Point getPointNexus() {
+		return new Point(baseLocation.get(0).x,baseLocation.get(0).y) ;
+	}
 	private void getNewSize(int size){ // if need new size to build. 
 		if(size == 4 && ConstructionSites4.isEmpty() && !ConstructionSites6.isEmpty()){ 
 			Point pom = ConstructionSites6.get(0);
-			Point middle = getNearestPoint(middleTemplate, pom.x, pom.y);
+			Point middle = sc.getNearestPoint(pom,middleTemplate);
 			if(middle.x > pom.x)
 				pom.x +=1;
 			ConstructionSites4.add(new Point(pom.x, pom.y));
 			ConstructionSites6.remove(0);
 		}else if(size == 4 && ConstructionSites4.isEmpty() && !ConstructionSites12.isEmpty()){ 
 			Point pom = ConstructionSites12.get(0);
-			Point middle = getNearestPoint(middleTemplate, pom.x, pom.y);
+			Point middle = sc.getNearestPoint(pom,middleTemplate);
 			if(middle.y > pom.y)
 				pom.y -=1;
 			ConstructionSites4.add(new Point(pom.x, pom.y));
@@ -166,7 +184,7 @@ public class Placement {
 			ConstructionSites12.remove(0);
 		}else if(size == 6 && ConstructionSites6.isEmpty() && !ConstructionSites12.isEmpty()){ 
 			Point pom = ConstructionSites12.get(0);
-			Point middle = getNearestPoint(middleTemplate, pom.x, pom.y);
+			Point middle = sc.getNearestPoint(pom,middleTemplate);
 			if(middle.y > pom.y)
 				pom.y +=1;
 			if(middle.x > pom.x)
@@ -175,26 +193,14 @@ public class Placement {
 			ConstructionSites12.remove(0);
 		}
 	}
-	private Point getNearestPoint(ArrayList<Point> list,int tileX, int tileY){
-		Point near = list.get(0);
-		Point tile = new Point(tileX, tileY);
-		double dis = sc.getDistance(tile, near);
-		for(Point l : list){
-			double disPom = sc.getDistance(tile, l);
-			if(dis > disPom){
-				near = l;
-				dis = disPom;
-			}	
-		}
-		return near;
-	}
+
 	private Point isInWall(int typeID){
 		for (Wall w : walls) {
 			for(int i = 0 ; i < w.getBuildingTypeIds().size(); i++){
 				int id = w.getBuildingTypeIds().get(i);
 				if(typeID == id){
 					Point ret = new Point(w.getBuildTiles().get(i).x,w.getBuildTiles().get(i).y);
-					if(!isInArray(ret,usePointWalls))
+					if(!sc.isInArray(ret,usePointWalls))
 					return ret;
 				}
 			}
@@ -214,13 +220,7 @@ public class Placement {
 			}
 		}
 	}
-	private boolean isInArray(Point p, ArrayList<Point> array){
-		for(Point a : array){
-			if(a.x == p.x && a.y == p.y)
-				return true;
-		}
-		return false;
-	}
+
 	private boolean canBuildHere(int odi,int odj , int doi,int doj){
 		for(int i = odi; i <= doi ; i++){
 			for(int j = odi; j <= doi ; j++){
@@ -341,6 +341,10 @@ public class Placement {
 					for(int i = 0 ; i < ConstructionSites12.size();i++)
 						if( ConstructionSites12.get(i).x == u.getTileX() && ConstructionSites12.get(i).y == u.getTileY() )
 							ConstructionSites12.remove(i);
+				if(size == 12 && !baseLocation.isEmpty() && buildingTypeID == UnitTypes.Protoss_Nexus.ordinal()) 
+					for(int i = 0 ; i < baseLocation.size();i++)
+						if( baseLocation.get(i).x == u.getTileX() && baseLocation.get(i).y == u.getTileY() )
+							baseLocation.remove(i);
 			}
 		}
 	}
@@ -499,6 +503,11 @@ public class Placement {
 				for(Point p : ConstructionSites4){
 					game.drawBox(p.x*32, p.y*32, (p.x + 2)*32, (p.y + 2)*32, BWColor.YELLOW, false, false);
 					game.drawCircle((p.x*32+(p.x + 2)*32 )/2,(p.y*32+(p.y + 2)*32 )/2, 10, BWColor.YELLOW, false, false);
+				}
+				int s = 0;
+				for(Point p : baseLocation){
+					game.drawBox(p.x*32, p.y*32, (p.x + 4)*32, (p.y + 3)*32, BWColor.PURPLE, false, false);
+					game.drawText(p.x *32 +12 , p.y *32 +12, ++s + " ", false);			
 				}
 			}
 		}	

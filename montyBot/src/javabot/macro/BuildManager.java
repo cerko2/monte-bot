@@ -22,11 +22,12 @@ import javabot.util.Wall;
 public class BuildManager extends AbstractManager{
 	private static final boolean BUILD_MANAGER_DEBUG = true; 
 	
-	private Support sc = new Support();
+
 	private boolean freeMode = false; // dokym neskonci opening som obmedzeny.
 	private int time = 0;
 	private Placement placement = null;
 	private JNIBWAPI game = null;
+	private Support sc = null;
 	private Boss boss  = null;
 	private int minerals = 0;
 	private int gas = 0;
@@ -64,9 +65,14 @@ public class BuildManager extends AbstractManager{
 	private class MyStack{
 		int typeID = -1;
 		int jobID = -1;
+		boolean wall = false;
 		public MyStack(int typeID){ /*TODO*/ 
 			this.typeID = typeID;
 			this.jobID = ++JOBS;
+		}
+		public MyStack(int typeID,boolean wall){
+			this(typeID);
+			this.wall = wall;
 		}
 	}
 
@@ -82,6 +88,7 @@ public class BuildManager extends AbstractManager{
 	public BuildManager(Boss boss){
 		this.boss = boss;
 		this.game = boss.game;
+		sc = new Support(game);
 	}
 	public void gameStarted(){
 		placement = new Placement(game);
@@ -122,7 +129,7 @@ public class BuildManager extends AbstractManager{
 	}
 	private void unit(int unitID){
 		if(unitID != -1){
-			Unit u = getUnit(unitID);
+			Unit u = sc.getUnit(unitID);
 			if(u != null){
 				int typeID = u.getTypeID();
 				if(!createStack.isEmpty() )
@@ -145,7 +152,15 @@ public class BuildManager extends AbstractManager{
 	}
 	public boolean createBuilding(int typeID){
 		if(game.getUnitType(typeID).isBuilding()){
-			createStack.add(new MyStack(typeID));
+			createStack.add(new MyStack(typeID,false));
+			buildStack();
+			return true;
+		}
+		return false;
+	}
+	public boolean createBuilding(int typeID,boolean wall){
+		if(game.getUnitType(typeID).isBuilding()){
+			createStack.add(new MyStack(typeID,wall));
 			buildStack();
 			return true;
 		}
@@ -159,12 +174,12 @@ public class BuildManager extends AbstractManager{
 			if(typeID == UnitTypes.Protoss_Zealot.ordinal()) {
 				need |= reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
 			} else if(typeID == UnitTypes.Protoss_Dragoon.ordinal()) {
+				need |= reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
+				need |= reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());	
 				need |= reControlBuilding(UnitTypes.Protoss_Assimilator.ordinal());
-				need |= reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
-				need |= reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
 			} else if(typeID == UnitTypes.Protoss_Dark_Archon.ordinal()|| typeID == UnitTypes.Protoss_Archon.ordinal() || typeID == UnitTypes.Protoss_High_Templar.ordinal() || typeID == UnitTypes.Protoss_Dark_Templar.ordinal()) {
-				need |= reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
 				need |= reControlBuilding(UnitTypes.Protoss_Gateway.ordinal());
+				need |= reControlBuilding(UnitTypes.Protoss_Cybernetics_Core.ordinal());
 				need |= reControlBuilding(UnitTypes.Protoss_Citadel_of_Adun.ordinal());
 				need |= reControlBuilding(UnitTypes.Protoss_Templar_Archives.ordinal());
 			} else if(typeID == UnitTypes.Protoss_Shuttle.ordinal()) {
@@ -232,7 +247,7 @@ public class BuildManager extends AbstractManager{
 		time++;
 		ArrayList<MyUnit> workerss = new ArrayList<>(workers);
 		for(MyUnit u : workerss){
-			if(u.worker.isIdle() || u.t + TIME_EXPIRES >= time || !isExist(u.worker.getID())){
+			if(u.worker.isIdle() || u.t + TIME_EXPIRES >= time || !sc.isExist(u.worker.getID())){
 				workers.remove(u);
 				boss.getWorkerManager().addWorker(u.worker);
 			}
@@ -255,19 +270,14 @@ public class BuildManager extends AbstractManager{
 			if(game.getUnitType(buildingTypeID).isBuilding()){
 				if(!game.getUnitType(buildingTypeID).isRefinery() && buildingTypeID != UnitTypes.Protoss_Nexus.ordinal() && buildingTypeID != UnitTypes.Protoss_Pylon.ordinal()){	
 					if(!placement.isBuildable(u.getTypeID(), new Point(u.getTileX(),u.getTileY()))){
-						Point targer1 = placement.getBuildTile(UnitTypes.Protoss_Pylon.ordinal(), u.getTileX(), u.getTileY()); 
+						Point targer1 = placement.getBuildTile(UnitTypes.Protoss_Pylon.ordinal(), u.getTileX(), u.getTileY(),false); 
 						build(UnitTypes.Protoss_Pylon.ordinal(),++JOBS, targer1);
 					}
 				}
 			}
 		}
 	}
-	private boolean isExist(int id) {
-		for(Unit u : game.getMyUnits())
-			if(u.getID() == id)
-				return true;
-		return false;
-	}
+
 
 
 //-----------------------------------------------------------------------------------------	
@@ -275,9 +285,9 @@ public class BuildManager extends AbstractManager{
 		Boolean goStack =  true;
 		if(!createStack.isEmpty()){
 			int typeID = createStack.get(0).typeID;
-			int jobID = createStack.get(0).jobID;
+			MyStack my = createStack.get(0);
 			if(minerals >= game.getUnitType(typeID).getMineralPrice() && gas >= game.getUnitType(typeID).getGasPrice()){
-				goStack = buildable(typeID,jobID);
+				goStack = buildable(my);
 				if(goStack){
 					minerals -= game.getUnitType(typeID).getMineralPrice();
 					gas -= game.getUnitType(typeID).getGasPrice();
@@ -286,20 +296,22 @@ public class BuildManager extends AbstractManager{
 			}
 		}
 	}
-	private boolean buildable(int typeID,int jobID){
+	private boolean buildable(MyStack my){
 		Point targer = new Point(-1,-1);
-		if(game.getUnitType(typeID).isRefinery())
-			targer = placement.getBuildTile(typeID, homeX, homeY);
+		if(game.getUnitType(my.typeID).isRefinery())
+			targer = placement.getBuildTile(my.typeID, homeX, homeY,my.wall);
 		else 
-			targer = placement.getBuildTile(typeID, -1, -1);
-		if( targer.x == -1)
+			targer = placement.getBuildTile(my.typeID, -1, -1,my.wall);
+		if( targer.x == -1){
+			if(my.wall)
+				createStack.remove(0);
 			return false;
-		
-		if(!placement.isBuildable(typeID, targer)){
-			Point targer1 = placement.getBuildTile(UnitTypes.Protoss_Pylon.ordinal(), targer.x, targer.y); 
+		}
+		if(!placement.isBuildable(my.typeID, targer)){
+			Point targer1 = placement.getBuildTile(UnitTypes.Protoss_Pylon.ordinal(), targer.x, targer.y,false); 
 			build(UnitTypes.Protoss_Pylon.ordinal(),++JOBS, targer1);
 		}else
-			return build(typeID,jobID,targer);
+			return build(my.typeID,my.jobID,targer);
 		return false;
 		
 	}
@@ -307,7 +319,7 @@ public class BuildManager extends AbstractManager{
 		targer.x *= 32;
 		targer.y *= 32;
 		int workerID = getWorker(targer.x,targer.y);
-		Unit workerUnit = getUnit(workerID);
+		Unit workerUnit = sc.getUnit(workerID);
 		if(workerID != -1 && workerUnit != null){
 			workers.add(new MyUnit(workerUnit, jobID));
 			if(targer.x >= 0){
@@ -328,15 +340,6 @@ public class BuildManager extends AbstractManager{
 		return boss.getWorkerManager().getWorker(x, y);
 	}
 //------------------------------------------------------------------------------------------
-
-	private Unit getUnit(int ID){
-		for (Unit unit : game.getMyUnits()) {	
-			if(unit.getID() == ID )
-				return unit;
-		}
-		return null;
-	}
-
 	private boolean isInGroup(Unit u, ArrayList<MyUnit> list){
 		for(MyUnit l:list){
 			if(l.worker.getID() == u.getID())

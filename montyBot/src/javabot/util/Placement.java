@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import javabot.JNIBWAPI;
 import javabot.model.BaseLocation;
+import javabot.model.ChokePoint;
+import javabot.model.Region;
 import javabot.model.Unit;
 import javabot.types.UnitType.UnitTypes;
 
@@ -82,9 +84,7 @@ public class Placement {
 		ret = getPoint(buildingTypeID,tileX,tileY);
 		if(ret == null || ret.x == 0 )
 			ret = new Point(-1,-1);
-		
 
-		
 		/*
 		int maxDist = 3;
 		int stopDist = 40;
@@ -275,6 +275,19 @@ public class Placement {
 		setTemplate(x-a-a,y+b+b);
 		setTemplate(x+a+a,y-b-b);
 		
+		setTemplate(x+a+a+a,y);
+		setTemplate(x-a-a-a,y);
+		setTemplate(x,y-b-b-b);
+		setTemplate(x,y+b+b+b);	
+		setTemplate(x+a,y+b+b+b);
+		setTemplate(x-a,y+b+b+b);
+		setTemplate(x+a,y-b-b-b);
+		setTemplate(x-a,y-b-b-b);
+		setTemplate(x+a+a+a,y+b);
+		setTemplate(x-a-a-a,y+b);
+		setTemplate(x+a+a+a,y-b);
+		setTemplate(x-a-a-a,y-b);
+
 		checkSablone();	
 	}
 	private void setTemplate(int x , int y ){
@@ -293,9 +306,11 @@ public class Placement {
 		ConstructionSites6.add(new Point(x+6  ,y+5));
 	}
 	private void checkSablone(){ 
-		ConstructionSites4 = checkConstructionSites(ConstructionSites4,2,2);
-		ConstructionSites6 =  checkConstructionSites(ConstructionSites6,3,2);
 		ConstructionSites12 = checkConstructionSites(ConstructionSites12,4,3);
+		ConstructionSites6 =  checkConstructionSites(ConstructionSites6,3,2);
+		ConstructionSites4 = checkConstructionSites(ConstructionSites4,2,2);
+		ConstructionSites6 =  checkNearPower(ConstructionSites6,3,2);
+		ConstructionSites12 = checkNearPower(ConstructionSites12,4,3);
 	}
 	private ArrayList<Point> checkConstructionSites(ArrayList<Point> ConstructionSites,int XX, int  YY){
 		ArrayList<Point> pom = new ArrayList<Point>();
@@ -303,18 +318,55 @@ public class Placement {
 			for(int i = 0 ; i < ConstructionSites.size(); i++){
 				if(!isLockHere(ConstructionSites.get(i).x, ConstructionSites.get(i).y,ConstructionSites.get(i).x+XX, ConstructionSites.get(i).y+YY))
 					pom.add(ConstructionSites.get(i));	
+				else
+					addSites(ConstructionSites.get(i),XX*YY,false);
 			}
 		}	
 		return pom;
 	}
-	private boolean isLockHere(int odi,int odj , int doi,int doj){
-		if(odi < 0 || odj < 0 || doj > game.getMap().getHeight() || doi > game.getMap().getWidth() )
+	private ArrayList<Point> checkNearPower(ArrayList<Point> ConstructionSites,int XX, int  YY){
+		ArrayList<Point> pom = new ArrayList<Point>();
+		if(!ConstructionSites.isEmpty()){
+			for(int i = 0 ; i < ConstructionSites.size(); i++){
+				if(sc.getDistance(sc.getNearestPoint(ConstructionSites.get(i), ConstructionSites4),ConstructionSites.get(i)) < 6)
+					pom.add(ConstructionSites.get(i));	
+				else
+					addSites(ConstructionSites.get(i),XX*YY,true);
+			}
+		}	
+		return pom;
+	}
+	private void addSites(Point pom,int size,Boolean power){
+		if(size == 6){ 
+			Point middle = sc.getNearestPoint(pom,middleTemplate);
+			if(middle.x > pom.x)
+				pom.x +=1;
+			ConstructionSites4.add(new Point(pom.x, pom.y));
+		}else if(size == 12 && !power){ 
+			Point middle = sc.getNearestPoint(pom,middleTemplate);
+			if(middle.y > pom.y)
+				pom.y +=1;
+			if(middle.x > pom.x)
+				pom.x +=1;
+			ConstructionSites6.add(new Point(pom.x,pom.y));
+		}else if(size == 12 && power){ 
+			Point middle = sc.getNearestPoint(pom,middleTemplate);
+			if(middle.y > pom.y)
+				pom.y -=1;
+			ConstructionSites4.add(new Point(pom.x, pom.y));
+			ConstructionSites4.add(new Point(pom.x+2, pom.y));
+			ConstructionSites4.add(new Point(pom.x, pom.y+2));
+			ConstructionSites4.add(new Point(pom.x+2, pom.y+2));
+		}
+	}
+	private boolean isLockHere(int fromX,int fromY , int toX,int toY){
+		if(fromX < 0 || fromY < 0 || toY > game.getMap().getHeight() || toX > game.getMap().getWidth() )
 			return true;
-		for(int i = odi; i < doi ; i++){
-			for(int j = odj; j < doj ; j++){
+		if(!border.contains(fromX,fromY) && !border.contains((fromX+toX)/2,(fromY+toY)/2) || !border.contains((fromX+toX)/2,(fromY+toY)/2) && !border.contains(toX,toY) )
+			return true;
+		for(int i = fromX; i < toX ; i++){
+			for(int j = fromY; j < toY ; j++){
 				if(getLock(i, j))
-					return true;
-				if(!border.contains(i,j))
 					return true;
 			}
 		}
@@ -367,6 +419,13 @@ public class Placement {
 				if(!game.getMap().isBuildable(i, j))
 					setLock(i, j, true);
 			}
+		}
+		Region r = sc.getNearestRegion(new Point(home.x *32,home.y *32));
+		for(ChokePoint p :r.getChokePoints()){
+			int a = 4;
+			for(int i = (p.getCenterX()/32) - a ; i < (p.getCenterX()/32) +a ;i++)
+				for(int j = (p.getCenterY()/32) - a ; j < (p.getCenterY()/32) +a ;j++)
+					setLock(i, j, true);
 		}
 		createMyLimited();
 	}
@@ -500,6 +559,12 @@ public class Placement {
 				}
 				*/
 				/*
+				Region r = sc.getNearestRegion(new Point(home.x *32,home.y *32));
+				for(ChokePoint p :r.getChokePoints()){
+					game.drawCircle(p.getCenterX(),p.getCenterY(), 20, BWColor.YELLOW, false, false);
+					
+				}*/
+				/*
 				for(int i = 0 ; i < game.getMap().getWidth();i++){
 					for(int j = 0 ; j < game.getMap().getHeight();j++){
 					//	if(getBuild(i, j))
@@ -508,13 +573,12 @@ public class Placement {
 							game.drawBox(i*32,j*32, (i+1)*32, (j+1)*32, BWColor.RED, false, false);
 					}
 				}
-				*/
-				/*
+			
 				for(int i =1; i < border.npoints; i++){
 					game.drawLine(border.xpoints[i-1]*32, border.ypoints[i-1]*32,border.xpoints[i]*32,border.ypoints[i]*32, BWColor.RED,false);
 				}
 				game.drawLine(border.xpoints[0]*32, border.ypoints[0]*32,border.xpoints[border.npoints-1]*32,border.ypoints[border.npoints-1]*32, BWColor.RED,false);
-			 	*/
+			 */
 				/*
 				Point a = null;
 				Point b = null;

@@ -142,26 +142,20 @@ public class Support {
 		}
 		return near;
 	}
-	
 	public double getDistance (Point a, Point b){
 		double distance, pomx, pomy;
 		pomx = Math.abs(a.x-b.x);
 		pomy = Math.abs(a.y-b.y);
-		distance = Math.sqrt((pomx*pomx)+(pomy*pomy))   ;
+		distance = Math.sqrt((pomx*pomx)+(pomy*pomy))  ;
 		return distance;
 	}
 	public double getDistance (Unit a, Point b){
-		double distance, pomx, pomy;
-		pomx = Math.abs(a.getX()-b.x);
-		pomy = Math.abs(a.getY()-b.y);
-		distance = Math.sqrt((pomx*pomx)+(pomy*pomy))   ;
-		return distance;
+		return getDistance(new Point(a.getX(),a.getY()),b);
+	}
+	public double getDistance (Unit a, Unit b){
+		return getDistance(new Point(a.getX(),a.getY()),new Point(b.getX(),b.getY()));
 	}
 	public double getDistance (Region a, Region b){
-		double distance, pomx, pomy;
-		pomx = Math.abs(a.getCenterX()-b.getCenterX());
-		pomy = Math.abs(a.getCenterY()-b.getCenterY());
-		distance = Math.sqrt((pomx*pomx)+(pomy*pomy))   ;
-		return distance;
+		return getDistance(new Point(a.getCenterX(),a.getCenterY()), new Point(b.getCenterX(),b.getCenterY()));
 	}
 }

@@ -17,8 +17,6 @@ import javabot.util.BWColor;
 *
  */
 public class UnitProductionManager extends AbstractManager{
-	private static final boolean UNIT_MANAGER_DEBUG = true; //testovacie vypisy.
-	
 	private boolean freeMode = false; // dokym neskonci opening som obmedzeny.
 	private JNIBWAPI game = null;
 	private Boss boss  = null;
@@ -138,13 +136,11 @@ public class UnitProductionManager extends AbstractManager{
 	}
 //-----------------------------------------------------------------------------------------
 	private void setSettings(){
-		if(boss != null){
-			this.minerals = boss.getUnitProductionMinerals();  
-			this.gas = boss.getUnitProductionGas();
-			if(UNIT_MANAGER_DEBUG){ /*TODO*/
-				this.minerals = game.getSelf().getMinerals();
-				this.gas = game.getSelf().getGas();
-			}
+		if(boss != null){  /*TODO*/
+		//	this.minerals = boss.getUnitProductionMinerals();  
+		//	this.gas = boss.getUnitProductionGas();
+			this.minerals = game.getSelf().getMinerals();
+			this.gas = game.getSelf().getGas();
 		}else sendText("err: boss = null");
 	}
 	private void myAct(){
@@ -374,10 +370,10 @@ public class UnitProductionManager extends AbstractManager{
 	}
 //------------------------------------ only testing ----------------------------------------
 	private void sendText(String msg){
-		if(UNIT_MANAGER_DEBUG) game.sendText("UPM-" + msg);
+		if(boss.UNIT_MANAGER_DEBUG) game.sendText("UPM-" + msg);
 	}
 	private void drawDebugInfo() {
-		if(UNIT_MANAGER_DEBUG){
+		if(boss.UNIT_MANAGER_DEBUG){
 			int hh = 180 ;
 			int ww = 500;
 			for(int i = 0; i < rateArmyGap.size();i++){

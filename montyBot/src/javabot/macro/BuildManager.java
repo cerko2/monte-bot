@@ -5,14 +5,12 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import javabot.AbstractManager;
-import javabot.BWAPIEventListener;
 import javabot.JNIBWAPI;
 import javabot.model.Unit;
 import javabot.types.UnitType.UnitTypes;
 import javabot.util.BWColor;
 import javabot.util.Placement;
 import javabot.util.Support;
-import javabot.util.Wall;
 
 //Azder BM
 /*TODO*/
@@ -20,9 +18,6 @@ import javabot.util.Wall;
 * 
 */
 public class BuildManager extends AbstractManager{
-	private static final boolean BUILD_MANAGER_DEBUG = true; 
-	
-
 	private boolean freeMode = false; // dokym neskonci opening som obmedzeny.
 	private int time = 0;
 	private Placement placement = null;
@@ -38,7 +33,7 @@ public class BuildManager extends AbstractManager{
 	
 	private static int TIME_EXPIRES = 100;
 	private static int ACT_FREQUENCY = 60; //frekvecia myAct
-	private static int INIT_MY_PLAN_FREQUENCY = 100000;
+	//private static int INIT_MY_PLAN_FREQUENCY = 100000;
 	private static int JOBS = 0;
 	private int homeX = 0;
 	private int homeY = 0;
@@ -233,13 +228,11 @@ public class BuildManager extends AbstractManager{
 
 //-----------------------------------------------------------------------------------------	
 	private void setSettings(){
-		if(boss != null){
-			this.minerals = boss.getBuildManagerMinerals();  
-			this.gas = boss.getBuildManagerGas();
-			if(BUILD_MANAGER_DEBUG){ /*TODO*/
-				this.minerals = game.getSelf().getMinerals();
-				this.gas = game.getSelf().getGas();
-			}
+		if(boss != null){/*TODO*/
+			//this.minerals = boss.getBuildManagerMinerals();  
+		//	this.gas = boss.getBuildManagerGas();
+			this.minerals = game.getSelf().getMinerals();
+			this.gas = game.getSelf().getGas();
 		}else sendText("err: boss = null");
 	}
 	private void myAct(){
@@ -278,9 +271,7 @@ public class BuildManager extends AbstractManager{
 		}
 	}
 
-
-
-//-----------------------------------------------------------------------------------------	
+	//-----------------------------------------------------------------------------------------	
 	private void buildStack(){
 		Boolean goStack =  true;
 		if(!createStack.isEmpty()){
@@ -335,7 +326,6 @@ public class BuildManager extends AbstractManager{
 		return false;
 	}
 
-
 	private int getWorker(int x,int y){
 		return boss.getWorkerManager().getWorker(x, y);
 	}
@@ -360,10 +350,10 @@ public class BuildManager extends AbstractManager{
 	}
 //------------------------------------ only testing ----------------------------------------
 	private void sendText(String msg){
-		if(BUILD_MANAGER_DEBUG) game.sendText("BM: " + msg);
+		if(Boss.BUILD_MANAGER_DEBUG) game.sendText("BM: " + msg);
 	}
 	private void drawDebugInfo() {
-		if(BUILD_MANAGER_DEBUG){
+		if(Boss.BUILD_MANAGER_DEBUG){
 			int ww = 440;
 			for(int i = 0; i < createStack.size();i++){
 				int s = (int) Math.round(createStack.get(i).typeID);

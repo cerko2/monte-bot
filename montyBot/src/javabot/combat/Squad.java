@@ -45,7 +45,10 @@ public class Squad {
 		airPower  		= getAirPower();
 		groundPower     = getGroundPower();
 		
-		leader			= setLeader();
+		if ( leader == null || !leader.isExists() )
+		{
+		    leader = setLeader();
+		}
 		if ( leader == null )
 		{
 			return;
@@ -282,5 +285,32 @@ public class Squad {
 		return time;
 	}
 	
+	
+    public boolean containsUnit( Unit u )
+    {
+        for ( Unit e : squadUnits )
+        {
+            if ( e.getID() == u.getID() )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean destroyUnit( int unitId )
+    {
+        int i = 0;
+        for ( Unit u : squadUnits  )
+        {
+            if ( u.getID() == unitId )
+            {
+                squadUnits.remove( i );
+                return true;
+            }
+            i++;
+        }
+        return false;
+    }
 	
 }

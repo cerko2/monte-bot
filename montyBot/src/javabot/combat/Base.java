@@ -3,7 +3,8 @@ package javabot.combat;
 import javabot.JNIBWAPI;
 import javabot.model.Region;
 
-public class Base {
+public class Base 
+{
 	
 	Region baseRegion;
 	JNIBWAPI bwapi;

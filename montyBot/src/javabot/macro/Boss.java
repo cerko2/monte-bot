@@ -562,4 +562,15 @@ public class Boss extends AbstractManager{
 			System.out.println(game.getGroundDistance(base1.getTx(), base1.getTy(), base2.getTx(), base2.getTy()));
 		}
 	}
+	
+	@Override
+	public void unitDestroy( int unitID )
+	{
+	    super.unitDestroy( unitID );
+	    if ( montePlanner.getSquadManager() != null )
+	    {
+	        System.out.println( "Unit destroyed" );
+	        montePlanner.getSquadManager().destroyUnit( unitID );
+	    }
+	}
 }

@@ -2,12 +2,7 @@ package javabot.util;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
-
-import sun.util.locale.BaseLocale;
 
 import javabot.util.BWColor;
 
@@ -17,9 +12,6 @@ import javabot.model.ChokePoint;
 import javabot.model.Map;
 import javabot.model.Region;
 import javabot.model.Unit;
-import javabot.types.UnitType;
-import javabot.types.UnitType.UnitTypes;
-import javabot.types.WeaponType;
 
 public class RegionUtils {
 	
@@ -60,8 +52,7 @@ public class RegionUtils {
 		
 		if ( connection == null )
 		{	
-			System.out.println( "Region Utils: neexistuje spolocny chokepoint" );
-			return -1;
+			return airPathToRegion( from, to );
 		}
 		
 		return UnitUtils.getDistance( connection.getCenterX(), connection.getCenterY(), from.getCenterX(), from.getCenterY()) +
@@ -207,9 +198,12 @@ public class RegionUtils {
 	}
 	
 		
-	private static boolean chokeObstructedByNeutral(JNIBWAPI bwapi, ChokePoint choke) {
-		for (Unit u : bwapi.getAllStaticNeutralUnits()) {
-			if (UnitUtils.getDistance(u.getX(), u.getY(), choke.getCenterX(), choke.getCenterY()) <= choke.getRadius() ) return true;
+	public static boolean chokeObstructedByNeutral( JNIBWAPI bwapi, ChokePoint choke ) 
+	{
+		for ( Unit u : bwapi.getAllStaticNeutralUnits() ) 
+		{
+			if ( UnitUtils.getDistance(u.getX(), u.getY(), choke.getCenterX(), choke.getCenterY()) <= choke.getRadius() ) 
+				return true;
 		}
 		return false;
 	}
@@ -238,6 +232,21 @@ public class RegionUtils {
 		}
 		return null;
 	}
+	
+	public static boolean chokeBlockedByNeutral( JNIBWAPI bwapi, ChokePoint chokePoint )
+	{
+		
+		for ( Unit u : bwapi.getAllStaticNeutralUnits() )
+		{
+			if ( UnitUtils.getDistance( chokePoint.getCenterX(), chokePoint.getCenterY(), u.getX(), u.getY() ) < 100 )
+			{
+				return true;
+			}
+		}
+		
+		return false;
+		
+	}
 
 	public static ArrayList<Region> getGroundConnectedRegions( Region region, JNIBWAPI bwapi ) 
 	{
@@ -251,7 +260,7 @@ public class RegionUtils {
 				     ( c.getSecondRegionID() == region.getID() ) 
 				   )
 				{
-					if ( !chokeObstructedByNeutral( bwapi, c ) )
+					if ( !chokeBlockedByNeutral( bwapi, c ) )
 					{
 						result.add( r );
 					}

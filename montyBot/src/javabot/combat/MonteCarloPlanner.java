@@ -1,13 +1,11 @@
 package javabot.combat;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javabot.model.ChokePoint;
 import javabot.model.Region;
@@ -23,7 +21,7 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 {
 
 	final boolean DEBUG = true;
-	SquadManager squadManager;
+	private SquadManager squadManager;
 	JNIBWAPI bwapi;
 	
 	long time;
@@ -42,6 +40,7 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 		this.bwapi = bwapi;
 		Thread t = new Thread(this);
 		t.start();
+		System.out.println( "Monte carlo started" );
 	}
 
 	private void setEnemyBases() 
@@ -54,7 +53,7 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 			if ( bwapi.getUnitType( u.getTypeID() ).isBuilding() )
 			{
 				Region r = RegionUtils.getRegion( bwapi.getMap() , u );
-				if ( !regions.contains( r ) )
+				if ( !regions.contains( r.getID() ) )
 				{
 					regions.add( r.getID() );
 					enemyBases.add( new Base( bwapi , r ) );
@@ -73,7 +72,7 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 			if ( bwapi.getUnitType( u.getTypeID() ).isBuilding() )
 			{
 				Region r = RegionUtils.getRegion( bwapi.getMap() , u );
-				if ( !regions.contains( r ) )
+				if ( !regions.contains( r.getID() ) )
 				{
 					regions.add( r.getID() );
 					ourBases.add( new Base( bwapi , r ) );
@@ -117,10 +116,14 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 			if ( entry.getValue().enemyIsNearSquad() )
 			{
 				if ( !fightingSquads.contains( entry.getValue() ) )
+				{
 					fightingSquads.add( entry.getValue() );
-				System.out.println( fightingSquads.size() );
+				}
 				if ( bwapi.getFrameCount() % ( 24 ) == 0 )
+				{
+				    System.out.println( "battling" );
 					battle();
+				}
 			}
 			else
 			{
@@ -135,7 +138,6 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 	private synchronized void generatePlans()
 	{
 		time = System.currentTimeMillis();
-//		System.out.println( "Started generating at " + 0 );
 		myPlans    = new HashSet<MyPlan>();
 		enemyPlans = new HashSet<EnemyPlan>();
 		for ( int i = 0; i < 100; i++ )
@@ -170,9 +172,6 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 		
 		time = System.currentTimeMillis() - time;
 		
-//		System.out.println( "Ended generating at: " + time );
-//		System.out.println( "Our Plans Size " + myPlans.size() );
-//		System.out.println( "Enemy Plans Size " + enemyPlans.size() );
 		
 	}
 	
@@ -183,11 +182,9 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 		
 		
 		time = System.currentTimeMillis();
-//		System.out.println( "Started computing at " + 0   );
 		
 		if ( myPlans.isEmpty() )
 		{
-//			System.out.println( "Monte Carlo my plans are empty" );
 			return null;
 		}
 		
@@ -209,7 +206,6 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 				if ( ( System.currentTimeMillis() - time ) > 5000 ) 
 				{
 					best_id  = i;
-//					System.out.println( "Ended computing at " + ( System.currentTimeMillis() - time ) );
 					bwapi.printText( "Finished early and picked the best plan from " + best_id + " plans ");
 					return bestPlan.ourSquads;
 				}
@@ -228,11 +224,8 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 		
 		time = System.currentTimeMillis() - time;
 		
-//		System.out.println( "Ended computing at " + time );
-		
 		if ( !myPlans.isEmpty() && ( bestPlan == null ) )
 		{
-//			System.out.println("Nenasiel best");
 			bestPlan = (MyPlan) iter.next();
 			return bestPlan.ourSquads;
 		}
@@ -245,6 +238,14 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 	
 	private void debugConnectedRegions( HashMap<Integer, Double> connected, int squad_id, boolean enemySquad ) 
 	{
+		
+		OurSquad squad = squadManager.getOurSquad( squad_id );
+		
+		if ( squad == null ) 
+		{			
+			return;
+		}
+			
 		for ( Map.Entry<Integer, Double> entry : connected.entrySet() )
 		{
 			int regionId = entry.getKey();
@@ -253,13 +254,12 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 			
 			if ( r == null )
 			{
-//				System.out.println( "Region pri z connected bol nulovy" );
 				continue;
 			}
 			
 			if ( !enemySquad )
 			{
-				bwapi.drawText( r.getCenterX()-50, r.getCenterY() + ( 10 * ( squad_id + 1 ) ), "Our Squad ID: " + squad_id + " Chance: " + entry.getValue().intValue() + "%%", false );
+				bwapi.drawText( r.getCenterX()-50, r.getCenterY() + ( 10 * ( squad_id + 1 ) ), "Our Squad ID: " + squad_id + " Chance: " + entry.getValue().intValue() + "%%" + " Region ID: " + squad.getRegion().getID(), false );
 			}
 			else
 			{
@@ -274,64 +274,33 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 	{
 		if ( DEBUG )
 		{
-			squadManager.debug();
+			squadManager.debug();		
+						
+			for ( Map.Entry<Integer, OurSquad> ourSquad : squadManager.ourSquads.entrySet() )
+			{
+				ourSquad.getValue().setSimulatorCollections( enemyBases, ourBases, squadManager.enemySquads, squadManager.ourSquads );
+				HashMap<Integer, Double> connected = ourSquad.getValue().evaluateNearbyRegions();
+				debugConnectedRegions( connected, ourSquad.getKey(), false );
+			}
 			
 			for ( Region r : bwapi.getMap().getRegions() )
 			{
 				bwapi.drawText( r.getCenterX(), r.getCenterY(), "Region s id: " + r.getID(), false );
 			}
 			
-			for ( Base b : ourBases )
+			for ( ChokePoint c : bwapi.getMap().getChokePoints() )
 			{
-				bwapi.drawText( b.getRegion().getCenterX(), b.getRegion().getCenterY()+10, "Our base on (region_id): " + b.getRegion().getID(), false);
+				if ( RegionUtils.chokeBlockedByNeutral( bwapi, c ) )
+				{
+					bwapi.drawCircle( c.getCenterX(), c.getCenterY(), 100, BWColor.YELLOW, false, false );
+				}
 			}
 			
 			for ( Base b : enemyBases )
 			{
-				bwapi.drawText( b.getRegion().getCenterX(), b.getRegion().getCenterY()+10, "Enemy base (region_id): " + b.getRegion().getID(), false);
+				bwapi.drawCircle( b.baseRegion.getCenterX(), b.baseRegion.getCenterY(), 100, BWColor.RED, false, false );
 			}
 			
-			for ( Map.Entry<Integer, OurSquad> ourSquad : squadManager.ourSquads.entrySet() )
-			{
-				ourSquad.getValue().setSimulatorCollections( enemyBases, ourBases, squadManager.enemySquads, squadManager.ourSquads );
-				HashMap <Integer, Double> connected = ourSquad.getValue().evaluateNearbyRegions();
-				debugConnectedRegions( connected, ourSquad.getKey(), false );
-				
-				CopyOnWriteArrayList<Action> plan = ourSquad.getValue().plan;
-				
-				int i = 0;
-				while ( i < plan.size()-2 )
-				{
-					int color = BWColor.BLUE;
-					if ( i % 3 == 1 )
-					{
-						color = BWColor.RED;
-					} 
-					else if ( i % 3 == 2 )
-					{
-						color = BWColor.GREEN;
-					} 
-					else
-					{
-						color = BWColor.WHITE;
-					}
-					int delta = 0;
-					Point a = new Point( plan.get( i ).region.getCenterX()+delta, plan.get( i ).region.getCenterY() );
-					
-					bwapi.drawText( a.x-(50*ourSquad.getKey()), a.y-( 10*i), "Action: " + i , false );
-					++i;
-					Point b = new Point( plan.get( i ).region.getCenterX()+delta, plan.get( i ).region.getCenterY() );
-					bwapi.drawLine( a, b, color, false );
-				}
-				
-			}
-			
-			for ( Map.Entry<Integer, EnemySquad> enemySquad : squadManager.enemySquads.entrySet() )
-			{
-				enemySquad.getValue().setSimulatorCollections( enemyBases, ourBases, squadManager.enemySquads, squadManager.ourSquads );
-				HashMap<Integer, Double> connected = enemySquad.getValue().evaluateNearbyRegions();
-				debugConnectedRegions( connected, enemySquad.getKey(), true );
-			}
 			
 		}
 	}
@@ -346,15 +315,16 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 	{
 		while ( true )
 		{
-			if ( ( bwapi.getFrameCount() % ( 24*10 ) == 0 ) && ( bwapi.getFrameCount() > 24*60 ) )
+			if ( ( bwapi.getFrameCount() % ( 24*10 ) == 0 ) && ( bwapi.getFrameCount() > 24*10 ) )
 			{
 				squadManager.ourSquads = getBestPlan();
 			}
 			
-			try {
+			try
+			{
 				Thread.sleep( 10 );
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+			} catch ( InterruptedException e ) 
+			{
 				e.printStackTrace();
 			}
 		}
@@ -367,13 +337,17 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 			for ( Unit u : ourSquad.getSquadUnits() )
 			{
 				if ( !u.isExists() ) continue;
-				Unit enemy = FindNearesEnemy( u );
-				bwapi.attack( u.getID(), enemy.getID() );
+				else
+				{
+					Unit enemy = FindNearestEnemy( u );
+					if ( ( enemy != null ) && ( enemy.isExists() ) )
+						bwapi.attack( u.getID(), enemy.getID() );
+				}
 			}
 		}
 	}
 	
-	private Unit FindNearesEnemy( Unit u )
+	private Unit FindNearestEnemy( Unit u )
 	{
 		Unit nearestEnemy = null;
 		
@@ -390,6 +364,17 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 		return nearestEnemy;
 	}
 	
+    @Override
+    public void unitDestroy( int unitID )
+    {
+        super.unitDestroy( unitID );
+        System.out.println( "unit destroyed" );
+    }
+    
+    public SquadManager getSquadManager()
+    {
+        return this.squadManager;
+    }
 	
 }
 

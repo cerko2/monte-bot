@@ -33,10 +33,11 @@ import javabot.util.Wall;
 
 public class Boss extends AbstractManager{
 	
-	public static final boolean BOSS_DEBUG = true;
+
+	public static final boolean BOSS_DEBUG = false;
 	public static final boolean WALLIN_DEBUG = false;
-	public static final boolean OPPONENT_POSITIONING_DEBUG = true;
-	public static final boolean RESOURCE_DEBUG = true;
+	public static final boolean OPPONENT_POSITIONING_DEBUG = false;
+	public static final boolean RESOURCE_DEBUG = false;
 	public static final boolean OPPONENT_MODELLING_DEBUG = false;
 	public static final boolean UNIT_MANAGER_DEBUG  = false;
 	public static final boolean BUILD_MANAGER_DEBUG = true; 
@@ -111,7 +112,7 @@ public class Boss extends AbstractManager{
 		
 		//subordinate initialization
 		buildManager = new  BuildManager(this);
-		montePlanner = new MonteCarloPlanner();
+		montePlanner = new MonteCarloPlanner( game );
 		opponentKnowledgeBase = new OpponentKnowledgeBase(this);
 		openingManager = new OpeningManager(this);
 		opponentPositioning = new OpponentPositioning(game);
@@ -142,7 +143,7 @@ public class Boss extends AbstractManager{
 	
 	public void gameUpdate(){
 		setUnits();
-		montePlanner.update(combatUnits);
+		montePlanner.update( new ArrayList<Unit>( opponentPositioning.getEnemyUnits() ) , game.getMyUnits() );
 		workerManager.update(workerUnits);
 		
 		minerals = player.getMinerals();
@@ -563,5 +564,16 @@ public class Boss extends AbstractManager{
 			
 			System.out.println(game.getGroundDistance(base1.getTx(), base1.getTy(), base2.getTx(), base2.getTy()));
 		}
+	}
+	
+	@Override
+	public void unitDestroy( int unitID )
+	{
+	    super.unitDestroy( unitID );
+	    if ( montePlanner.getSquadManager() != null )
+	    {
+	        System.out.println( "Unit destroyed" );
+	        montePlanner.getSquadManager().destroyUnit( unitID );
+	    }
 	}
 }

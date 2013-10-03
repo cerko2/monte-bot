@@ -1,10 +1,14 @@
 package javabot.combat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import javabot.JNIBWAPI;
 import javabot.model.Region;
 import javabot.model.Unit;
+import javabot.types.UnitType.UnitTypes;
 import javabot.util.RegionUtils;
 
 public class Squad {
@@ -54,10 +58,48 @@ public class Squad {
 			return;
 		}
 		simulatorRegion = RegionUtils.getRegion( bwapi.getMap() , leader );
-		squadSpeed      = bwapi.getUnitType( leader.getTypeID() ).getTopSpeed();
+		if ( isShuttleInSquad() )
+		{
+		    squadSpeed      = bwapi.getUnitType( leader.getTypeID() ).getTopSpeed();
+		}
+		else
+		{
+		    squadSpeed      = getMedianSpeed();
+		}
 		
 		hp  = getHP();
 		dps = getDps();
+	}
+	
+	private boolean isShuttleInSquad()
+	{
+	    for ( Unit u : getSquadUnits() )
+	    {
+	        if ( UnitTypes.Protoss_Shuttle.ordinal() == u.getTypeID() )
+	        {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	
+	protected double getMedianSpeed()
+	{
+	    ArrayList<Double> speeds = new ArrayList<Double>();
+	    for ( Unit u : getSquadUnits() )
+	    {
+	        speeds.add( bwapi.getUnitType( u.getTypeID() ).getTopSpeed() );
+	    }
+	    Collections.sort( speeds );
+	    try
+        {
+	       return speeds.get( speeds.size() / 2 );
+        }
+        catch ( ArrayIndexOutOfBoundsException e )
+        {
+            e.printStackTrace();
+        }
+	    return speeds.get( 0 );
 	}
 
 	protected double getDps() 
@@ -199,6 +241,10 @@ public class Squad {
 
 	public Unit getLeader()
 	{
+	    if ( leader == null || !leader.isExists() )
+	    {
+	        leader = setLeader();
+	    }
 		return leader;
 	}
 	

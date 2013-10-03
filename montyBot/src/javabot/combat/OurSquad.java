@@ -42,6 +42,13 @@ public class OurSquad extends Squad
         this.enemySquadId = enemySquadId;
     }
 
+    public OurSquad( ArrayList <Unit> testFillSquadUnits, JNIBWAPI bwapi )
+    {
+        super( bwapi );
+        this.squadUnits = testFillSquadUnits;
+        setLeader();
+    }
+
     public void update()
     {
         if ( squadUnits.isEmpty() )

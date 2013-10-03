@@ -44,7 +44,7 @@ public class SquadManager
     {
         // ourSquads = new TreeMap <Integer, OurSquad>();
         // enemySquads = new HashMap <Integer, EnemySquad>();
-         harassSquad = null;
+        harassSquad = null;
 
         this.enemyCombatUnits = getEnemyCombatUnits( enemyUnits );
         this.availableUnits = getOurCombatUnits( ourUnits );
@@ -60,9 +60,7 @@ public class SquadManager
         ArrayList <Unit> result = new ArrayList <Unit>();
         for ( Unit u: ourUnits )
         {
-            if ( ( !bwapi.getUnitType( u.getTypeID() ).isWorker() )
-                    && ( !alreadyInOurSquad( u ) )
-                    && ( ( bwapi.getUnitType( u.getTypeID() ).isAttackCapable() ) || isSpecialUnit( u.getTypeID() ) ) )
+            if ( ( !bwapi.getUnitType( u.getTypeID() ).isWorker() ) && ( !alreadyInOurSquad( u ) ) && ( ( bwapi.getUnitType( u.getTypeID() ).isAttackCapable() ) || isSpecialUnit( u.getTypeID() ) ) )
             {
                 result.add( u );
             }
@@ -81,7 +79,7 @@ public class SquadManager
         }
         return false;
     }
-    
+
     private boolean alreadyInEnemySquad( Unit u )
     {
         for ( Map.Entry <Integer, EnemySquad> squad: enemySquads.entrySet() )
@@ -103,7 +101,7 @@ public class SquadManager
             {
                 result.add( u );
             }
-            
+
             if ( u.getTypeID() == UnitTypes.Protoss_Carrier.ordinal() )
             {
                 result.add( u );
@@ -121,18 +119,22 @@ public class SquadManager
             {
                 result.add( u );
             }
-            
+
             if ( isSpecialUnit( u.getTypeID() ) )
             {
                 result.add( u );
             }
-            
+
         }
         return result;
     }
 
-    private boolean isSpecialUnit( int typeID )
+    public static boolean isSpecialUnit( int typeID )
     {
+        if ( typeID == UnitTypes.Protoss_Shuttle.ordinal() )
+            return true;
+        if ( typeID == UnitTypes.Terran_Dropship.ordinal() )
+            return true;
         if ( typeID == UnitTypes.Protoss_Carrier.ordinal() )
             return true;
         if ( typeID == UnitTypes.Protoss_Reaver.ordinal() )
@@ -160,8 +162,7 @@ public class SquadManager
     {
         int ourSquadId = 0;
 
-        while ( ( ourSquadId < enemySquads.size() )
-                && ( !availableUnits.isEmpty() ) )
+        while ( ( ourSquadId < enemySquads.size() ) && ( !availableUnits.isEmpty() ) )
         {
             matchEnemySquadsPower( ourSquadId );
             ourSquadId++;
@@ -242,7 +243,7 @@ public class SquadManager
         {
             ourSquads.put( enemySquadId, new OurSquad( bwapi, enemySquadId ) );
         }
-        
+
         int counter = 0;
         while ( ourSquads.get( enemySquadId ).isWeakerOnGroundThan( enemySquad ) )
         {
@@ -286,8 +287,7 @@ public class SquadManager
             {
                 if ( UnitUtils.getDistance( ourSquadUnit, available ) < closestDist )
                 {
-                    closestDist = UnitUtils.getDistance( ourSquadUnit,
-                            available );
+                    closestDist = UnitUtils.getDistance( ourSquadUnit, available );
                     closestUnit = available;
                 }
             }
@@ -315,8 +315,7 @@ public class SquadManager
             {
                 if ( UnitUtils.getDistance( ourSquadUnit, available ) < closestDist )
                 {
-                    closestDist = UnitUtils.getDistance( ourSquadUnit,
-                            available );
+                    closestDist = UnitUtils.getDistance( ourSquadUnit, available );
                     closestUnit = available;
                 }
             }
@@ -375,8 +374,7 @@ public class SquadManager
         ArrayList <Unit> result = new ArrayList <Unit>();
         for ( Unit u: enemyUnits )
         {
-            if ( ( !bwapi.getUnitType( u.getTypeID() ).isWorker() ) && ( !alreadyInEnemySquad( u ) ) &&
-                 ( ( bwapi.getUnitType( u.getTypeID() ).isAttackCapable() ) || isSpecialUnit( u.getTypeID() ) ) )
+            if ( ( !bwapi.getUnitType( u.getTypeID() ).isWorker() ) && ( !alreadyInEnemySquad( u ) ) && ( ( bwapi.getUnitType( u.getTypeID() ).isAttackCapable() ) || isSpecialUnit( u.getTypeID() ) ) )
             {
                 result.add( u );
             }
@@ -522,24 +520,20 @@ public class SquadManager
                 i = 0;
             for ( Unit u: e_squad.getValue().squadUnits )
             {
-                bwapi.drawCircle( u.getX(), u.getY(), 20, colors.get( i ),
-                        false, false );
+                bwapi.drawCircle( u.getX(), u.getY(), 20, colors.get( i ), false, false );
             }
             Unit l = e_squad.getValue().getLeader();
-            bwapi.drawText( l.getX(), l.getY(), e_squad.getValue().toString(),
-                    false );
+            bwapi.drawText( l.getX(), l.getY(), e_squad.getValue().toString(), false );
 
             if ( ourSquads.get( e_squad.getKey() ) != null )
             {
                 for ( Unit u: ourSquads.get( e_squad.getKey() ).squadUnits )
                 {
-                    bwapi.drawCircle( u.getX(), u.getY(), 20, colors.get( i ),
-                            false, false );
+                    bwapi.drawCircle( u.getX(), u.getY(), 20, colors.get( i ), false, false );
                 }
 
                 Unit a = ourSquads.get( e_squad.getKey() ).getLeader();
-                bwapi.drawText( a.getX(), a.getY(),
-                        ourSquads.get( e_squad.getKey() ).toString(), false );
+                bwapi.drawText( a.getX(), a.getY(), ourSquads.get( e_squad.getKey() ).toString(), false );
             }
 
             i++;
@@ -550,8 +544,7 @@ public class SquadManager
         {
             for ( Unit u: harassSquad.squadUnits )
             {
-                bwapi.drawCircle( u.getX(), u.getY(), 5, BWColor.RED, true,
-                        false );
+                bwapi.drawCircle( u.getX(), u.getY(), 5, BWColor.RED, true, false );
             }
         }
     }
@@ -580,11 +573,7 @@ public class SquadManager
 
         for ( Region r: regions )
         {
-            result += " "
-                    + r.getID()
-                    + "["
-                    + UnitUtils.getDistance( r.getCenterX(), r.getCenterY(),
-                            d.getCenterX(), d.getCenterY() ) + "]";
+            result += " " + r.getID() + "[" + UnitUtils.getDistance( r.getCenterX(), r.getCenterY(), d.getCenterX(), d.getCenterY() ) + "]";
         }
 
         return result;
@@ -604,18 +593,18 @@ public class SquadManager
         return null;
 
     }
-    
+
     public void destroyUnit( int unitId )
     {
-        for ( Map.Entry <Integer, OurSquad> squad : ourSquads.entrySet() )
+        for ( Map.Entry <Integer, OurSquad> squad: ourSquads.entrySet() )
         {
             if ( squad.getValue().destroyUnit( unitId ) )
             {
                 return;
             }
         }
-        
-        for ( Map.Entry <Integer, EnemySquad> squad : enemySquads.entrySet() )
+
+        for ( Map.Entry <Integer, EnemySquad> squad: enemySquads.entrySet() )
         {
             if ( squad.getValue().destroyUnit( unitId ) )
             {

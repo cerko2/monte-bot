@@ -19,7 +19,7 @@ import javabot.util.NaturalBase;
 import javabot.util.RegionUtils;
 
 public class OpeningManager extends AbstractManager{
-	private boolean debug = true;
+	private boolean debug = false;
 	private JNIBWAPI game;
 	private Boss boss;
 	private boolean isActive;

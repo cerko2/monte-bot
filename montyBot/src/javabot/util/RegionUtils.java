@@ -25,6 +25,27 @@ public class RegionUtils {
 		return UnitUtils.getDistance(from.getCenterX(), from.getCenterY(), to.getCenterX(), to.getCenterY());
 	}
 	
+	public static ChokePoint getConnectionChoke( Region from, Region to )
+	{
+	    ChokePoint connection = null;
+        
+        for ( ChokePoint r : from.getChokePoints() )
+        {
+            if ( connection != null )
+                break;
+            for ( ChokePoint t : to.getChokePoints() )
+            {
+                if ( ( r.getCenterX() == t.getCenterX() ) && ( r.getCenterY() == t.getCenterY() ) )
+                {
+                    connection = t;
+                    break;
+                }
+            }
+        }
+        
+        return connection;
+	}
+	
 	/**
 	 * Between 2 neighbouring regions
 	 * @param from
@@ -34,21 +55,7 @@ public class RegionUtils {
 	 */
 	public static double groundPathToRegion( Region from, Region to, Map map )
 	{
-		ChokePoint connection = null;
-		
-		for ( ChokePoint r : from.getChokePoints() )
-		{
-			if ( connection != null )
-				break;
-			for ( ChokePoint t : to.getChokePoints() )
-			{
-				if ( ( r.getCenterX() == t.getCenterX() ) && ( r.getCenterY() == t.getCenterY() ) )
-				{
-					connection = t;
-					break;
-				}
-			}
-		}
+		ChokePoint connection = getConnectionChoke( from, to );		
 		
 		if ( connection == null )
 		{	

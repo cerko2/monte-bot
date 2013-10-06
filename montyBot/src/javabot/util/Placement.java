@@ -536,7 +536,7 @@ public class Placement {
 	}
 	private boolean isInElipse(int x,int y,int sx,int sy){ // TODO a,b 
 		double a = 9;
-		double b = 6;
+		double b = 6.5;
 		double xx = x+0.5;
 		double yy = y+0.5;
 		double sxx = sx;
@@ -548,6 +548,8 @@ public class Placement {
 		public void drawDebugInfo() {
 			if(PLACEMENT_DEBUG){
 				recontrolConstructionSites();	
+				
+				
 				
 				/*
 				for(Unit u : game.getMyUnits()){
@@ -567,13 +569,14 @@ public class Placement {
 				/*
 				for(int i = 0 ; i < game.getMap().getWidth();i++){
 					for(int j = 0 ; j < game.getMap().getHeight();j++){
-					//	if(getBuild(i, j))
-					//		game.drawBox(i*32,j*32, (i+1)*32, (j+1)*32, BWColor.GREY, false, false);
-						if(getLock(i, j))
-							game.drawBox(i*32,j*32, (i+1)*32, (j+1)*32, BWColor.RED, false, false);
+						if(getBuild(i, j))
+							game.drawBox(i*32,j*32, (i+1)*32, (j+1)*32, BWColor.GREY, false, false);
+						//if(getLock(i, j))
+						//	game.drawBox(i*32,j*32, (i+1)*32, (j+1)*32, BWColor.RED, false, false);
 					}
 				}
-			
+			*/
+				/*
 				for(int i =1; i < border.npoints; i++){
 					game.drawLine(border.xpoints[i-1]*32, border.ypoints[i-1]*32,border.xpoints[i]*32,border.ypoints[i]*32, BWColor.RED,false);
 				}

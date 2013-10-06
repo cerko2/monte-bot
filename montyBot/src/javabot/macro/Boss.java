@@ -40,8 +40,9 @@ public class Boss extends AbstractManager{
 	public static final boolean RESOURCE_DEBUG = false;
 	public static final boolean OPPONENT_MODELLING_DEBUG = false;
 	public static final boolean UNIT_MANAGER_DEBUG  = false;
-	public static final boolean BUILD_MANAGER_DEBUG = true; 
-	public static final boolean OPENING_MANAGER_DEBUG = true; 
+	public static final boolean BUILD_MANAGER_DEBUG = false; 
+	public static final boolean OPENING_MANAGER_DEBUG = false;
+	public static final boolean MONTE_MANAGER_DEBUG = true; 
 	
 	//REALLY SLOW
 	public static final boolean PATH_DEBUG = false;
@@ -572,7 +573,6 @@ public class Boss extends AbstractManager{
 	    super.unitDestroy( unitID );
 	    if ( montePlanner.getSquadManager() != null )
 	    {
-	        System.out.println( "Unit destroyed" );
 	        montePlanner.getSquadManager().destroyUnit( unitID );
 	    }
 	}

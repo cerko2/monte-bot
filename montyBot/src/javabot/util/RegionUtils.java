@@ -242,7 +242,6 @@ public class RegionUtils {
 	
 	public static boolean chokeBlockedByNeutral( JNIBWAPI bwapi, ChokePoint chokePoint )
 	{
-		
 		for ( Unit u : bwapi.getAllStaticNeutralUnits() )
 		{
 			if ( UnitUtils.getDistance( chokePoint.getCenterX(), chokePoint.getCenterY(), u.getX(), u.getY() ) < 100 )
@@ -259,7 +258,7 @@ public class RegionUtils {
 	{
 		ArrayList<Region> result = new ArrayList<Region>();
 		
-		for ( Region r : region.getConnectedRegions() )
+		for ( Region r : getConnectedRegions( bwapi.getMap(), region ) )
 		{
 			for ( ChokePoint c : r.getChokePoints() )
 			{

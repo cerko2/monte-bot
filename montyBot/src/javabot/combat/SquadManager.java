@@ -499,20 +499,20 @@ public class SquadManager
 
         OurSquad ourTestSquads = this.getOurSquad( 0 );
 
-        if ( ourTestSquads == null )
+        if ( ourTestSquads == null || ourTestSquads.getRegion() == null )
             return;
-
+        
         bwapi.drawText( 10, 10, "Region id: " + ourTestSquads.getRegion().getID(), true );
 
-        // bwapi.drawText
-        // (
-        // 10,
-        // 30,
-        // "Connected regions: " + regionsToString(
-        // RegionUtils.getGroundConnectedRegions( ourTestSquads.getRegion(),
-        // bwapi ) ),
-        // true
-        // );
+         bwapi.drawText
+         (
+         10,
+         30,
+         "Connected regions: " + regionsToString(
+         RegionUtils.getGroundConnectedRegions( ourTestSquads.getRegion(),
+         bwapi ) ),
+         true
+         );
 
         for ( Map.Entry <Integer, EnemySquad> e_squad: enemySquads.entrySet() )
         {
@@ -533,7 +533,10 @@ public class SquadManager
                 }
 
                 Unit a = ourSquads.get( e_squad.getKey() ).getLeader();
-                bwapi.drawText( a.getX(), a.getY(), ourSquads.get( e_squad.getKey() ).toString(), false );
+                if ( a != null )
+                {
+                    bwapi.drawText( a.getX(), a.getY(), ourSquads.get( e_squad.getKey() ).toString(), false );
+                }
             }
 
             i++;

@@ -94,10 +94,7 @@ public class OurSquad extends Squad
 
     /**************************** SIMULATOR METHODS ************************/
 
-    public void setSimulatorCollections( ArrayList <Base> enemyBases,
-            ArrayList <Base> ourBases,
-            HashMap <Integer, EnemySquad> enemySquads2,
-            TreeMap <Integer, OurSquad> ourSquads )
+    public void setSimulatorCollections( ArrayList <Base> enemyBases, ArrayList <Base> ourBases, HashMap <Integer, EnemySquad> enemySquads2, TreeMap <Integer, OurSquad> ourSquads )
     {
         this.enemyBases = enemyBases;
         this.ourBases = ourBases;
@@ -113,36 +110,30 @@ public class OurSquad extends Squad
 
         try
         {
-
             for ( Base b: enemyBases )
             {
-                if ( RegionUtils.airPathToRegion( r, b.getRegion() )
-                        * ENEMY_BASE_ATTRACTION == 0 )
+                if ( RegionUtils.airPathToRegion( r, b.getRegion() ) * ENEMY_BASE_ATTRACTION == 0 )
                 {
                     values.add( 0.0 );
                     continue;
                 }
-                values.add( 1 / RegionUtils.airPathToRegion( r, b.getRegion() )
-                        * ENEMY_BASE_ATTRACTION );
+                values.add( 1 / RegionUtils.airPathToRegion( r, b.getRegion() ) * ENEMY_BASE_ATTRACTION );
             }
 
             for ( Base b: ourBases )
             {
-                if ( RegionUtils.airPathToRegion( r, b.getRegion() )
-                        * OUR_BASE_ATTRACTION == 0 )
+                if ( RegionUtils.airPathToRegion( r, b.getRegion() ) * OUR_BASE_ATTRACTION == 0 )
                 {
                     values.add( 0.0 );
                     continue;
                 }
-                values.add( 1 / RegionUtils.airPathToRegion( r, b.getRegion() )
-                        * OUR_BASE_ATTRACTION );
+                values.add( 1 / RegionUtils.airPathToRegion( r, b.getRegion() ) * OUR_BASE_ATTRACTION );
             }
 
         }
         catch ( ConcurrentModificationException e )
         {
-            System.err
-                    .append( "Concurrent modification Base b : ourBases exception" );
+            System.err.append( "Concurrent modification Base b : ourBases exception" );
         }
 
         for ( Map.Entry <Integer, EnemySquad> e_squad: enemySquads.entrySet() )
@@ -155,17 +146,13 @@ public class OurSquad extends Squad
                 modifier = OPPOSITE_SQUAD_ATTRACTION;
             }
 
-            if ( RegionUtils.airPathToRegion( r,
-                    e_squad.getValue().getRegion( true ) )
-                    * modifier == 0 )
+            if ( RegionUtils.airPathToRegion( r, e_squad.getValue().getRegion( true ) ) * modifier == 0 )
             {
                 values.add( 0.0 );
                 continue;
             }
 
-            values.add( 1
-                    / RegionUtils.airPathToRegion( r, e_squad.getValue()
-                            .getRegion( true ) ) * modifier );
+            values.add( 1 / RegionUtils.airPathToRegion( r, e_squad.getValue().getRegion( true ) ) * modifier );
         }
 
         for ( Map.Entry <Integer, OurSquad> entry: ourSquads.entrySet() )
@@ -176,33 +163,25 @@ public class OurSquad extends Squad
                 modifier = 0.0;
             }
 
-            if ( RegionUtils.airPathToRegion(
-                    r,
-                    entry.getValue().getRegion(
-                            entry.getValue().onlyFlyersInSquad() ) )
-                    * modifier == 0 )
+            if ( RegionUtils.airPathToRegion( r, entry.getValue().getRegion( entry.getValue().onlyFlyersInSquad() ) ) * modifier == 0 )
             {
                 values.add( 0.0 );
                 continue;
             }
-            values.add( 1
-                    / RegionUtils.airPathToRegion( r, entry.getValue()
-                            .getRegion( entry.getValue().onlyFlyersInSquad() ) )
-                    * modifier );
+            values.add( 1 / RegionUtils.airPathToRegion( r, entry.getValue().getRegion( entry.getValue().onlyFlyersInSquad() ) ) * modifier );
         }
 
         for ( Double d: values )
         {
             result += d;
         }
-
+        
         return result;
     }
 
     public HashMap <Integer, Double> evaluateNearbyRegions()
     {
         ArrayList <Region> connectedRegions;
-
         if ( simulatorRegion == null )
         {
             return null;
@@ -210,17 +189,15 @@ public class OurSquad extends Squad
 
         if ( onlyFlyersInSquad() )
         {
-            connectedRegions = RegionUtils.getConnectedRegions( bwapi.getMap(),
-                    simulatorRegion );
+            connectedRegions = RegionUtils.getConnectedRegions( bwapi.getMap(), simulatorRegion );
         }
         else
         {
-            connectedRegions = RegionUtils.getGroundConnectedRegions(
-                    simulatorRegion, bwapi );
+            connectedRegions = RegionUtils.getGroundConnectedRegions( simulatorRegion, bwapi );
         }
-
         HashMap <Integer, Double> regions = new HashMap <Integer, Double>();
-
+        
+        
         for ( Region r: connectedRegions )
         {
             regions.put( r.getID(), evaluateRegion( r ) );
@@ -324,14 +301,17 @@ public class OurSquad extends Squad
         {
             if ( u != null && u.isExists() )
             {
-                bwapi.attack( u.getID(), plan2.get( 0 ).getRegion()
-                        .getCenterX(), plan2.get( 0 ).getRegion().getCenterY() );
+                bwapi.attack( u.getID(), plan2.get( 0 ).getRegion().getCenterX(), plan2.get( 0 ).getRegion().getCenterY() );
             }
         }
 
         if ( plan2.isEmpty() )
             return;
 
+        if ( plan2.get( 0 ) == null || plan2.get( 0 ).getRegion() == null || getRegion( true ) == null )
+        {
+            return;
+        }
         if ( plan2.get( 0 ).getRegion().getID() == getRegion( true ).getID() )
         {
             plan2.remove( 0 );
@@ -359,8 +339,7 @@ public class OurSquad extends Squad
             Region to = chooseRegion();
             int actionTime = moveToNextRegion( to );
 
-            plan.add( new Action( simulatorRegion, ellapsedTime, ellapsedTime
-                    + actionTime ) );
+            plan.add( new Action( simulatorRegion, ellapsedTime, ellapsedTime + actionTime ) );
             ellapsedTime += actionTime;
         }
 
@@ -387,7 +366,7 @@ public class OurSquad extends Squad
         Random rand = new Random();
 
         int counter = 0;
-
+        if ( Double.isNaN( chance ) || chance < 1 ) chance = 10.0;
         int percentage = rand.nextInt( ( int ) chance );
 
         while ( counter < 50 )
@@ -397,11 +376,9 @@ public class OurSquad extends Squad
 
             for ( Map.Entry <Integer, Double> entry: connectedRegions.entrySet() )
             {
-                if ( ( percentage >= minOK )
-                        && ( percentage <= entry.getValue() ) )
+                if ( ( percentage >= minOK ) && ( percentage <= entry.getValue() ) )
                 {
-                    return RegionUtils.getRegion( bwapi.getMap(),
-                            entry.getKey() );
+                    return RegionUtils.getRegion( bwapi.getMap(), entry.getKey() );
                 }
             }
 
@@ -414,7 +391,7 @@ public class OurSquad extends Squad
 
     public boolean containsUnit( Unit u )
     {
-        for ( Unit e : squadUnits )
+        for ( Unit e: squadUnits )
         {
             if ( e.getID() == u.getID() )
             {

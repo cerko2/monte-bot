@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javabot.combat.squad_movement.SquadMovementManager;
+import javabot.macro.Boss;
 import javabot.model.ChokePoint;
 import javabot.model.Region;
 
@@ -21,7 +22,7 @@ import javabot.util.UnitUtils;
 public class MonteCarloPlanner extends AbstractManager implements Runnable
 {
 
-    public static final boolean DEBUG          = false;
+    public static final boolean DEBUG          = Boss.MONTE_MANAGER_DEBUG;
     final boolean               MONTE_ON       = true;
     private SquadManager        squadManager;
     JNIBWAPI                    bwapi;
@@ -138,7 +139,6 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
                 }
                 if ( bwapi.getFrameCount() % ( 24 ) == 0 )
                 {
-                    System.out.println( "battling" );
                     battle();
                 }
             }
@@ -259,6 +259,11 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
             return;
         }
 
+        if ( connected == null )
+        {
+            return;
+        }
+        
         for ( Map.Entry <Integer, Double> entry: connected.entrySet() )
         {
             int regionId = entry.getKey();
@@ -273,6 +278,10 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
 
             if ( !enemySquad )
             {
+                if ( r == null || squad == null || squad.getRegion() == null )
+                {
+                    continue;
+                }
                 bwapi.drawText( r.getCenterX() - 50, r.getCenterY() + ( 10 * ( squad_id + 1 ) ), "Our Squad ID: " + squad_id + " Chance: " + entry.getValue().intValue() + "%%" + " Region ID: "
                         + squad.getRegion().getID(), false );
             }
@@ -289,6 +298,7 @@ public class MonteCarloPlanner extends AbstractManager implements Runnable
     {
         if ( MonteCarloPlanner.DEBUG )
         {
+            
             squadManager.debug();
 
             for ( Map.Entry <Integer, OurSquad> ourSquad: squadManager.ourSquads.entrySet() )

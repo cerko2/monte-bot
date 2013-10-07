@@ -488,7 +488,7 @@ public class OpeningManager extends AbstractManager{
 	}
 	
 	private void sendText(String msg){
-		if(debug) game.sendText("OM: " + msg);
+		if(Boss.OPENING_MANAGER_DEBUG) game.sendText("OM: " + msg);
 	}
 	
 	private void drawText(int x, int y, String msg){

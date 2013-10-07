@@ -51,28 +51,49 @@ public class EnemySquad extends Squad {
 		
 		try 
 		{
-			
 			for ( Base b : enemyBases )
 			{
-				values.add( RegionUtils.airPathToRegion( simulatorRegion, b.getRegion() ) * ENEMY_BASE_ATTRACTION );
+			    if ( RegionUtils.airPathToRegion( r, b.getRegion() ) * ENEMY_BASE_ATTRACTION == 0 )
+                {
+                    values.add( 0.0 );
+                    continue;
+                }
+                values.add( 1 / RegionUtils.airPathToRegion( r, b.getRegion() ) * ENEMY_BASE_ATTRACTION );
 			}
 			
 			for ( Base b : ourBases )
 			{
-				values.add( RegionUtils.airPathToRegion( simulatorRegion, b.getRegion() ) * OUR_BASE_ATTRACTION );
+			    if ( RegionUtils.airPathToRegion( r, b.getRegion() ) * OUR_BASE_ATTRACTION == 0 )
+                {
+                    values.add( 0.0 );
+                    continue;
+                }
+                values.add( 1 / RegionUtils.airPathToRegion( r, b.getRegion() ) * OUR_BASE_ATTRACTION );
 			}
 			
 		for ( Map.Entry<Integer, EnemySquad> e_squad : enemySquads.entrySet() )
 		{
 			
 			double modifier =  ENEMY_SQUAD_ATTRACTION;
-			values.add( RegionUtils.airPathToRegion( simulatorRegion, e_squad.getValue().getRegion( true ) ) * modifier );
+			if ( RegionUtils.airPathToRegion( r, e_squad.getValue().getRegion( true ) ) * modifier == 0 )
+            {
+                values.add( 0.0 );
+                continue;
+            }
+
+            values.add( 1 / RegionUtils.airPathToRegion( r, e_squad.getValue().getRegion( true ) ) * modifier );
+			
 		}
 		
 		for ( Map.Entry<Integer, OurSquad> entry : ourSquads.entrySet() )
 		{
 			double modifier = OUR_SQUAD_ATTRACTION;
-			values.add( RegionUtils.airPathToRegion( simulatorRegion, entry.getValue().getRegion( true ) ) * modifier );
+			if ( RegionUtils.airPathToRegion( r, entry.getValue().getRegion( entry.getValue().onlyFlyersInSquad() ) ) * modifier == 0 )
+            {
+                values.add( 0.0 );
+                continue;
+            }
+            values.add( 1 / RegionUtils.airPathToRegion( r, entry.getValue().getRegion( entry.getValue().onlyFlyersInSquad() ) ) * modifier );
 		}
 		
 		for ( Double d : values )
@@ -192,7 +213,7 @@ public class EnemySquad extends Squad {
 		
 		while ( ( result == null ) && ( counter < 50 ) )
 		{
-			if ( chance < 1 ) chance = 50;
+			if ( Double.isNaN( chance ) || chance < 1 ) chance = 10.0;
 			int percentage = rand.nextInt( (int) chance );
 			
 			int minOK = 0;

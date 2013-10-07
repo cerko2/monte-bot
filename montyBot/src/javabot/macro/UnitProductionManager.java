@@ -9,23 +9,22 @@ import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.model.Unit;
 import javabot.types.UnitType.UnitTypes;
+import javabot.util.BWColor;
 
 //Azder UPM
 /*TODO*/
 /* 
- * lepsie spravit navysovanie pomeru. 
- * otestovat funciu createUnit
+*
  */
 public class UnitProductionManager extends AbstractManager{
-	private boolean testing = true; //testovacie vypisy.
 	private boolean freeMode = false; // dokym neskonci opening som obmedzeny.
-	
 	private JNIBWAPI game = null;
 	private Boss boss  = null;
 	private int minerals = 0;
 	private int gas = 0;
 	
-	private ArrayList<Double> rateArmy = new ArrayList<Double>(); // sucet = 100;???
+	private ArrayList<Integer> countArmy = new ArrayList<Integer>();
+ 	private ArrayList<Double> rateArmy = new ArrayList<Double>(); // sucet = 100;???
 	private ArrayList<Double> rateArmyActual = new ArrayList<Double>();
 	private ArrayList<MyArmyGap> rateArmyGap = new ArrayList<MyArmyGap>();
 	private ArrayList<Unit> useBuilding = new ArrayList<Unit>();
@@ -33,7 +32,7 @@ public class UnitProductionManager extends AbstractManager{
 	private Vector<Integer> createStackExternal = new Vector<Integer>();
 	private double rate = 1;
 	
-	private static int numArmy = 13; // velkos rozmanitosti armady.
+	private static int numArmy = 13; // velkos armady.
 	private static int maxRate = 100; 
 	private static int actFrequency = 30; //frekvecia myAct
 	
@@ -53,10 +52,14 @@ public class UnitProductionManager extends AbstractManager{
 	public UnitProductionManager(Boss boss){
 		this.boss = boss;
 		this.game = boss.game;
+	}
+	public void gameStarted(){
 		sendText("Start: Unit Production");	
 		for(int i = 0 ; i < numArmy ; i++){
 			rateArmy.add(0.0);
+			countArmy.add(0);
 		}  
+		countArmy.set(UnitTypeID_To_InternalID(UnitTypes.Protoss_Observer.ordinal()), 4);
 	}
 	public void setAddResources(int minerals,int gas){
 		this.minerals += minerals;
@@ -133,22 +136,19 @@ public class UnitProductionManager extends AbstractManager{
 	}
 //-----------------------------------------------------------------------------------------
 	private void setSettings(){
-		if(boss != null){
-			this.minerals = boss.getUnitProductionMinerals();  
-			this.gas = boss.getUnitProductionGas();
-			if(testing){ /*TODO*/
-				this.minerals = game.getSelf().getMinerals();
-				this.gas = game.getSelf().getGas();
-			}
+		if(boss != null){  /*TODO*/
+		//	this.minerals = boss.getUnitProductionMinerals();  
+		//	this.gas = boss.getUnitProductionGas();
+			this.minerals = game.getSelf().getMinerals();
+			this.gas = game.getSelf().getGas();
 		}else sendText("err: boss = null");
 	}
 	private void myAct(){
 		useBuilding = new ArrayList<Unit>();
-		if(!boss.getOpeningManager().isActive())
-			freeMode = true;
 		
 		buildExternalStack();
 		if(freeMode){ // AK je modul aktivny
+			
 			setRateArmyActual();
 			setRateArmyGap();	
 			setCrateStack();
@@ -159,9 +159,15 @@ public class UnitProductionManager extends AbstractManager{
 				productionUnit(typeID);
 			}
 			for(int i =0 ; i < numArmy;i++){
-				if(rateArmy.get(i) > 0){
+				if(rateArmy.get(i) > 0 || countArmy.get(i) > 0){
 					boss.getBuildManager().needBuilding(InternalID_To_UnitTypeID(i));
 				}
+			}
+			countArmy.set(UnitTypeID_To_InternalID(UnitTypes.Protoss_Shuttle.ordinal()), (int)(getCountUnit(UnitTypes.Protoss_Reaver.ordinal())/2));
+			for(int i =0 ; i < numArmy;i++){
+				if(getCountUnit(InternalID_To_UnitTypeID(i)) < countArmy.get(i)-1 && !isInStack(InternalID_To_UnitTypeID(i)) )
+					if(!boss.getBuildManager().needBuilding(InternalID_To_UnitTypeID(i)))
+						createUnit(InternalID_To_UnitTypeID(i));
 			}
 		}
 		useBuilding = new ArrayList<Unit>();
@@ -232,7 +238,7 @@ public class UnitProductionManager extends AbstractManager{
 		for(int i =0 ; i < numArmy;i++){ // TODO dako rozumne
 			Random r = new Random();
 			int s = r.nextInt(numArmy);
-			pomRate = rateArmy.get(s);
+			pomRate = rateArmyGap.get(s).gap;
 			if(pomRate > 0){
 				createStack.add(InternalID_To_UnitTypeID(s));
 			}	
@@ -314,6 +320,21 @@ public class UnitProductionManager extends AbstractManager{
 		}
 		return false;
 	}
+	private int getCountUnit(int typeID){
+		int sum = 0;
+		for(Unit u : game.getMyUnits()){
+			if(u.getTypeID() == typeID)
+				sum++;
+		}
+		return sum;
+	}
+	private boolean isInStack(int typeID){
+		for(Integer type: createStackExternal){
+			if(type == typeID)
+				return true;
+		}
+		return false;
+	}
 //------------------------------------ FROM-TO ---------------------------------------------
 	private int UnitTypeID_To_InternalID(int typeID){
 		if(typeID == UnitTypes.Protoss_Zealot.ordinal()) return 0; 			// 0
@@ -349,10 +370,10 @@ public class UnitProductionManager extends AbstractManager{
 	}
 //------------------------------------ only testing ----------------------------------------
 	private void sendText(String msg){
-		if(testing) game.sendText("UPM-" + msg);
+		if(boss.UNIT_MANAGER_DEBUG) game.sendText("UPM-" + msg);
 	}
 	private void drawDebugInfo() {
-		if(testing){
+		if(boss.UNIT_MANAGER_DEBUG){
 			int hh = 180 ;
 			int ww = 500;
 			for(int i = 0; i < rateArmyGap.size();i++){

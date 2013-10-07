@@ -74,6 +74,8 @@ public class ScoutingManager extends AbstractManager{
 			System.out.println("bb tx = " + bb.getTx() + " bb ty = " + bb.getTy());
 		}
 		
+		if ( homeBase == null ) homeBase = baseLocations.get(0);
+		
 		for (Region region : map.getRegions()){
 			if (homeBase.getRegionID() == region.getID()){
 				homeRegion = region;

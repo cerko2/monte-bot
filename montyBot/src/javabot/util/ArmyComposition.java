@@ -36,6 +36,7 @@ public class ArmyComposition {
 		String[] unitStrings = temp[0].split(",");
 		for (String us : unitStrings) {
 			String[] u = us.split(";");
+			if  ( u[0] == "" ) return; 
 			this.ratio.add(Integer.valueOf(u[0]));
 		    this.unitTypes.add(translateStringToUnitType(u[1]));
 		}

@@ -10,10 +10,12 @@ public class AspSolver {
 	
 	private String exePath;
 	private String purpose;
+	private int maxAS;
 	
-	public AspSolver(String path, String purpose) {
+	public AspSolver(String path, String purpose, int maxAnswerSets) {
 		this.exePath = path;
 		this.purpose = purpose;
+		this.maxAS = maxAnswerSets;
 	}
 	
 	public ArrayList<String> solve(String lp) {
@@ -21,7 +23,11 @@ public class AspSolver {
 		ArrayList<String> ret = new ArrayList<String>();
 		
 		if (!out.contains("UNSATISFIABLE")) {
-			for (String s : out.split(" ")) {
+			String lastLine = "";
+			for (String line : out.split("\n")) {
+				if (!line.contains("OPTIMUM") && !line.contains("Warning")) lastLine = line;
+			}
+			for (String s : lastLine.split(" ")) {
 				if (!s.trim().isEmpty()) ret.add(s);
 			}
 		}
@@ -43,7 +49,7 @@ public class AspSolver {
 		try {
 		  String line;
 		
-	      Process p = Runtime.getRuntime().exec(this.exePath+" --asp09 bwapi-data/AI/montyBot/"+purpose+".lp");
+	      Process p = Runtime.getRuntime().exec(this.exePath+" "+String.valueOf(this.maxAS)+" --asp09 bwapi-data/AI/montyBot/"+purpose+".lp");
 	      BufferedReader bri = new BufferedReader
 	        (new InputStreamReader(p.getInputStream()));
 	      BufferedReader bre = new BufferedReader

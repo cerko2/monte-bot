@@ -231,7 +231,7 @@ public class UnitType {
 		Protoss_Assimilator,
 		Undefined158,
 		Protoss_Observatory,
-		Protoss_Gateway, //160
+		Protoss_Gateway, //160 ------------------------------
 		Undefined161,
 		Protoss_Photon_Cannon,
 		Protoss_Citadel_of_Adun,

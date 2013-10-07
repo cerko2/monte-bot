@@ -1045,7 +1045,6 @@ public class WorkerManager extends AbstractManager {
 					if (workers.size() < manager.maxWorkersPerGeyser && (assimilator.getKey().getResources() > 0 || allAssimilatorsDepleted)) {
 						deleteWorker(worker);
 						workers.add(worker);
-						game.printText("move to gas");
 						game.rightClick(worker.getID(), assimilator.getKey().getID());
 						break;
 					}
@@ -1076,7 +1075,6 @@ public class WorkerManager extends AbstractManager {
 					if (workers.size() < manager.maxWorkersPerMineralField) {
 						deleteWorker(worker);
 						workers.add(worker);
-						game.printText("move to minerals");
 						game.rightClick(worker.getID(), mineral.getKey().getID());
 						break;
 					}
@@ -1311,7 +1309,7 @@ public class WorkerManager extends AbstractManager {
 			// Mine assigned minerals
 			for (Map.Entry<Unit, ArrayList<Unit>> mineral: minerals.entrySet()) {
 				for (Unit worker: mineral.getValue()) {
-					if ((worker.isIdle() || worker.getOrderID() == 85) && worker.getOrderTargetID() != mineral.getKey().getID()) {
+					if ((worker.isIdle() || worker.isGatheringGas() || worker.getOrderID() == 85) && worker.getOrderTargetID() != mineral.getKey().getID()) {
 						game.rightClick(worker.getID(), mineral.getKey().getID());
 					}
 				}
@@ -1320,7 +1318,7 @@ public class WorkerManager extends AbstractManager {
 			// Harvest gas
 			for (Map.Entry<Unit, ArrayList<Unit>> assimilator: assimilators.entrySet()) {
 				for (Unit worker: assimilator.getValue()) {
-					if (worker.isIdle()) {
+					if (worker.isIdle() || worker.isGatheringMinerals()) {
 						game.rightClick(worker.getID(), assimilator.getKey().getID());
 					}
 				}

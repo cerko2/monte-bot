@@ -25,8 +25,6 @@ import javabot.util.Position;
 
 public class WorkerManager extends AbstractManager {
 	
-	private final boolean WORKER_MANAGER_DEBUG = false;
-	
 	private final double maxWorkersPerMineralField = 2.3;
 	private final double maxWorkersPerGeyser = 3.0;
 	private final int maxWorkersCount = 70;
@@ -222,7 +220,7 @@ public class WorkerManager extends AbstractManager {
 		for (NexusBase nexusBase: nexusBases) {
 			nexusBase.checkMinerals();
 			nexusBase.checkAssimilators();
-			if (getWorkersNumIsTraining() + allWorkers.size() < maxWorkersCount && !boss.getOpeningManager().isActive()) {
+			if (!isSaturated() && getWorkersNumIsTraining() + allWorkers.size() < maxWorkersCount && !boss.getOpeningManager().isActive()) {
 				nexusBase.buildWorkers();
 			}
 			nexusBase.handleWorkers();
@@ -267,7 +265,7 @@ public class WorkerManager extends AbstractManager {
 		}
 		
 		// Show manager debug info on the map
-		if (WORKER_MANAGER_DEBUG) {
+		if (boss.WORKER_MANAGER_DEBUG) {
 			drawDebugInfo();
 		}
 		
@@ -913,6 +911,7 @@ public class WorkerManager extends AbstractManager {
 		DecimalFormat df = new DecimalFormat("#.##");
 		
 		String debug = "";
+		debug += getWorkersNumIsTraining() + " + " + allWorkers.size() + " < " + maxWorkersCount;
 		debug += "work: " + allWorkers.size();
 		debug += "  un. work: " + unassignedWorkers.size();
 		debug += "  ratio: ";

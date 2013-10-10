@@ -11,6 +11,7 @@ import java.util.Vector;
 import javabot.AbstractManager;
 import javabot.JNIBWAPI;
 import javabot.combat.MonteCarloPlanner;
+import javabot.combat.WorkerDefenseManager;
 import javabot.combat.micro.ScoutingManager;
 import javabot.model.BaseLocation;
 import javabot.model.ChokePoint;
@@ -69,6 +70,7 @@ public class Boss extends AbstractManager{
 	private UnitProductionManager unitProductionManager;
 	private WallInModule wallInModule;
 	private WorkerManager workerManager;
+	private WorkerDefenseManager workerDefenseManager;
 	
 	private ArrayList<Unit> validUnits;
 	private ArrayList<Unit> combatUnits;
@@ -120,6 +122,7 @@ public class Boss extends AbstractManager{
 		scoutManager = new ScoutingManager(game);
 		wallInModule = new WallInModule(game, this);
 		workerManager = new WorkerManager(this);
+		workerDefenseManager = new WorkerDefenseManager(this);
 		unitProductionManager = new UnitProductionManager(this); 
 		
 		opponentModeling = new OpponentModeling(game, opponentPositioning, this);
@@ -146,6 +149,7 @@ public class Boss extends AbstractManager{
 		setUnits();
 		montePlanner.update( new ArrayList<Unit>( opponentPositioning.getEnemyUnits() ) , game.getMyUnits() );
 		workerManager.update(workerUnits);
+		workerDefenseManager.update(workerUnits);
 		
 		minerals = player.getMinerals();
 		gas = player.getGas();
@@ -471,6 +475,10 @@ public class Boss extends AbstractManager{
 
 	public WorkerManager getWorkerManager() {
 		return workerManager;
+	}
+	
+	public WorkerDefenseManager getWorkerDefenseManager() {
+		return workerDefenseManager;
 	}
 	
 	public void startScouting(){

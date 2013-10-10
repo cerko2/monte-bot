@@ -911,16 +911,14 @@ public class WorkerManager extends AbstractManager {
 		DecimalFormat df = new DecimalFormat("#.##");
 		
 		String debug = "";
-		debug += "sat: " + isSaturated() + " ";
-		debug += getWorkersNumIsTraining() + " + " + allWorkers.size() + " < " + maxWorkersCount;
-		debug += " work: " + allWorkers.size();
-		debug += "  un. work: " + unassignedWorkers.size();
-		debug += "  ratio: ";
+		debug += " awork: " + allWorkers.size();
+		debug += "  uwork: " + unassignedWorkers.size();
+		debug += "  saturation: ";
 		
 		int i = 1;
 		for (NexusBase nexusBase: nexusBases) {
 			nexusBase.drawDebugInfo();
-			debug += (i > 1 ? ", " : "") + String.valueOf(nexusBase.getCountGasWorkers()) + " < " + String.valueOf(nexusBase.getMaxGasWorkers());//df.format(nexusBase.getWorkerRatio());
+			debug += (i > 1 ? ", " : "") + df.format(nexusBase.getWorkerRatio());
 			i++;
 		}
 		

@@ -911,15 +911,16 @@ public class WorkerManager extends AbstractManager {
 		DecimalFormat df = new DecimalFormat("#.##");
 		
 		String debug = "";
+		debug += "sat: " + isSaturated() + " ";
 		debug += getWorkersNumIsTraining() + " + " + allWorkers.size() + " < " + maxWorkersCount;
-		debug += "work: " + allWorkers.size();
+		debug += " work: " + allWorkers.size();
 		debug += "  un. work: " + unassignedWorkers.size();
 		debug += "  ratio: ";
 		
 		int i = 1;
 		for (NexusBase nexusBase: nexusBases) {
 			nexusBase.drawDebugInfo();
-			debug += (i > 1 ? ", " : "") + df.format(nexusBase.getWorkerRatio());
+			debug += (i > 1 ? ", " : "") + String.valueOf(nexusBase.getCountGasWorkers()) + " < " + String.valueOf(nexusBase.getMaxGasWorkers());//df.format(nexusBase.getWorkerRatio());
 			i++;
 		}
 		
@@ -1044,6 +1045,7 @@ public class WorkerManager extends AbstractManager {
 					if (workers.size() < manager.maxWorkersPerGeyser && (assimilator.getKey().getResources() > 0 || allAssimilatorsDepleted)) {
 						deleteWorker(worker);
 						workers.add(worker);
+						gasWorkers.add(worker);
 						game.rightClick(worker.getID(), assimilator.getKey().getID());
 						break;
 					}
@@ -1074,6 +1076,7 @@ public class WorkerManager extends AbstractManager {
 					if (workers.size() < manager.maxWorkersPerMineralField) {
 						deleteWorker(worker);
 						workers.add(worker);
+						mineralWorkers.add(worker);
 						game.rightClick(worker.getID(), mineral.getKey().getID());
 						break;
 					}
@@ -1087,7 +1090,7 @@ public class WorkerManager extends AbstractManager {
 		 * @param worker - worker which will be added to this NexusBase
 		 * @return returns wheter worker was added to this NexusBase or not
 		 */
-		public boolean addWorker(Unit worker) {
+		public boolean addWorker(Unit worker) {			
 			// If we have 1 or more Assimilator assigned to this Nexus and count of gas workers
 			// is smaller than maximum number of workers which can be assigned to this Nexus
 			// add worker to gas workers and assign it to first Assimilator which have assigned 
@@ -1104,6 +1107,7 @@ public class WorkerManager extends AbstractManager {
 						
 						workers.add(worker);
 						game.rightClick(worker.getID(), assimilator.getKey().getID());
+						
 						return true;
 					}
 				}
